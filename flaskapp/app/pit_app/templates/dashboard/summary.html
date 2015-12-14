@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block content %}
+  
+
+    <div class="navbar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="sidebar-search">
+                    <div class="input-group custom-search-form">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                    </div>
+                    <!-- /input-group -->
+                </li>
+                <li>
+                    <a href="#summary"><i class="fa fa-dashboard fa-fw"></i> Summary</a>
+                </li>
+                <li>
+                    <a href="#mass_statistics"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics<span class="fa arrow"></span></a>
+                </li>
+                <li>
+                    <a href="tables.html"><i class="fa fa-table fa-fw"></i>Expression Data Statistics </a>
+                </li>
+                <li>
+                    <a href="#sequences"><i class="fa fa-edit fa-fw"></i> Sequences</a>
+                </li>
+                <li>
+                    <a href="#genomic"><i class="fa fa-wrench fa-fw"></i> Genomic Context<span class="fa arrow"></span></a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.sidebar-collapse -->
+    </div>
+
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">TGE000003265</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+
+        <!-- /.row -->
+        <div class="row">
+            <div>
+                <div class="panel panel-default" id="summary">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Summary
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <label>TGE ID:</label> {{ tge.id }} <br/>
+                        <label>TGE Type:</label> <br/>
+                        <label>Organisms:</label> <br/>
+                        <label>Associated gene ID:</label> <br/>
+                        <label>Associated transcript ID:</label> <br/>
+                        <label>Observations:</label>  <br/>
+                        <label>Samples:</label> <br/>
+                        <label>Description:</label> {{ tge.description }}
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <div class="panel panel-default" id="mass_statistics">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Data Statistics
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <label>Average peptide coverage:</label> <br>
+                        <label>Average peptides per TGE:</label> <br/>
+                        <label>Average PSM count per peptide:</label> <br/>
+                        <label>Score:</label> <br/>
+                        <label>Software: </label>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <!-- /.panel -->
+                <div class="panel panel-default" id="sequences">
+                    <div class="panel-heading ">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Sequences
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body collapse in" id="sequences">
+                        <div class="wordwrap"><label>TGE Sequence:</label> {{ tge.amino_seq }}</div><br/>
+                        <div class="wordwrap"><label>Transcript Sequence:</label> {{ trn.dna_seq }}</div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <!-- /.panel -->
+                <div class="panel panel-default" id="genomic">
+                    <div class="panel-heading ">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Genomic Context
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <label>Amino Acids:</label> 3 <br/>
+                        <label>Region:</label> 5' uORF <br/>
+                        <label>Location:</label> <br/>
+                        <label>Assembly:</label> GRCh38
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+            
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+{% endblock %}

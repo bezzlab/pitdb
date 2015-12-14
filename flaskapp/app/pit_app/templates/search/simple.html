@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+  
+{% block content %}
+<div class="container">
+	<div class="col-md-12"> 
+    <div class="panel with-nav-tabs panel-default">
+        <div class="panel-heading2">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#tab1default" data-toggle="tab">Quick</a></li>
+                <li><a href="#tab2default" data-toggle="tab">Advanced</a></li>
+            </ul>
+        </div>
+
+        <div class="panel-body">
+            <div class="tab-content">
+
+                <div class="tab-pane fade in active" id="tab1default">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for..." id="searchTerm" name="searchTerm" required>
+                              <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" name="action"><span class="glyphicon glyphicon-search"></span> Search</button>
+                              </span>
+                        </div><!-- /input-group -->
+                    </div>
+                </div>
+            <div class="tab-pane fade" id="tab2default">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for..." id="searchTerm" name="searchTerm" required>
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" name="action"><span class="glyphicon glyphicon-search"></span> Search</button>
+                        </span>
+                    </div><!-- /input-group -->
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "layoutIndex.html" %}
+  
+{% block content %}
+
+{% macro render_field(field, placeholder=None) %}
+{% if field.errors %}
+  <div>
+  {% elif field.flags.error %}
+    <div>
+    {% else %}
+    <div>
+  {% endif %}
+{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+</div>
+{% endmacro %}
+
+<div class="container">
+    <div id="signupbox" style="margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <div class="panel-title">Sign Up</div>
+            <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="/signin">Sign In</a></div>
+            </div>  
+            
+            <div class="panel-body" >
+              {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                <div>
+                {% for error in errors %}
+                {{ error }}<br>
+                {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                {% if form.errors %}
+                <div>
+                {% for field, error in form.errors.items() %}
+                {% for e in error %}
+                {{ e }}<br>
+                {% endfor %}
+                {% endfor %}
+                </div>
+                {% endif %}
+              <form id="signupform" data-toggle="validator" class="form-horizontal" role="form" action="/signup" method="POST">
+                {{ form.csrf_token }}
+
+                <div id="signupalert" style="display:none" class="alert alert-danger">
+                  <p>Error:</p>
+                  <span></span>
+                </div>
+                                    
+                <div class="form-group has-feedback">
+                  <label for="email" class="col-md-3 control-label">Email</label>
+                  <div class="col-md-9">
+                    <input type="text" class="form-control" name="email" placeholder="Email Address" required>
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="password" class="col-md-3 control-label">Password</label>
+                  <div class="col-md-9">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="password" class="col-md-3 control-label">Confirm Password</label>
+                  <div class="col-md-9">
+                    <input type="password" class="form-control" name="password2" placeholder="Confirm password" required>
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="firstname" class="col-md-3 control-label">Full Name</label>
+                  <div class="col-md-9">
+                    <input type="text" class="form-control" name="fullname" placeholder="Full Name" required>
+                    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-md-offset-3 col-md-9">
+                    <button id="btn-signup" type="submit" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp Sign Up</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>  
+        </div> 
+    </div>
+{% endblock %}

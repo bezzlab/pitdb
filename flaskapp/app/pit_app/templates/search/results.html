@@ -1,0 +1,26 @@
+{% extends "layoutTables.html" %}
+
+{% block content %}
+
+<div id="search-output">
+    <table class="table table-striped table-bordered dataTable no-footer" id="search-results" >
+      <thead>
+        <tr>
+          <th style="width=100px; max-width=100px;">ID</th>
+          <th style="width=200px; max-width=200px;">Name</th>
+          <th>Amino Acid</th>
+        </tr>
+      </thead>
+    	<tbody>
+        {% for tge in tgeRes %}
+    	<tr>
+    	  <td style="width=100px; max-width=100px;">{{ tge.id }}</td>
+    	  <td style="width=200px; max-width=200px;">{{ tge.name }}</td>
+    	  <td class="wordwrap">{{ tge.amino_seq }}</td>
+    	</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<script src="/static/js/ext/jquery.dataTables.js"></script>
+{% endblock %}
