@@ -60,7 +60,7 @@
 										    </optgroup>
 										    <option role="separator" class="divider"></li>
 										    <optgroup label="Experiment">
-										      <option>Accession Number</option>
+										      <option value="experiment">Accession Number</option>
 										    </optgroup>
 										    <option role="separator" class="divider"></li>
 										    <optgroup label="Species">
@@ -72,6 +72,10 @@
 	                    <label for="contain" id="searchFilter" name="searchFilter">Search</label>
 	                    <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea"></textarea>
 	                  </div>
+	                  <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
+	                  <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
+										
+										<br/><br/>
 	                  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 	                </form>
                   </div>

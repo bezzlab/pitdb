@@ -17,24 +17,34 @@ $(function() {
     $('#searchFilter').html("Enter "+$(this).val()+":");
   });
 
-  var oTable = $('#search-results').dataTable({
-    "pagingType": "full_numbers",
-    // "bJQueryUI": true,
+  var oTable = $('#searchRes').dataTable({
+    //"pagingType": "full_numbers",
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": false, "searchable": false },
+      { "bVisible": true, "width": "15%" },
+      { "bVisible": true, "width": "85%" }
+      
+    ],
+    // // "bJQueryUI": true,
     // "bProcessing": true,
     // "bAutoWidth": false,
-    // // "aoColumns": [
-    //   { "bVisible": false },
-    //   null,
-    //   null
-    // ]
   });
 
-  $('#search-results tbody tr').click( function () {
-    var aData = oTable.fnGetData( this );
-    // alert( aData[0] ); // assuming the id is in the first column
+  $('#searchRes tbody tr').click( function () {
+    var aData = oTable.fnGetData(this);
     window.open("http://localhost:5000/"+aData[0]+"/summary");
   });
 
+  $(".wordwrap").html(function(_, html){
+    var val  = $('#searchData').val();
+    var type = $('#searchType').val();
+    if (type != "exact"){
+      var regex = new RegExp("(" + val + "+)", "g");
+      return html.replace(regex, '<span class="red">$1</span>'); 
+    }  
+  });
 });
 
 //$('.selectpicker').selectpicker();

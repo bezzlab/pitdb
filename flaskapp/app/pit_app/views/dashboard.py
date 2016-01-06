@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, render_template
 from flask.ext.login import login_required, current_user
 
@@ -18,4 +19,12 @@ dashboard = Blueprint('dashboard',  __name__)
 def summary(user_url_slug):
   tge = TGE.query.filter_by(id=user_url_slug).first_or_404()
   trn = Transcript.query.filter_by(tge_id=user_url_slug).first_or_404()
-  return render_template('dashboard/summary.html', tge = tge, trn = trn)
+
+  tgeType   = re.search("(?<=type:).*?(?=\s)", tge.description)
+  tgeLength = re.search("(?<=len:).*?(?=\s)",  tge.description)
+  tgeStrand = re.search("(?<=\().*?(?=\))",    tge.description)
+	 
+  # tgeID  = tgeID[0:tgeID.find('|')]
+  #tgeType = tge.description
+
+  return render_template('dashboard/summary.html', tge = tge, trn = trn, type = tgeType.group(0), length=tgeLength.group(0), strand=tgeStrand.group(0))

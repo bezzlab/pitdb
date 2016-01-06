@@ -5,7 +5,7 @@ from pit_app import db
 from psycopg2 import Binary
 from datatables import ColumnDT, DataTables
 from pit_app.forms import SearchForm
-from pit_app.models import TGE
+from pit_app.models import TGE, Transcript
 
 
 
@@ -23,11 +23,33 @@ def advance():
   if request.method == 'POST':
     connection = db.engine.connect()
     trans = connection.begin()
-    query = connection.execute('SELECT id FROM tge where amino_seq = %s', form.searchArea.data)
-    tgeID = query.fetchone().id
-    connection.close()
 
-    return redirect(url_for('search.results', tge_id=tgeID))
+    searchOption = request.form['searchOptions']
+    searchType   = request.form['searchType']
+
+    if searchOption == 'Amino Acid Sequence':
+      if searchType == 'exact':
+        res = TGE.query.filter(TGE.amino_seq == (form.searchArea.data).encode('utf-8')).all()
+      else:
+        res = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data.encode('utf-8')+"%")).all()
+    elif searchOption == 'Transcript Sequence':
+      if searchType == 'exact':
+        res = TGE.query.join(Transcript, TGE.id == Transcript.tge_id).filter(Transcript.dna_seq.like((form.searchArea.data).encode('utf-8'))).all()
+        print res
+      else:
+        res = TGE.query.join(Transcript, TGE.id == Transcript.tge_id).filter(Transcript.dna_seq.like("%"+form.searchArea.data.encode('utf-8')+"%")).all()
+        print res
+    elif searchOption == 'Accession Number':
+      if searchType == 'exact':
+        res = TGE.query.filter_by(name=form.searchArea.data).all()
+      else:
+        res = TGE.query.filter(TGE.name.contains(form.searchArea.data)).all()
+    
+    connection.close() 
+
+    return render_template('search/results.html', tgeRes=res, searchData=form.searchArea.data, searchType=searchType)
+
+    #return redirect(url_for('search.results', tgeRes=tgeRes))
   # Do some stuff
   return render_template('search/advanced.html', form=form)
 
@@ -36,12 +58,14 @@ def advance2():
   # Do some stuff
   return render_template('search/advanced2.html')
 
-@search.route('/<tge_id>/results')
-def results(tge_id):
+@search.route('/results')
+def results():
 
-  tgeRes = TGE.query.all()
+  #tgeRes = TGE.query.all()
   #tgeRes = TGE.query.filter_by(id=tge_id)
-  
+  tgeRes = request.args['tgeRes']
+  print tgeRes
+
   if tgeRes:
     return render_template('search/results.html', tgeRes=tgeRes)
   return render_template('/advanced_search')
