@@ -52,15 +52,20 @@ class TGE(Base):
   amino_seq   = db.Column(db.LargeBinary, nullable=False) # unique=True
   sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
   peptide_num = db.Column(db.Integer, default = 0)
-  peptide_acc = db.Column(db.String(255))
+  uniprot_id  = db.Column(db.String(255))
+  membership  = db.Column(db.String(255))
+  organism    = db.Column(db.String(255))
   
   # New instance instantiation procedure
-  def __init__(self, name, description, amino_seq, peptide_num, peptide_acc):
+  def __init__(self, name, description, amino_seq, peptide_num, peptide_acc, uniprot_id, membership, organism):
     self.name        = name
     self.description = description
     self.amino_seq   = amino_seq
     self.peptide_num = peptide_num
     self.peptide_acc = peptide_acc
+    self.uniprot_id  = uniprot_id
+    self.membership  = membership
+    self.organism    = organism
 
   def __repr__(self):
     return '<TGE %r>' % (self.name)
@@ -69,14 +74,38 @@ class TGE(Base):
 class Peptide(Base):
   __tablename__ = 'peptide'
   
-  aa_seq = db.Column(db.String(255), nullable=False) # unique=True
+  spectrum_id = db.Column('given_id', db.Integer, db.ForeignKey("spectrum.id"))
+  aa_seq      = db.Column(db.String(255), nullable=False) # unique=True
+  calc_mz     = db.Column(db.Numeric)
+  exp_mz      = db.Column(db.Numeric)
   
   # New instance instantiation procedure
-  def __init__(self, amino_seq):
-    self.aa_seq = aa_seq
+  def __init__(self, amino_seq, calc_mz, exp_mz):
+    self.aa_seq  = aa_seq
+    self.calc_mz = calc_mz
+    self.exp_mz  = exp_mz
 
   def __repr__(self):
     return '<Peptide %r>' % (self.aa_seq)
+
+
+# TgeToPeptide = db.Table('tge_peptide', Base.metadata,
+#     db.Column('tge_id',     db.Integer, db.ForeignKey("tge.id")),
+#     db.Column('peptide_id', db.Integer, db.ForeignKey("peptide.id"))
+# )
+
+class TgeToPeptide(Base):
+  __tablename__ = 'tge_peptide'
+  
+  tge_id     = db.Column('tge_id',     db.Integer, db.ForeignKey("tge.id"),     nullable=False)
+  peptide_id = db.Column('peptide_id', db.Integer, db.ForeignKey("peptide.id"), nullable=False)
+
+  def __init__(self, tge_id, peptide_id):
+    self.tge_id     = tge_id
+    self.peptide_id = peptide_id
+
+  def __repr__(self):
+    return '<Test %r>' % (self.tge_id)
 
 
 class Experiment(Base):
@@ -127,7 +156,7 @@ class Transcript(Base):
   __tablename__ = 'transcript'
   
   tge_id    = db.Column('tge_id', db.Integer, db.ForeignKey("tge.id"))
-  sample_id = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
+  # sample_id = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
   dna_seq   = db.Column(db.LargeBinary, nullable=False)
   name      = db.Column(db.String(255)) # unique=True
   ensemble  = db.Column(db.String(255)) # unique=True
@@ -157,11 +186,13 @@ class Spectrum(Base):
   
   given_id = db.Column(db.Integer)
   title    = db.Column(db.String(255))
+  location = db.Column(db.String(255))
 
   # New instance instantiation procedure
   def __init__(self, given_id, title):
     self.given_id  = given_id
     self.title     = title
+    self.location  = location
 
   def __repr__(self):
     return '<Spectrum %r>' % (self.title)

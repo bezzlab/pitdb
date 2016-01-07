@@ -40,7 +40,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">TGE???????</h1>
+                <h1 class="page-header">TGE00{{ tgeName }}</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -59,11 +59,11 @@
                         <label>Type:</label> {{ type }} <br/>
                         <label>Length: </label> {{ length }}<br/>
                         <label>Strand: </label> ({{ strand }})<br/>
-                        <label>Organism(s): - </label> <br/>
+                        <label>Organism(s): </label> {{ tge.organism }}<br/>
                         <label>Associated gene ID:</label> <br/>
                         <label>Associated transcript ID:</label> <br/>
                         <label>Observations:</label>  <br/>
-                        <label>Samples:</label> <br/>
+                        <label>Sample(s):</label> {{ sampleName }} <br/>
                     </div>
                     <!-- /.panel-body -->
                 </div>
@@ -75,8 +75,10 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body collapse in" id="sequences">
-                        <div class="wordwrap"><label>TGE Sequence:</label> {{ tge.amino_seq }}</div><br/>
-                        <div class="wordwrap"><label>Transcript Sequence:</label> {{ trn.dna_seq }}</div>
+                        <div class="wordwrap"><label>TGE Sequence:</label> <span class="tge_seq">{{ tge.amino_seq }}</span></div><br/>
+                        <div class="wordwrap"><label>Transcript Sequence:</label> {{ trn.dna_seq }}</div><br/>
+                        <div class="wordwrap"><label>Peptide Sequence(s):</label> {% for peptide in peptides %}<span class="peptide_seq" val={{ peptide }}>{{ peptide }}</span>, {% endfor %} 
+                      </div>
                     </div>
                     <!-- /.panel-body -->
                 </div>
@@ -91,7 +93,10 @@
                         <label>Amino Acids:</label> {{ tge.peptide_num }} <br/>
                         <label>Region:</label> <br/>
                         <label>Location:</label> <br/>
-                        <label>Assembly:</label> 
+                        <label>Assembly:</label> <br/>
+                        <label>UniProt:</label> 
+                        <a href="http://www.uniprot.org/uniprot/"+{{ tge.uniprot_id }} target="blank">{{ tge.uniprot_id }}</a><br/>
+                        <label>Group membership:</label> {{ tge.membership }} <br/>
                     </div>
                     <!-- /.panel-body -->
                 </div>

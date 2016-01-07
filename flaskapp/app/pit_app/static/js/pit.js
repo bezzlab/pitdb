@@ -45,6 +45,18 @@ $(function() {
       return html.replace(regex, '<span class="red">$1</span>'); 
     }  
   });
+
+  $(".amino_seq").html(function(_, html){
+    // var val  = $('.peptide_seq').val();
+    // alert(val)
+
+    // var val  = $('#searchData').val();
+    // var type = $('#searchType').val();
+    // if (type != "exact"){
+    //   var regex = new RegExp("(" + val + "+)", "g");
+    //   return html.replace(regex, '<span class="red">$1</span>'); 
+    // }  
+  });
 });
 
 //$('.selectpicker').selectpicker();
