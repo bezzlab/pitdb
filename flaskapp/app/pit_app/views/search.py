@@ -27,23 +27,23 @@ def advance():
     searchOption = request.form['searchOptions']
     searchType   = request.form['searchType']
 
-    if searchOption == 'Amino Acid Sequence':
+    if searchOption == 'Accession Number':
       if searchType == 'exact':
-        res = TGE.query.filter(TGE.amino_seq == (form.searchArea.data).encode('utf-8')).all()
+        res = TGE.query.filter_by(id=form.searchArea.data).all()
       else:
-        res = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data.encode('utf-8')+"%")).all()
+        res = TGE.query.filter(TGE.id.contains(form.searchArea.data)).all()
+    elif searchOption == 'Amino Acid Sequence':
+      if searchType == 'exact':
+        res = TGE.query.filter(TGE.amino_seq == form.searchArea.data).all()
+      else:
+        res = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data+"%")).all()
     elif searchOption == 'Transcript Sequence':
       if searchType == 'exact':
-        res = TGE.query.join(Transcript, TGE.id == Transcript.tge_id).filter(Transcript.dna_seq.like((form.searchArea.data).encode('utf-8'))).all()
+        res = TGE.query.join(Transcript, TGE.id == Transcript.obs_id).filter(Transcript.dna_seq.like(form.searchArea.data)).all()
         print res
       else:
-        res = TGE.query.join(Transcript, TGE.id == Transcript.tge_id).filter(Transcript.dna_seq.like("%"+form.searchArea.data.encode('utf-8')+"%")).all()
+        res = TGE.query.join(Transcript, TGE.id == Transcript.obs_id).filter(Transcript.dna_seq.like("%"+form.searchArea.data+"%")).all()
         print res
-    elif searchOption == 'Accession Number':
-      if searchType == 'exact':
-        res = TGE.query.filter_by(name=form.searchArea.data).all()
-      else:
-        res = TGE.query.filter(TGE.name.contains(form.searchArea.data)).all()
     
     connection.close() 
 
@@ -64,7 +64,7 @@ def results():
   #tgeRes = TGE.query.all()
   #tgeRes = TGE.query.filter_by(id=tge_id)
   tgeRes = request.args['tgeRes']
-  print tgeRes
+  # print tgeRes
 
   if tgeRes:
     return render_template('search/results.html', tgeRes=tgeRes)
