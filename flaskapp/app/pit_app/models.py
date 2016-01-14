@@ -47,10 +47,25 @@ class User(Base):
 class TGE(Base):
   __tablename__ = 'tge'
   
+  amino_seq   = db.Column(db.LargeBinary, nullable=False) # unique=True
+  
+  # New instance instantiation procedure
+  def __init__(self, amino_seq):
+    self.amino_seq   = amino_seq
+
+  def __repr__(self):
+    return '<TGE %r>' % (self.amino_seq)
+
+class TGEobservation(Base):
+  __tablename__ = 'tge_observation'
+  
+  tge_id      = db.Column('tge_id',    db.Integer, db.ForeignKey("tge.id"))
+  sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
+
   name        = db.Column(db.String(255)) # unique=True
   description = db.Column(db.String(255))
   amino_seq   = db.Column(db.LargeBinary, nullable=False) # unique=True
-  sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
+  
   peptide_num = db.Column(db.Integer, default = 0)
   uniprot_id  = db.Column(db.String(255))
   membership  = db.Column(db.String(255))
@@ -69,7 +84,6 @@ class TGE(Base):
 
   def __repr__(self):
     return '<TGE %r>' % (self.name)
-
 
 class Peptide(Base):
   __tablename__ = 'peptide'

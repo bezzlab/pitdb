@@ -46,9 +46,9 @@ $(function() {
     }  
   });
 
-  $(".amino_seq").html(function(_, html){
-    // var val  = $('.peptide_seq').val();
-    // alert(val)
+  $("#tgeSeq").html(function(_, html){
+    var val  = $('.peptide_seq').val();
+    alert(val)
 
     // var val  = $('#searchData').val();
     // var type = $('#searchType').val();

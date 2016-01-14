@@ -75,9 +75,9 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body collapse in" id="sequences">
-                        <div class="wordwrap"><label>TGE Sequence:</label> <span class="tge_seq">{{ tge.amino_seq }}</span></div><br/>
+                        <div class="wordwrap"><label>TGE Sequence:</label> <span id="tgeSeq" value={{ tge.amino_seq }}>{{ tge.amino_seq }}</span></div><br/>
                         <div class="wordwrap"><label>Transcript Sequence:</label> {{ trn.dna_seq }}</div><br/>
-                        <div class="wordwrap"><label>Peptide Sequence(s):</label> {% for peptide in peptides %}<span class="peptide_seq" val={{ peptide }}>{{ peptide }}</span>, {% endfor %} 
+                        <div class="wordwrap"><label>Peptide Sequence(s):</label> {% for peptide in peptides %}<span class="peptide_seq" value={{ peptide }}>{{ peptide }}</span>, {% endfor %} 
                       </div>
                     </div>
                     <!-- /.panel-body -->
