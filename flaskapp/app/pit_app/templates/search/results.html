@@ -5,12 +5,11 @@
 <div id="search-output">
   <input type="hidden" id="searchData" value={{ searchData }}>
   <input type="hidden" id="searchType" value={{ searchType }}>
-  
+
   <table class="table table-striped table-bordered dataTable no-footer" id="searchRes" >
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
+        <th>Accession Number</th>
         <th>Amino Acid</th>
       </tr>
     </thead>
@@ -18,7 +17,6 @@
       {% for tge in tgeRes %}
       	<tr>
       	  <td>{{ tge.id }}</td>
-      	  <td>{{ tge.name }}</td>
       	  <td class="wordwrap">{{ tge.amino_seq }}</td>
       	</tr>
       {% endfor %}
