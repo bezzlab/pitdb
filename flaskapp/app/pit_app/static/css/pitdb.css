@@ -67,3 +67,8 @@
 .red { 
   color: red;
 }
+
+.dna-seq {
+  width: 35em; 
+  word-wrap: break-word;
+}

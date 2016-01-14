@@ -22,7 +22,7 @@ $(function() {
     "bAutoWidth": false,
     "bProcessing": true,
     "aoColumns": [
-      { "bVisible": false, "searchable": false },
+      //{ "bVisible": false, "searchable": false },
       { "bVisible": true, "width": "15%" },
       { "bVisible": true, "width": "85%" }
       
@@ -48,7 +48,6 @@ $(function() {
 
   $("#tgeSeq").html(function(_, html){
     var val  = $('.peptide_seq').val();
-    alert(val)
 
     // var val  = $('#searchData').val();
     // var type = $('#searchType').val();
@@ -57,6 +56,33 @@ $(function() {
     //   return html.replace(regex, '<span class="red">$1</span>'); 
     // }  
   });
+
+  $('#resTrs').dataTable({
+    //"pagingType": "full_numbers",
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "65%" },
+      { "bVisible": true, "width": "25%" }
+      
+    ],
+    // // "bJQueryUI": true,
+    // "bProcessing": true,
+    // "bAutoWidth": false,
+  });
+
+  $('#tgeSummary').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+  });
+
+  var elem = $(".dna-seq");
+    if(elem){
+      if (elem.text().length > 150)
+        elem.text(elem.text().substr(0,150)+"....")
+  }
+
 });
 
 //$('.selectpicker').selectpicker();
