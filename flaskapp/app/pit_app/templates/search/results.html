@@ -1,4 +1,4 @@
-{% extends "layoutTables.html" %}
+{% extends "layout.html" %}
 
 {% block content %}
 
@@ -10,18 +10,29 @@
     <thead>
       <tr>
         <th>Accession Number</th>
-        <th>Amino Acid</th>
+        <th>TGE Type</th>
+        <th>Uniprot ID</th>
+        <th>Organisms</th>
+        <th>#Observations</th>
+        <th>#Experiments</th>
+        <th>Length</th>
       </tr>
     </thead>
   	<tbody>
       {% for tge in tgeRes %}
       	<tr>
       	  <td>{{ tge.id }}</td>
-      	  <td class="wordwrap">{{ tge.amino_seq }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      	  <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
       	</tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
-<script src="/static/js/ext/jquery.dataTables.js"></script>
+
 {% endblock %}

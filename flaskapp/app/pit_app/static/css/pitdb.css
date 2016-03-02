@@ -50,8 +50,22 @@
   border-bottom-left-radius: 4px;
 }
 
+#resTrs tr, #tgeSummary tr {
+  cursor: pointer;
+}
+
+.table .selected {
+  background-color: #999999 !important;
+}
+
 #search-output {
   margin-top: 50px;
+}
+
+#searchform {
+  margin-top: 30px;
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 #searchRes {
@@ -66,9 +80,11 @@
 
 .red { 
   color: red;
+  font-weight:bold;
 }
 
 .dna-seq {
-  width: 35em; 
+  width: 30em; 
   word-wrap: break-word;
 }
+

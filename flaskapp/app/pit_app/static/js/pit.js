@@ -12,24 +12,49 @@ $(function() {
     }
   });
 
+  $.fn.highlight = function (resTrs) {
+    indx = resTrs.$('tr.selected').index()
+    //var aData = resTrs.cell(indx, 2).data();
+    //alert(aData)
+    //   var arr = aData[2].split(',');
+
+    //   $("#tgeSeq").html(function(_, html){
+        
+    //     var finalHtml = html;
+    //     $.each(arr, function( index, value ) {
+    //       var regex = null;
+    //       var regex = new RegExp("(" + value + "+)", "g");
+    //       alert(regex)
+    //       finalHtml = finalHtml.replace(regex, '<span class="red">$1</span>');
+    //       alert(finalHtml)
+    //     });
+    //     return finalHtml;
+    //   });
+  };
+
+  $.fn.emphasis = function(str, className) {
+    var regex = new RegExp(str, "gi");
+
+    return this.each(function() {
+        this.innerHTML = this.innerHTML.replace(regex, function(matched) {
+            return '<span class="red">' + matched + '</span>';
+        });
+    });
+  };
 
   $('#searchOptions').change(function(){
     $('#searchFilter').html("Enter "+$(this).val()+":");
   });
 
   var oTable = $('#searchRes').dataTable({
-    //"pagingType": "full_numbers",
-    "bAutoWidth": false,
+   // "bAutoWidth": false,
     "bProcessing": true,
-    "aoColumns": [
-      //{ "bVisible": false, "searchable": false },
-      { "bVisible": true, "width": "15%" },
-      { "bVisible": true, "width": "85%" }
+    // "aoColumns": [
+    //   //{ "bVisible": false, "searchable": false },
+    //   { "bVisible": true, "width": "15%" },
+    //   { "bVisible": true, "width": "85%" }
       
-    ],
-    // // "bJQueryUI": true,
-    // "bProcessing": true,
-    // "bAutoWidth": false,
+    // ],
   });
 
   $('#searchRes tbody tr').click( function () {
@@ -57,8 +82,14 @@ $(function() {
     // }  
   });
 
-  $('#resTrs').dataTable({
-    //"pagingType": "full_numbers",
+  // Create DataTables 
+
+  var tgeSummary = $('#tgeSummary').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+  });
+
+  var resTrs = $('#resTrs').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
     "aoColumns": [
@@ -67,23 +98,77 @@ $(function() {
       { "bVisible": true, "width": "25%" }
       
     ],
-    // // "bJQueryUI": true,
-    // "bProcessing": true,
-    // "bAutoWidth": false,
   });
 
-  $('#tgeSummary').dataTable({
-    "bAutoWidth": false,
-    "bProcessing": true,
+  // Select by default the first row (index 0)
+
+  $('#tgeSummary tbody tr:eq(0)').addClass('selected');
+  $('#resTrs tbody tr:eq(0)').addClass('selected');
+
+  // Add on-click events
+  $('#tgeSummary tbody').on( 'click', 'tr', function () {
+    tgeSummary.$('tr.selected').removeClass('selected');
+    $(this).addClass('selected');
+
+    indx = $(this).index();
+    resTrs.$('tr.selected').removeClass('selected');
+    $('#resTrs tbody tr:eq('+indx+')').addClass('selected');
   });
+
+  $('.table').highlight(resTrs);
+
+  $('#resTrs tbody').on( 'click', 'tr', function () {
+    resTrs.$('tr.selected').removeClass('selected');
+    $(this).addClass('selected');
+
+    var aData = resTrs.fnGetData(this);
+    var arr = aData[2].split(',');
+
+    var nol = arr.length; // find out the number of letters
+    for(i=0;i<nol;i++){ // loop through each letters
+      $(".in").emphasis(arr[i], 'red'); // The function "emphasis"
+    }
+    //});
+
+    indx = $(this).index();
+    tgeSummary.$('tr.selected').removeClass('selected');
+    $('#tgeSummary tbody tr:eq('+indx+')').addClass('selected');
+  });
+
 
   var elem = $(".dna-seq");
-    if(elem){
-      if (elem.text().length > 150)
-        elem.text(elem.text().substr(0,150)+"....")
-  }
+  
+  // if(elem){
+  //   if (elem.text().length > 100)
+  //     elem.text(elem.text().substr(0,100)+" .... ").append('<i class="fa fa-plus-circle text-success"></i>')
+  // }
 
+  var pieOrganism = [{
+    values: [19, 26, 55],
+    labels: ['Residential', 'Non-Residential', 'Utility'],
+    type: 'pie'
+  }];
+
+  var pieSample = [{
+    values: [19, 26, 55],
+    labels: ['Residential', 'Non-Residential', 'Utility'],
+    type: 'pie'
+  }];
+
+  var layout = {
+    autosize: false,
+    width: 350,
+    height: 350,
+    margin: {
+      l: 40,
+      r: 40,
+      b: 0,
+      t: 20,
+      pad: 0
+    }
+  };
+
+  Plotly.newPlot('pie_organism', pieOrganism, layout);
+  Plotly.newPlot('pie_sample',   pieSample,   layout);
 });
-
-//$('.selectpicker').selectpicker();
 

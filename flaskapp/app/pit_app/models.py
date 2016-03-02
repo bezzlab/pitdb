@@ -19,39 +19,85 @@ class Base(db.Model):
     self.updated = datetime.utcnow()
  
 
+class User(Base):
+  __tablename__ = 'user'
+  
+  email     = db.Column(db.String(255), nullable=False, unique=True)
+  password  = db.Column(db.String(255), nullable=False)
+  fullname  = db.Column(db.String(255), nullable=False)
+  address   = db.Column(db.String(255), nullable=False)
+  
+  def __init__(self, email, password, fullname, address):
+    self.email    = email
+    self.set_password(password)
+    self.fullname = fullname
+    self.address  = address
+
+  def set_password(self, password):
+    self.password = generate_password_hash(password)
+   
+  def check_password(self, password):
+    return check_password_hash(self.password, password)
+
+  def __repr__(self):
+    return '<User %r>' % (self.fullname)
+
+
+class Experiment(Base):
+  __tablename__ = 'experiment'
+  
+  name    = db.Column(db.String(255), nullable=False, unique=True) 
+  user_id = db.Column('user_id', db.Integer, db.ForeignKey("user.id"))
+  
+  def __init__(self, name):
+    self.name = name
+
+  def __repr__(self):
+    return '<Experiment name %r>' % (self.name)
+
+
+class Sample(Base):
+  __tablename__ = 'sample'
+  
+  name   = db.Column(db.String(255), unique=True)
+  exp_id = db.Column('experiment_id', db.Integer, db.ForeignKey("experiment.id"))
+  
+  def __init__(self, name, exp_id):
+    self.name   = name
+    self.exp_id = exp_id
+
+
 class TGE(Base):
   __tablename__ = 'tge'
   
   amino_seq = db.Column(db.Text, nullable=False) # unique=True
   
   def __init__(self, amino_seq):
-    self.amino_seq   = amino_seq
+    self.amino_seq = amino_seq
 
   def __repr__(self):
     return '<TGE %r>' % (self.amino_seq)
 
 
-
 class TGEobservation(Base):
-  __tablename__ = 'tge_observation'
+  __tablename__ = 'tge_obs'
   
   tge_id      = db.Column('tge_id',    db.Integer, db.ForeignKey("tge.id"))
   sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
   name        = db.Column(db.String(255)) # unique=True
   description = db.Column(db.String(255))
-  #uniprot_id  = db.Column(db.String(255))
-  #membership  = db.Column(db.String(255))
   organism    = db.Column(db.String(255))
   peptide_num = db.Column(db.Integer)
+  #uniprot_id  = db.Column(db.String(255))
+  #membership  = db.Column(db.String(255))
   
-  def __init__(self, name, description, peptide_num, peptide_acc, organism):
+  def __init__(self, name, description, organism, peptide_num):
     self.name        = name
     self.description = description
     self.peptide_num = peptide_num
-    self.peptide_acc = peptide_acc
+    self.organism    = organism
     #self.uniprot_id  = uniprot_id
     #self.membership  = membership
-    self.organism    = organism
 
   def __repr__(self):
     return '<TGE %r>' % (self.name)
@@ -60,50 +106,31 @@ class TGEobservation(Base):
 class Transcript(Base):
   __tablename__ = 'transcript'
   
-  obs_id    = db.Column('obs_id', db.Integer, db.ForeignKey("tge_observation.id"))
-  # sample_id = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
-  # name      = db.Column(db.String(255), nullable=False) # unique=True
+  obs_id    = db.Column('obs_id', db.Integer, db.ForeignKey("tge_obs.id"))
   dna_seq   = db.Column(db.Text, nullable=False)
-  # species   = db.Column(db.String(255))
   ensemble  = db.Column(db.String(255)) 
+  assembly  = db.Column(db.String(255))
   chr       = db.Column(db.String(255)) 
   start     = db.Column(db.Integer)
   end       = db.Column(db.Integer)
-  assembly  = db.Column(db.String(255))
   
-  def __init__(self, dna_seq, ensemble, chr, start, end, assembly):
+  def __init__(self, dna_seq, ensemble, assembly, chr, start, end):
     self.dna_seq  = dna_seq
     self.ensemble = ensemble
-    # self.species  = species
+    sef.assembly  = assembly
     self.chr      = chr
     self.start    = start
     self.end      = end
-    sef.assembly  = assembly
-
-
-class Sample(Base):
-  __tablename__ = 'sample'
-  
-  name    = db.Column(db.String(255), unique=True)
-  user_id = db.Column('user_id', db.Integer, db.ForeignKey("user.id")) # unique=True
-  
-  def __init__(self, name, user_id):
-    self.name    = name
-    self.user_id = user_id
+    
 
 
 class Peptide(Base):
   __tablename__ = 'peptide'
   
-  # spectrum_id = db.Column('given_id', db.Integer, db.ForeignKey("spectrum.id"))
-  aa_seq      = db.Column(db.String(255), nullable=False) # unique=True
-  # calc_mz     = db.Column(db.Numeric)
-  # exp_mz      = db.Column(db.Numeric)
+  aa_seq = db.Column(db.String(255), nullable=False) # unique=True
   
   def __init__(self, amino_seq):
     self.aa_seq  = aa_seq
-  #   self.calc_mz = calc_mz
-  #   self.exp_mz  = exp_mz
 
   def __repr__(self):
     return '<Peptide %r>' % (self.aa_seq)
@@ -117,7 +144,7 @@ class Peptide(Base):
 class TgeToPeptide(Base):
   __tablename__ = 'tge_peptide'
   
-  obs_id     = db.Column('obs_id',     db.Integer, db.ForeignKey("tge_observation.id"), nullable=False)
+  obs_id     = db.Column('obs_id',     db.Integer, db.ForeignKey("tge_obs.id"), nullable=False)
   peptide_id = db.Column('peptide_id', db.Integer, db.ForeignKey("peptide.id"), nullable=False)
 
   def __init__(self, obs_id, peptide_id):
@@ -125,76 +152,62 @@ class TgeToPeptide(Base):
     self.peptide_id = peptide_id
 
   def __repr__(self):
-    return '<Test %r>' % (self.obs_id)
+    return '<TgeToPeptide %r>' % (self.obs_id)
 
 
-class Experiment(Base):
-  __tablename__ = 'experiment'
+class PSM(Base):
+  __tablename__ = 'psm'
   
-  test = db.Column(db.String(255), nullable=False) # unique=True
+  psm_id        = db.Column('tge_pep_id', db.Integer, db.ForeignKey("tge_peptide.id"))
+  name          = db.Column(db.String(255))
+  spectrum_id   = db.Column(db.Integer)
+  title         = db.Column(db.String(255))
+  location      = db.Column(db.String(255))
+  retention     = db.Column(db.Numeric)
+  calc_mz       = db.Column(db.Numeric)
+  exp_mz        = db.Column(db.Numeric)
+  charge        = db.Column(db.Numeric)
+  modifications = db.Column(db.String(255))
+  raw_score     = db.Column(db.Numeric)
+  denovo_score  = db.Column(db.Numeric)
+  spec_evalue   = db.Column(db.Numeric)
+  evalue        = db.Column(db.Numeric)
+  qvalue        = db.Column(db.Numeric)
+  pep_qvalue    = db.Column(db.Numeric)
+  local_fdr     = db.Column(db.Numeric)
+  q_value       = db.Column(db.Numeric)
+  fdr_score     = db.Column(db.Numeric)
+
+  def __init__(self, name):
+    self.name = name
+    
+  def __repr__(self):
+    return '<Spectrum %r>' % (self.name)
+
+
+# class PeptideToPSM(Base):
+#   __tablename__ = 'peptide_psm'
   
-  def __init__(self, test):
-    self.test = test
+#   peptide_id = db.Column('peptide_id', db.Integer, db.ForeignKey("peptide.id"), nullable=False)
+#   psm_id     = db.Column('psm_id',     db.Integer, db.ForeignKey("psm.id"), nullable=False)
+
+#   def __init__(self, peptide_id, psm_id):
+#     self.peptide_id = peptide_id
+#     self.psm_id     = psm_id
+
+#   def __repr__(self):
+#     return '<PeptideToPSM %r>' % (self.peptide_id)
+
+
+class Organism(Base):
+  __tablename__ = 'organism'
+  
+  name = db.Column(db.String(255), nullable=False) # unique=True
+  
+  def __init__(self, amino_seq):
+    self.aa_seq  = aa_seq
 
   def __repr__(self):
-    return '<Test %r>' % (self.test)
-
-
-class Run(Base):
-  __tablename__ = 'run'
-  
-  sample_id   = db.Column(db.Integer, nullable=False) # unique=True
-  transc_path = db.Column(db.String(255))
-  msms_path   = db.Column(db.String(255), nullable=False)
-  user_id     = db.Column(db.Integer)
-  
-  def __init__(self, sample_id, transc_path, msms_path, user_id):
-    self.sample_id   = sample_id
-    self.transc_path = transc_path
-    self.msms_path   = msms_path
-    self.user_id     = user_id
-
-  def __repr__(self):
-    return '<Test %r>' % (self.sample_id)
-
-
-class Spectrum(Base):
-  __tablename__ = 'spectrum'
-  
-  given_id = db.Column(db.Integer)
-  title    = db.Column(db.String(255))
-  location = db.Column(db.String(255))
-
-  def __init__(self, given_id, title):
-    self.given_id  = given_id
-    self.title     = title
-    self.location  = location
-
-  def __repr__(self):
-    return '<Spectrum %r>' % (self.title)
-
-
-class User(Base):
-  __tablename__ = 'user'
-  
-  email     = db.Column(db.String(255), nullable=False, unique=True)
-  password  = db.Column(db.String(255), nullable=False)
-  fullname  = db.Column(db.String(255), nullable=False)
-  #address   = db.Column(db.String(255), nullable=False)
-  
-  def __init__(self, email, password, fullname):
-    self.email    = email
-    self.set_password(password)
-    self.fullname = fullname
-    #self.address  = address
-
-  def set_password(self, password):
-    self.password = generate_password_hash(password)
-   
-  def check_password(self, password):
-    return check_password_hash(self.password, password)
-
-  def __repr__(self):
-    return '<User %r>' % (self.fullname)
+    return '<Organism %r>' % (self.name)
 
 db.create_all()

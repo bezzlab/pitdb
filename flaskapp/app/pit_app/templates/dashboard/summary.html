@@ -13,65 +13,75 @@
             </button>
           </span>
         </div>
-        <!-- /input-group -->
+
       </li>
-      <li>
-        <a href="#summary"><i class="fa fa-dashboard fa-fw"></i> Summary</a>
-      </li>
-      <li>
-        <a href="#sequences"><i class="fa fa-edit fa-fw"></i> Sequences</a>
-      </li>
-      <li>
-        <a href="#genomic"><i class="fa fa-wrench fa-fw"></i> Genomic Context</span></a>
-      </li>
-      <li>
-        <a href="#mass_statistics"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics</span></a>
-      </li>
-      <li>
-        <a href="tables.html"><i class="fa fa-table fa-fw"></i>Expression Data Statistics </a>
-      </li>
-      
+      <li><a href="#summary"><i class="fa fa-dashboard fa-fw"></i> Summary</a></li>
+      <li><a href="#observations"><i class="fa fa-dashboard fa-fw"></i> TGE Observations</a></li>
+      <li><a href="#sequences"><i class="fa fa-edit fa-fw"></i> Sequences</a></li>
+      <li><a href="#massspec_stats"><i class="fa fa-edit fa-fw"></i> Mass-Spectrometry Data Statistics</a></li>
+      <li><a href="#psm"><i class="fa fa-edit fa-fw"></i> PSM</a></li>
+      <li><a href="#genomic"><i class="fa fa-wrench fa-fw"></i> Genomic Context</span></a></li>
+      <li><a href="#mass_statistics"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics</span></a></li>
+      <li><a href="tables.html"><i class="fa fa-table fa-fw"></i>Expression Data Statistics </a></li>
     </ul>
     </div>
-        <!-- /.sidebar-collapse -->
-    </div>
 
+    </div>
 
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">TGE_{{ tge.id }}</h1>
             </div>
-            <!-- /.col-lg-12 -->
         </div>
 
-        <!-- /.row -->
         <div class="row">
             <div>
                 <div class="panel panel-default" id="summary">
                     <div class="panel-heading">
                         <i class="fa fa-bar-chart-o fa-fw"></i> Summary
                     </div>
-                    <!-- /.panel-heading -->
+                    
                     <div class="panel-body">
-                        <!--<label>Given Name(s):</label> {% for obs in tgeObs %}<br/><span>{{ obs.name }}</span> {% endfor %} <br/>
-                        <label>Description:</label> {% for obs in tgeObs %}<br/><span>{{ obs.description }}</span> {% endfor %} <br/>-->
-                        
+                        <div class="row" style="margin-left:5px">
+                            <label>TGE ID:</label> TGE_{{ tge.id }}</br>
+                            <label>TGE Type:</label>  </br>
+                            <label>Description:</label>  </br>
+                            <label>Organisms:</label> 
+                            {% for org in organisms %}
+                                <a href="#" target="_blank">{{ org }}</a>,
+                            {% endfor %}</br>
+                        </div>
+                        <div class="row">
+                            <div id="pie_organism" class="col-xs-6" style="height:350px;"></div>
+                            <div id="pie_sample"   class="col-xs-6 pull-right" style="height:350px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="observations">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> TGE Observations
+                    </div>
+                    
+                    <div class="panel-body">
                         <table class="table table-striped table-bordered dataTable no-footer" id="tgeSummary" >
                         <thead>
                           <tr>
                             <th>Observations</th>
+                            <th>Experiment</th>
                             <th>Sample</th>
                             <th>Organism</th>
                             <th>Type</th>
                             <th>Strand</th>
-                            <th>Peptide Number</th>
+                            <th>Num of Pept</th>
                           </tr>
                         </thead>
                         <tbody>
                           {% for res in results %}
                             <tr>
                               <td>{{ res.observation }}</td>
+                              <td>{{ res.experiment }}</td>
                               <td>{{ res.sample }}</td>
                               <td>{{ res.organism }}</td>
                               <td>{{ res.type }}</td>
@@ -107,10 +117,59 @@
                           {% for res in results %}
                             <tr>
                               <td>{{ res.observation }}</td>
-                              <td><p class="dna-seq">{{ res.dna_seq }}</p><i class="fa fa-plus-circle text-danger"></i></td>
+                              <td><p class="dna-seq">{{ res.dna_seq }}</p></td>
                               <td>{{ res.peptides }}</td>
                             </tr>
                           {% endfor %}
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <div class="panel panel-default" id="massspec_stats">
+                    <div class="panel-heading ">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Mass-Spectrometry Data Statistics
+                    </div>
+                    
+                    <div class="panel-body collapse in">
+                        <div class="row" style="margin-left:5px">
+                            <label>Average peptide coverage:</label> </br>
+                            <label>Average peptides per TGE:</label> {{ avgPeptNum }}</br>
+                            <label>Average PSM count per peptide:</label>  </br>
+                            <label>Score:</label>  </br>
+                            <label>Software:</label>  </br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" id="psm">
+                    <div class="panel-heading ">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> PSM
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body collapse in" id="sequences">
+                        <div class="wordwrap"><label>Selected Peptide:</label> <span id="peptide" value={{ tge.amino_seq }}>Blah</span></div><br/>
+                        <div class="wordwrap"><label>PSM Info:</label> 
+                        <table class="table table-striped table-bordered dataTable no-footer" id="psmTable" >
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Spectrum ID</th>
+                            <th>Retention</th>
+                            <th>Calc mz</th>
+                            <th>Exp mz</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
                         </tbody>
                       </table>
                       </div>

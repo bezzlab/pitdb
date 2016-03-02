@@ -1,15 +1,8 @@
-# Import Form and RecaptchaField (optional)
 from flask.ext.wtf import Form # , RecaptchaField
 from wtforms.fields import TextField, PasswordField, SelectField, TextAreaField, SubmitField # BooleanField
 from wtforms.validators import Required, Email, EqualTo
 from pit_app.models import User
 
-# class EmailPasswordForm(Form):
-#     email = TextField('Email', validators=[Required(), Email()])
-#     password = PasswordField('Password', validators=[Required()])
-
-
-# Define the login form (WTForms)
 
 class LoginForm(Form):
   email    = TextField('Email Address', [Email(), Required(message='Forgot your email address?')])
@@ -44,7 +37,7 @@ class SignupForm(Form):
       return True
 
 class SearchForm(Form):
-  searchOptions = SelectField('searchOptions',  [Required(message='You need to select a search field')])
-  searchArea    = TextAreaField('searchArea', [Required(message='You need to import a search value')])
+  searchOptions = SelectField('searchOptions', [Required(message='You need to select a search field')])
+  searchArea    = TextAreaField('searchArea',  [Required(message='You need to import a search value')])
 
 
