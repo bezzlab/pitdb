@@ -5,7 +5,7 @@ from pit_app import db
 from psycopg2 import Binary
 from datatables import ColumnDT, DataTables
 from pit_app.forms import SearchForm
-from pit_app.models import TGE, Transcript, Organism, TGEobservation
+from pit_app.models import *
 
 
 
@@ -25,45 +25,57 @@ def advance():
   elif request.method =='POST':
     searchOption = request.form['searchOptions']
     searchType   = request.form['searchType']
+    searchData   = form.searchArea.data
 
     if searchOption == 'Accession Number':
-      tge = TGE.query.filter_by(id=form.searchArea.data).one_or_none()
-
+      return redirect(url_for('results.tge', tge_id = searchData))
     elif searchOption == 'Amino Acid Sequence':
-      if searchType == 'exact':
-        tge = TGE.query.filter(TGE.amino_seq == form.searchArea.data).all()
-      else:
-        tge = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data+"%")).all()
+      return redirect(url_for('search.results', searchType=searchType, searchData = searchData))
+    elif searchOption == 'Experiment ID':
+      return redirect(url_for('results.experiment', experiment = searchData))
     else:
-      #tge = TGEobservation.query.filter(TGEobservation.organism == searchOption).all()
-      return render_template('results/organism.html', org = searchOption)
-    
+      return redirect(url_for('results.organism', organism = searchOption))
+
     connection.close() 
 
-    return render_template('search/results.html', tge=tge, searchData=form.searchArea.data, searchType=searchType)
-
+    #return render_template('search/results.html', tge=tge, searchData=searchData, searchType=searchType)
+    
   return render_template('search/form.html', form=form, organism = org)
 
 @search.route('/results')
 def results():  
-  results = []
-  orgs = exps = set()
-  tge  = request.args['tge']
+  tgeRes = []
+  # orgs = exps = set()
+  tge = None
+  searchData = request.args['searchData']
+  searchType = request.args['searchType']
 
-  if tgeRes:
-    # Get all the observations of a TGE
-    tgeObs = TGEobservation.query.filter_by(tge_id=tge.id).all()
-    
-    # For each tge observation: find the sample(s), experiment(s) and organism(s)
-    for obs in tgeObs: 
-      sample = Sample.query.filter_by(id=obs.sample_id).first()
-      exp    = Experiment.query.filter_by(id=sample.exp_id).first()
+  if searchType == 'exact':
+    tges = TGE.query.filter(TGE.amino_seq == searchData).all()
 
-      orgs.add(obs.organism)
-      exps.add(exp.name)
+  else:
+    tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all()
 
-    results.append({'tge': tge.id, 'experiments': list(exps), 'organisms': list(orgs) })
-       
-    return render_template('search/results.html', results = results)
+    # # For each tge observation: find the sample(s), experiment(s) and organism(s)
+    for tge in tges: 
+      organisms = TGEobservation.query.with_entities(TGEobservation.organism).\
+        join(TGE, TGE.id == TGEobservation.tge_id).\
+        filter_by(id=tge.id).distinct(TGEobservation.organism).all()
+      
+      obsNum = TGEobservation.query.with_entities(TGEobservation.organism).\
+        join(TGE, TGE.id == TGEobservation.tge_id).\
+        filter_by(id=tge.id).count()
+
+      expNum = Sample.query.with_entities(Sample.exp_id).\
+        join(TGEobservation, TGEobservation.sample_id==Sample.id).\
+        join(TGE, TGE.id == TGEobservation.tge_id).\
+        filter_by(id=tge.id).\
+        distinct(Sample.exp_id).count()
+
+      tgeRes.append({'id': tge.id, 'type': tge.type, 'length': len(tge.amino_seq), 
+        'obsNum': obsNum, 'organisms': organisms, 'expNum': expNum})
+
+
+    return render_template('search/results.html', tgeRes = tgeRes)
 
   return render_template('/search')

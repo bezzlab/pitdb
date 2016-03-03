@@ -74,9 +74,11 @@ class TGE(Base):
   __tablename__ = 'tge'
   
   amino_seq = db.Column(db.Text, nullable=False) # unique=True
-  
-  def __init__(self, amino_seq):
+  type = db.Column(db.String(255))
+
+  def __init__(self, amino_seq, type):
     self.amino_seq = amino_seq
+    self.type = type
 
   def __repr__(self):
     return '<TGE %r>' % (self.amino_seq)

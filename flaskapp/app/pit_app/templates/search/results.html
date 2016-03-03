@@ -22,12 +22,12 @@
       {% for tge in tgeRes %}
       	<tr>
       	  <td>{{ tge.id }}</td>
+          <td>{{ tge.type }}</td>
           <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>{% for org in tge.organisms %}{{ org }},{% endfor %}</td>
+          <td>{{ tge.obsNum }}</td>
+          <td>{{ tge.expNum }}</td>
+          <td>{{ tge.length }}</td>
       	  <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
       	</tr>
       {% endfor %}

@@ -59,7 +59,7 @@ $(function() {
 
   $('#searchRes tbody tr').click( function () {
     var aData = oTable.fnGetData(this);
-    window.open("http://localhost:5000/"+aData[0]+"/summary");
+    window.open("http://localhost:5000/tge/"+aData[0]);
   });
 
   $(".wordwrap").html(function(_, html){
@@ -136,9 +136,9 @@ $(function() {
   });
 
 
-  $('#submitSearch').click(function() {
-    $('#search-output').toggle();
-  });
+  // $('#submitSearch').click(function() {
+  //   $('#search-output').toggle();
+  // });
 
   $("#searchOptions").change(function() {
     var str = $( "#searchOptions option:selected" ).text();

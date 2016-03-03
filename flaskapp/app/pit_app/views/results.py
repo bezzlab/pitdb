@@ -14,8 +14,8 @@ results = Blueprint('results',  __name__)
 
 @results.route('/tge/<tge_id>')
 def tge(tge_id):
+
   tge    = TGE.query.filter_by(id=tge_id).first_or_404()
-  print(tge)
   tgeObs = TGEobservation.query.filter_by(tge_id=tge_id).all()
   avgPeptNum = TGEobservation.query.with_entities(func.avg(TGEobservation.peptide_num).label('average')).first()
 
@@ -54,7 +54,7 @@ def organism(organism):
 
   # results = []
   # orgs = exps = set()
-  #org  = request.args['org']
+  #org  = request.args['organism']
   # num = session.query(func.count(TGE.id))
   obs       = TGEobservation.query.filter_by(organism=organism)
   obsNum    = obs.count()
@@ -76,9 +76,7 @@ def organism(organism):
 
 @results.route('/experiment/<experiment>')
 def experiment(experiment):
-  exps = set()
-
-  exp       = Experiment.query.filter_by(id=experiment).one()
+  exp       = Experiment.query.filter_by(id=experiment).first_or_404()
   user      = User.query.filter_by(id=exp.user_id).one()
   samples   = Sample.query.filter_by(exp_id=experiment).all()
   sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
@@ -96,10 +94,14 @@ def experiment(experiment):
         join(Experiment, Experiment.id==Sample.exp_id ).\
         filter(Experiment.id==experiment).distinct().count()
 
+  pepNum = TGEobservation.query.with_entities(func.sum(TGEobservation.peptide_num)).\
+        join(Sample, TGEobservation.sample_id==Sample.id).\
+        join(Experiment, Experiment.id==Sample.exp_id ).\
+        filter(Experiment.id==experiment).scalar()
   #tgeNum    = exp.join(Sample).join(TGEobservation).distinct(TGEobservation.tge_id).count()
   
   return render_template('results/experiment.html', exp = exp, user=user, sampleNum = sampleNum, 
-    tgeNum = tgeNum, tgeObsNum = tgeObsNum, trnNum = trnNum, samples = samples)
+    tgeNum = tgeNum, tgeObsNum = tgeObsNum, trnNum = trnNum, samples = samples, pepNum = pepNum)
 
 
 
