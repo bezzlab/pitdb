@@ -5,6 +5,7 @@
 from . import db
 from datetime import datetime
 from werkzeug import generate_password_hash, check_password_hash
+from sqlalchemy.orm import relationship
 
 # Define a base model for other database tables to inherit
 class Base(db.Model):
@@ -27,6 +28,8 @@ class User(Base):
   fullname  = db.Column(db.String(255), nullable=False)
   address   = db.Column(db.String(255), nullable=False)
   
+  # experiments = relationship("Experiments", backref="user")
+
   def __init__(self, email, password, fullname, address):
     self.email    = email
     self.set_password(password)
@@ -60,7 +63,7 @@ class Sample(Base):
   __tablename__ = 'sample'
   
   name   = db.Column(db.String(255), unique=True)
-  exp_id = db.Column('experiment_id', db.Integer, db.ForeignKey("experiment.id"))
+  exp_id = db.Column('exp_id', db.Integer, db.ForeignKey("experiment.id"))
   
   def __init__(self, name, exp_id):
     self.name   = name

@@ -17,12 +17,12 @@ db = SQLAlchemy(app)
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('error/404.html'), 404
+  return render_template('error/404.html'), 404
 
 # Sample HTTP error handling
 @app.errorhandler(500)
 def errorNew(error):
-    return render_template('error/500.html'), 500
+  return render_template('error/500.html'), 500
 
 
 # import pit_app.views
@@ -31,12 +31,12 @@ from .views.home      import home
 from .views.users     import users
 from .views.auth      import auth
 from .views.search    import search
-from .views.dashboard import dashboard
+from .views.results   import results
 
 # Register blueprint(s)
 app.register_blueprint(home)
 app.register_blueprint(users)
 app.register_blueprint(auth)
 app.register_blueprint(search)
-app.register_blueprint(dashboard, url_prefix='/<user_url_slug>')
+app.register_blueprint(results)
 

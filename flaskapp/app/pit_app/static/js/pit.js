@@ -136,6 +136,19 @@ $(function() {
   });
 
 
+  $('#submitSearch').click(function() {
+    $('#search-output').toggle();
+  });
+
+  $("#searchOptions").change(function() {
+    var str = $( "#searchOptions option:selected" ).text();
+    if (str == "Amino Acid Sequence" || str == "Name" ){
+      $(".searchOptions").toggle();
+    } else {
+      $(".searchOptions").hide();
+    }
+  });
+
   var elem = $(".dna-seq");
   
   // if(elem){

@@ -26,12 +26,16 @@
           <option role="separator" class="divider"></li>
           <optgroup label="TGE">
             <option>Accession Number</option>
-            <option>Amino Acid Sequence</option>
+            <option id="aminoSeq">Amino Acid Sequence</option>
           </optgroup>
           <option role="separator" class="divider"></li>
           <optgroup label="Experiment">
-            <option>Accession Number</option>
+            <option>Experiment ID</option>
             <option>Name</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Protein">
+            <option>Uniprot ID</option>
           </optgroup>
           <option role="separator" class="divider"></li>
           <optgroup label="Species">
@@ -51,9 +55,43 @@
       </div>
 
       <br/><br/>
-      <button type="submit" class="btn btn-primary">Submit <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+      <button id="submitSearch" type="submit" class="btn btn-primary">Submit <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
     </form>
   </div>
+</div>
+
+
+<div id="search-output" style="display:none;">
+  <input type="hidden" id="searchData" value={{ searchData }}>
+  <input type="hidden" id="searchType" value={{ searchType }}>
+
+  <table class="table table-striped table-bordered dataTable no-footer" id="searchRes" >
+    <thead>
+      <tr>
+        <th>Accession Number</th>
+        <th>TGE Type</th>
+        <th>Uniprot ID</th>
+        <th>Organisms</th>
+        <th>#Observations</th>
+        <th>#Experiments</th>
+        <th>Length</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tge in tgeRes %}
+        <tr>
+          <td>{{ tge.id }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {% endblock %}

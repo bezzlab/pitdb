@@ -19,38 +19,51 @@ def advance():
   trans = connection.begin()
 
   if request.method == 'GET':
-    res = Organism.query.all()
+    org = Organism.query.all()
+    connection.close()
+
   elif request.method =='POST':
     searchOption = request.form['searchOptions']
     searchType   = request.form['searchType']
 
     if searchOption == 'Accession Number':
-      #if searchType == 'exact':
-        res = TGE.query.filter_by(id=form.searchArea.data).all()
-      #else:
-      #  res = TGE.query.filter(TGE.id.contains(form.searchArea.data)).all()
+      tge = TGE.query.filter_by(id=form.searchArea.data).one_or_none()
+
     elif searchOption == 'Amino Acid Sequence':
       if searchType == 'exact':
-        res = TGE.query.filter(TGE.amino_seq == form.searchArea.data).all()
+        tge = TGE.query.filter(TGE.amino_seq == form.searchArea.data).all()
       else:
-        res = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data+"%")).all()
+        tge = TGE.query.filter(TGE.amino_seq.like("%"+form.searchArea.data+"%")).all()
     else:
-      print (searchOption)
-      res = TGEobservation.query.filter(TGEobservation.organism == searchOption).all()
+      #tge = TGEobservation.query.filter(TGEobservation.organism == searchOption).all()
+      return render_template('results/organism.html', org = searchOption)
     
     connection.close() 
 
-    return render_template('search/results.html', tgeRes=res, searchData=form.searchArea.data, searchType=searchType)
+    return render_template('search/results.html', tge=tge, searchData=form.searchArea.data, searchType=searchType)
 
-  return render_template('search/form.html', form=form, organism = res)
+  return render_template('search/form.html', form=form, organism = org)
 
 @search.route('/results')
-def results():
-
-  #tgeRes = TGE.query.all()
-  #tgeRes = TGE.query.filter_by(id=tge_id)
-  tgeRes = request.args['tgeRes']
+def results():  
+  results = []
+  orgs = exps = set()
+  tge  = request.args['tge']
 
   if tgeRes:
-    return render_template('search/results.html', tgeRes=tgeRes)
+    # Get all the observations of a TGE
+    tgeObs = TGEobservation.query.filter_by(tge_id=tge.id).all()
+    
+    # For each tge observation: find the sample(s), experiment(s) and organism(s)
+    for obs in tgeObs: 
+      sample = Sample.query.filter_by(id=obs.sample_id).first()
+      exp    = Experiment.query.filter_by(id=sample.exp_id).first()
+
+      orgs.add(obs.organism)
+      exps.add(exp.name)
+
+    results.append({'tge': tge.id, 'experiments': list(exps), 'organisms': list(orgs) })
+       
+    return render_template('search/results.html', results = results)
+
   return render_template('/search')
