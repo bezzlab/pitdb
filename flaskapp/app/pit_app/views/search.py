@@ -19,7 +19,8 @@ def advance():
   trans = connection.begin()
 
   if request.method == 'GET':
-    org = Organism.query.all()
+    org = Observation.query.with_entities(Observation.organism).\
+          distinct(Observation.organism).all()
     connection.close()
 
   elif request.method =='POST':
@@ -28,11 +29,13 @@ def advance():
     searchData   = form.searchArea.data
 
     if searchOption == 'Accession Number':
-      return redirect(url_for('results.tge', tge_id = searchData))
+      return redirect(url_for('results.tge', accession = searchData))
     elif searchOption == 'Amino Acid Sequence':
       return redirect(url_for('search.results', searchType=searchType, searchData = searchData))
     elif searchOption == 'Experiment ID':
       return redirect(url_for('results.experiment', experiment = searchData))
+    elif searchOption == 'Uniprot ID':
+      return redirect(url_for('results.protein', uniprot = searchData))
     else:
       return redirect(url_for('results.organism', organism = searchOption))
 
@@ -40,42 +43,42 @@ def advance():
 
     #return render_template('search/results.html', tge=tge, searchData=searchData, searchType=searchType)
     
-  return render_template('search/form.html', form=form, organism = org)
+  return render_template('search/form.html', form=form, organisms = org)
 
 @search.route('/results')
 def results():  
-  tgeRes = []
-  # orgs = exps = set()
-  tge = None
+  tgeList = []
+  
   searchData = request.args['searchData']
   searchType = request.args['searchType']
 
   if searchType == 'exact':
     tges = TGE.query.filter(TGE.amino_seq == searchData).all()
-
   else:
     tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all()
 
     # # For each tge observation: find the sample(s), experiment(s) and organism(s)
     for tge in tges: 
-      organisms = TGEobservation.query.with_entities(TGEobservation.organism).\
-        join(TGE, TGE.id == TGEobservation.tge_id).\
-        filter_by(id=tge.id).distinct(TGEobservation.organism).all()
+      obs = Observation.query.\
+                        join(TGE, TGE.id == Observation.tge_id).\
+                        filter_by(id=tge.id)
+
+      obsNum     = obs.count()
+      organisms  = obs.distinct(Observation.organism)
+      uniprotIDs = obs.distinct(Observation.uniprot_id)
+      tgeClass   = obs.distinct(Observation.tge_class).all()
       
-      obsNum = TGEobservation.query.with_entities(TGEobservation.organism).\
-        join(TGE, TGE.id == TGEobservation.tge_id).\
-        filter_by(id=tge.id).count()
-
       expNum = Sample.query.with_entities(Sample.exp_id).\
-        join(TGEobservation, TGEobservation.sample_id==Sample.id).\
-        join(TGE, TGE.id == TGEobservation.tge_id).\
-        filter_by(id=tge.id).\
-        distinct(Sample.exp_id).count()
+                      join(Observation, Observation.sample_id == Sample.id).\
+                      join(TGE, TGE.id == Observation.tge_id).\
+                      filter_by(id=tge.id).\
+                      distinct(Sample.exp_id).count()
 
-      tgeRes.append({'id': tge.id, 'type': tge.type, 'length': len(tge.amino_seq), 
-        'obsNum': obsNum, 'organisms': organisms, 'expNum': expNum})
+      tgeList.append({'accession': tge.accession, 'length': len(tge.amino_seq), 
+        'obsNum': obsNum, 'organisms': organisms, 'class': tgeClass,  'uniprotIDs': uniprotIDs, 
+        'expNum': expNum, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
 
 
-    return render_template('search/results.html', tgeRes = tgeRes)
+    return render_template('search/results.html', tgeList = tgeList)
 
   return render_template('/search')
