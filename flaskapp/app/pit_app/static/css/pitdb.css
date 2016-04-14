@@ -50,12 +50,12 @@
   border-bottom-left-radius: 4px;
 }
 
-#resTrs tr, #tgeSummary tr {
+#resTrs tr, #tgeSummary tr, #tgeSearch tr {
   cursor: pointer;
 }
 
 .table .selected {
-  background-color: #999999 !important;
+  background-color: #e8eaf6 !important;
 }
 
 #search-output {
@@ -88,3 +88,15 @@
   word-wrap: break-word;
 }
 
+#myModal {
+  z-index: 100;
+}
+
+.btn {
+  font-size: 12px;
+}
+
+#page-wrapper {
+  width: 950px !important;
+  min-width: 950px !important;
+}

@@ -46,7 +46,7 @@ $(function() {
     $('#searchFilter').html("Enter "+$(this).val()+":");
   });
 
-  var oTable = $('#searchRes').dataTable({
+  var oTable = $('table').dataTable({
    // "bAutoWidth": false,
     "bProcessing": true,
     // "aoColumns": [
@@ -57,7 +57,7 @@ $(function() {
     // ],
   });
 
-  $('#searchRes tbody tr').click( function () {
+  $('#tgeSearch tbody tr').click( function () {
     var aData = oTable.fnGetData(this);
     window.open("http://localhost:5000/tge/"+aData[0]);
   });
@@ -104,6 +104,7 @@ $(function() {
 
   $('#tgeSummary tbody tr:eq(0)').addClass('selected');
   $('#resTrs tbody tr:eq(0)').addClass('selected');
+  $('#tges tbody tr:eq(0)').addClass('selected');
 
   // Add on-click events
   $('#tgeSummary tbody').on( 'click', 'tr', function () {
@@ -135,6 +136,9 @@ $(function() {
     $('#tgeSummary tbody tr:eq('+indx+')').addClass('selected');
   });
 
+  $('#tges tbody').on('click', 'tr', function () {
+    
+  });
 
   // $('#submitSearch').click(function() {
   //   $('#search-output').toggle();
@@ -142,10 +146,19 @@ $(function() {
 
   $("#searchOptions").change(function() {
     var str = $( "#searchOptions option:selected" ).text();
-    if (str == "Amino Acid Sequence" || str == "Name" ){
-      $(".searchOptions").toggle();
+    var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
+    $("#textArea").show();
+
+    if (label == "Species") {
+      $("#textArea").hide();
     } else {
-      $(".searchOptions").hide();
+      $("#textArea").show();
+
+      if (str == "Amino Acid Sequence"){
+        $(".searchOptions").toggle();
+      } else {
+        $(".searchOptions").hide();
+      }
     }
   });
 
@@ -156,32 +169,32 @@ $(function() {
   //     elem.text(elem.text().substr(0,100)+" .... ").append('<i class="fa fa-plus-circle text-success"></i>')
   // }
 
-  var pieOrganism = [{
-    values: [19, 26, 55],
-    labels: ['Residential', 'Non-Residential', 'Utility'],
-    type: 'pie'
-  }];
+  // var pieOrganism = [{
+  //   values: [19, 26, 55],
+  //   labels: ['Residential', 'Non-Residential', 'Utility'],
+  //   type: 'pie'
+  // }];
 
-  var pieSample = [{
-    values: [19, 26, 55],
-    labels: ['Residential', 'Non-Residential', 'Utility'],
-    type: 'pie'
-  }];
+  // var pieSample = [{
+  //   values: [19, 26, 55],
+  //   labels: ['Residential', 'Non-Residential', 'Utility'],
+  //   type: 'pie'
+  // }];
 
-  var layout = {
-    autosize: false,
-    width: 350,
-    height: 350,
-    margin: {
-      l: 40,
-      r: 40,
-      b: 0,
-      t: 20,
-      pad: 0
-    }
-  };
+  // var layout = {
+  //   autosize: false,
+  //   width: 350,
+  //   height: 350,
+  //   margin: {
+  //     l: 40,
+  //     r: 40,
+  //     b: 0,
+  //     t: 20,
+  //     pad: 0
+  //   }
+  // };
 
-  Plotly.newPlot('pie_organism', pieOrganism, layout);
-  Plotly.newPlot('pie_sample',   pieSample,   layout);
+  // Plotly.newPlot('pie_organism', pieOrganism, layout);
+  // Plotly.newPlot('pie_sample',   pieSample,   layout);
 });
 
