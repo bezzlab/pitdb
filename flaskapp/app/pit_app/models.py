@@ -49,14 +49,14 @@ class User(Base):
 class Experiment(Base):
   __tablename__ = 'experiment'
   
-  name    = db.Column(db.String(255), nullable=False, unique=True) 
+  title   = db.Column(db.String(255), nullable=False, unique=True) 
   user_id = db.Column('user_id', db.Integer, db.ForeignKey("user.id"))
   
-  def __init__(self, name):
-    self.name = name
+  def __init__(self, title):
+    self.title = title
 
   def __repr__(self):
-    return '<Experiment name %r>' % (self.name)
+    return '<Experiment title %r>' % (self.title)
 
 
 class Sample(Base):
@@ -73,8 +73,10 @@ class Sample(Base):
 class TGE(Base):
   __tablename__ = 'tge'
   
-  amino_seq = db.Column(db.Text, nullable=False) # unique=True
-  type = db.Column(db.String(255))
+  accession  = db.Column(db.String(255))
+  amino_seq  = db.Column(db.Text, nullable=False) # unique=True
+  tge_class  = db.Column(db.String(255))
+  uniprot_id = db.Column(db.String(255))
 
   def __init__(self, amino_seq, type):
     self.amino_seq = amino_seq
@@ -84,8 +86,8 @@ class TGE(Base):
     return '<TGE %r>' % (self.amino_seq)
 
 
-class TGEobservation(Base):
-  __tablename__ = 'tge_obs'
+class Observation(Base):
+  __tablename__ = 'observation'
   
   tge_id      = db.Column('tge_id',    db.Integer, db.ForeignKey("tge.id"))
   sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
@@ -93,15 +95,18 @@ class TGEobservation(Base):
   description = db.Column(db.String(255))
   organism    = db.Column(db.String(255))
   peptide_num = db.Column(db.Integer)
-  #uniprot_id  = db.Column(db.String(255))
+  uniprot_id  = db.Column(db.String(255))
+  tge_class   = db.Column(db.String(255))
+  variation   = db.Column(db.Integer)
+  long_description = db.Column(db.String(255))
   #membership  = db.Column(db.String(255))
   
-  def __init__(self, name, description, organism, peptide_num):
+  def __init__(self, name, description, organism, peptide_num, uniprot_id):
     self.name        = name
     self.description = description
     self.peptide_num = peptide_num
     self.organism    = organism
-    #self.uniprot_id  = uniprot_id
+    self.uniprot_id  = uniprot_id
     #self.membership  = membership
 
   def __repr__(self):
@@ -111,7 +116,7 @@ class TGEobservation(Base):
 class Transcript(Base):
   __tablename__ = 'transcript'
   
-  obs_id    = db.Column('obs_id', db.Integer, db.ForeignKey("tge_obs.id"))
+  obs_id    = db.Column('obs_id', db.Integer, db.ForeignKey("observation.id"))
   dna_seq   = db.Column(db.Text, nullable=False)
   ensemble  = db.Column(db.String(255)) 
   assembly  = db.Column(db.String(255))
@@ -128,6 +133,29 @@ class Transcript(Base):
     self.end      = end
     
 
+class Variation(Base):
+  __tablename__ = 'variation'
+  
+  obs_id      = db.Column('obs_id', db.Integer, db.ForeignKey("observation.id"))
+  
+  chrom       = db.Column(db.String(255)) # unique=True
+  pos         = db.Column(db.String(255))
+  alt         = db.Column(db.String(255))
+  qual        = db.Column(db.Integer)
+  var_type    = db.Column(db.String(255))
+  qpos        = db.Column(db.Integer)
+  peptide_num = db.Column(db.Integer)
+  peptides    = db.Column(db.String(255))
+  
+  def __init__(self, chrom, pos, alt, qual, var_type, qpos, peptide_num, peptides):
+    self.chrom       = chrom
+    self.pos         = pos
+    self.alt          = alt
+    self.qual         = qual
+    self.var_type     = var_type
+    self.qpos         = qpos
+    self.peptide_num  = peptide_num
+    self.peptides     = peptides
 
 class Peptide(Base):
   __tablename__ = 'peptide'
@@ -149,7 +177,7 @@ class Peptide(Base):
 class TgeToPeptide(Base):
   __tablename__ = 'tge_peptide'
   
-  obs_id     = db.Column('obs_id',     db.Integer, db.ForeignKey("tge_obs.id"), nullable=False)
+  obs_id     = db.Column('obs_id',     db.Integer, db.ForeignKey("observation.id"), nullable=False)
   peptide_id = db.Column('peptide_id', db.Integer, db.ForeignKey("peptide.id"), nullable=False)
 
   def __init__(self, obs_id, peptide_id):
@@ -204,15 +232,15 @@ class PSM(Base):
 #     return '<PeptideToPSM %r>' % (self.peptide_id)
 
 
-class Organism(Base):
-  __tablename__ = 'organism'
+# class Organism(Base):
+#   __tablename__ = 'organism'
   
-  name = db.Column(db.String(255), nullable=False) # unique=True
+#   name = db.Column(db.String(255), nullable=False) # unique=True
   
-  def __init__(self, amino_seq):
-    self.aa_seq  = aa_seq
+#   def __init__(self, amino_seq):
+#     self.aa_seq  = aa_seq
 
-  def __repr__(self):
-    return '<Organism %r>' % (self.name)
+#   def __repr__(self):
+#     return '<Organism %r>' % (self.name)
 
 db.create_all()
