@@ -31,7 +31,6 @@
           <option role="separator" class="divider"></li>
           <optgroup label="Experiment">
             <option>Experiment ID</option>
-            <option>Name</option>
           </optgroup>
           <option role="separator" class="divider"></li>
           <optgroup label="Protein">
@@ -39,13 +38,13 @@
           </optgroup>
           <option role="separator" class="divider"></li>
           <optgroup label="Species">
-            {% for org in organism %}
-              <option>{{ org.name }}</option>
+            {% for org in organisms %}
+              <option>{{ org.organism }}</option>
             {% endfor %}
           </optgroup>
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group" id="textArea">
         <label for="contain" id="searchFilter" name="searchFilter">Search</label>
         <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea"></textarea>
       </div>

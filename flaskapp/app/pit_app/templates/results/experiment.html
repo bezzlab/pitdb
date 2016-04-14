@@ -23,7 +23,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Experiment ID: {{ exp.id }}</h1>
+        <h1 class="page-header">Experiment ID: {{ summary.id }}</h1>
       </div>
     </div>
 
@@ -36,13 +36,12 @@
           
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
-              <label>Experiment Name:</label> {{ exp.name }}</br>
-              <label>Data submitted by:</label> {{ user.fullname }}</br>
-              <label># TGE Observations:</label> {{ tgeObsNum }}</br>
-              <label># TGEs:</label> {{ tgeNum }}</br>
-              <label># Samples:</label> {{ sampleNum }}</br>
-              <label># Transcripts:</label> {{ trnNum }}<br/>
-              <label># Peptides:</label> {{ pepNum }}
+              <label>Experiment Title:</label> {{ summary.title }}</br>
+              <label>Data submitted by the user:</label> {{ summary.user }}</br></br>
+              <label># TGEs:</label> {{ summary.tgeNum }}</br>
+              <label># Samples:</label> {{ summary.sampleNum }}</br>
+              <label># Transcripts:</label> {{ summary.trnNum }}<br/>
+              <label># Peptides:</label> {{ summary.pepNum }}
           	</div>
           </div>
       </div>
@@ -58,13 +57,15 @@
               <tr>
                 <th>Sample ID</th>
                 <th>Sample Name</th>
+                <th># TGEs</th>
               </tr>
             </thead>
             <tbody>
-              {% for sample in samples %}
+              {% for sample in sampleList %}
                 <tr>
                   <td>{{ sample.id }}</td>
                   <td>{{ sample.name }}</td>
+                  <td>{{ sample.tgeNum }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -74,5 +75,63 @@
     </div>
   </div>
 </div>
+
+<script src="/static/js/ext/plotly.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script type="text/javascript" src="/static/js/ext/sunburst.js"></script>
+<script type="text/javascript">
+  // Hack to make this example display correctly in an iframe on bl.ocks.org
+  d3.select(self.frameElement).style("height", "700px");
+</script> 
+<script>
+
+var width = 400,
+    height = 200,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
+
+var labelArc = d3.svg.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.tgeNum; });
+
+var svg = d3.select("#summary").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+d3.json("/experiment/{{ summary.id }}/experiment.json", function(error, data) {
+
+  var g = svg.selectAll(".arc")
+        .data(pie(data))
+        .enter().append("g")
+        .attr("class", "arc");
+
+  g.append("path")
+        .attr("d", arc)
+        .style("fill", function (d) {
+        return color(d.data.name);
+    });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .style("font-size","10px")
+      .text(function(d) { return d.data.name +": "+d.data.tgeNum; });
+});
+
+
+</script>
 
 {% endblock %}

@@ -23,7 +23,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Organism: {{ organism }}</h1>
+        <h1 class="page-header">Organism: {{ summary.organism }}</h1>
       </div>
     </div>
 
@@ -36,12 +36,11 @@
           
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
-              <label># TGE Observations:</label> {{ obsNum }} </br>
-              <label># TGEs:</label> {{ tgeNum }}  </br>
-              <label># Samples:</label> {{ sampleNum }} </br>
-              <label># Experiments:</label> {{ expNum }}</br>
-              <label># Transcripts:</label> {{ trnNum }} <br/>
-              <label># Peptides: </label> {{ sumPepNum }}
+              <label># TGEs:</label> {{ summary.tgeNum }}  </br>
+              <label># Samples:</label> {{ summary.sampleNum }} </br>
+              <label># Experiments:</label> {{ summary.expNum }}</br>
+              <label># Transcripts:</label> {{ summary.trnNum }} <br/>
+              <label># Peptides: </label> {{ summary.pepNum }}
           	</div>
           </div>
       </div>
@@ -49,22 +48,26 @@
       <div>
       	<div class="panel panel-default" id="summary">
           <div class="panel-heading">
-            <i class="fa fa-bar-chart-o fa-fw"></i> "Breakdown"
+            <i class="fa fa-bar-chart-o fa-fw"></i> TGEs
           </div>
           
           <div class="panel-body">
-            <table class="table table-striped table-bordered dataTable no-footer" >
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
+            <br/><br/>
+            <table class="table table-striped table-bordered dataTable no-footer" class="searchRes">
             <thead>
               <tr>
-                <th>TGE ID</th>
-                <th>Sample Name</th>
+                <th>TGE Accession</th>
+                <th>TGE Type</th>
+                <th>Protein Name</th>
               </tr>
             </thead>
             <tbody>
-              {% for sample in samples %}
+              {% for tge in tgeList %}
                 <tr>
-                  <td>{{ sample.id }}</td>
-                  <td>{{ sample.name }}</td>
+                  <td>{{ tge.accession }}</td>
+                  <td>{{ tge.class }}</td>
+                  <td>{{ tge.uniprotID }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -74,5 +77,80 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="/static/js/ext/jquery-2.1.4.min.js"></script>
+<script src="/static/js/ext/plotly.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 350,
+    height = 150,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.ordinal()
+    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
+
+var labelArc = d3.svg.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.count; });
+
+var svg = d3.select("#summary").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+d3.json("/organism/{{ summary.organism }}/organism.json", function(error, data) {
+
+  var g = svg.selectAll(".arc")
+        .data(pie(data))
+        .enter().append("g")
+        .attr("class", "arc");
+
+  g.append("path")
+        .attr("d", arc)
+        .style("fill", function (d) {
+        return color(d.data.tgeClass);
+    });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+      .attr("dy", ".5em")
+      .style("font-size","10px")
+      .text(function(d) { return d.data.tgeClass +": "+d.data.count; });
+});
+
+
+</script>
 
 {% endblock %}
