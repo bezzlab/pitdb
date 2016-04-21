@@ -47,19 +47,12 @@ $(function() {
   });
 
   var oTable = $('table').dataTable({
-   // "bAutoWidth": false,
     "bProcessing": true,
-    // "aoColumns": [
-    //   //{ "bVisible": false, "searchable": false },
-    //   { "bVisible": true, "width": "15%" },
-    //   { "bVisible": true, "width": "85%" }
-      
-    // ],
   });
 
   $('#tgeSearch tbody tr').click( function () {
     var aData = oTable.fnGetData(this);
-    window.open("http://localhost:5000/tge/"+aData[0]);
+    window.open("http://localhost:5000/tge?accession="+aData[0]);
   });
 
   $(".wordwrap").html(function(_, html){
