@@ -1,14 +1,8 @@
-# This is where the routes are defined. It may be split into a package of its own (yourapp/views/) 
-# with related views grouped together into modules. /yourapp/models.py	
-
-from pit_app import app
-
 from flask import Flask, render_template, request, redirect, url_for, abort, session
-
+from pit_app import app
 from .forms import EmailPasswordForm
 from .models import DBSession, User
 from datatables import ColumnDT, DataTables
-
 
 @app.errorhandler(404)
 def not_found_error(error):

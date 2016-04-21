@@ -32,6 +32,8 @@ from .views.users     import users
 from .views.auth      import auth
 from .views.search    import search
 from .views.results   import results
+from .views.data      import data
+from .views.plots     import plots
 
 # Register blueprint(s)
 app.register_blueprint(home)
@@ -39,4 +41,5 @@ app.register_blueprint(users)
 app.register_blueprint(auth)
 app.register_blueprint(search)
 app.register_blueprint(results)
-
+app.register_blueprint(data)
+app.register_blueprint(plots)
