@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, send_from_directory, Flask, send_file
+from flask import Blueprint, send_file
 
 # app = Flask(__name__, static_folder='data/GFF3')
 # app = Flask(__name__, static_url_path='/data')

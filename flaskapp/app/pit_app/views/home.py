@@ -7,12 +7,8 @@ def index():
     # Do some stuff
     return render_template('home/index.html')
 
-@home.route('/about')
-def about():
-  return render_template('home/about.html')
-
 @home.route('/index_tomato')
-def tomato():
+def genoverse():
   return render_template('index_tomato.html')
 
 @home.route('/sunburst')

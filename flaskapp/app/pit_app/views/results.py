@@ -1,21 +1,18 @@
 import re
-import json
-# import simplejson as json
-import numpy as np
 import locale
 
-from pit_app import db
-from pit_app.models import *
-from flask import Blueprint, render_template, request, session, redirect, url_for
-from flask.ext.login import login_required, current_user
+from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.sql import func, distinct
+from pit_app.models import *
+from pit_app import db
 
 
 results = Blueprint('results',  __name__)
 
+@results.route('/tge')
+def tge():
+  accession = request.args['accession']
 
-@results.route('/tge/<accession>')
-def tge(accession):
   tge        = TGE.query.filter_by(accession=accession).one()
   tgeObs     = Observation.query.filter_by(tge_id=tge.id)
   obsCount   = tgeObs.count()
@@ -53,49 +50,11 @@ def tge(accession):
   return render_template('results/tge.html', summary = summary, results=results, jsonDump = {'homoSapiens' : 3, 'monkey':5 })
 
 
-@results.route('/tge/<accession>/tge.json')
-def tgeJSON(accession):
-  #data = json.dumps([{'organism': 'HomoSapiens' , 'num': 3}, {'organism': 'Monkey' , 'num': 10}])
-
+@results.route('/organism')
+def organism():
   tgeList = []
-  tge     = TGE.query.filter_by(accession=accession).one()
-  obs     = Observation.query.\
-                        with_entities(Observation.organism, func.count(Observation.organism)).\
-                        group_by(Observation.organism).\
-                        filter_by(tge_id=tge.id).all()
-  
-  for ob in obs: 
-    tgeList.append({'organism': ob[0] , 'count': ob[1] })
 
-  data = json.dumps(tgeList)
-
-  print data
-  return data
-
-@results.route('/tge/<accession>/experiment.json')
-def tgeJSON2(accession):
-  #data = json.dumps([{'organism': 'HomoSapiens' , 'num': 3}, {'organism': 'Monkey' , 'num': 10}])
-
-  expList = []
-  tge     = TGE.query.filter_by(accession=accession).one()
-  tgeObs  = Observation.query.filter_by(tge_id=tge.id)
-  
-  for ob in tgeObs: 
-    sample = Sample.query.filter_by(id=ob.sample_id).first()
-    exp    = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title)).\
-                        group_by(Experiment.title).\
-                        filter_by(id=sample.exp_id).all()
-
-    expList.append({'experiment': exp[0] , 'count': exp[1] })
-
-  data = json.dumps(expList)
-
-  print data
-  return data
-
-@results.route('/organism/<organism>')
-def organism(organism):
-  tgeList = []
+  organism  = request.args['organism']
 
   obs       = Observation.query.filter_by(organism=organism)
   tgeClass  = obs.distinct(Observation.tge_class).first()
@@ -117,25 +76,11 @@ def organism(organism):
 
   return render_template('results/organism.html', summary = summary, tgeList= tgeList)
 
-@results.route('/organism/<organism>/organism.json')
-def orgJSON(organism):
-  orgList = []
 
-  obs = Observation.query.with_entities(Observation.tge_class, func.count(Observation.tge_class)).\
-                          group_by(Observation.tge_class).\
-                          filter_by(organism=organism).all()
-  
-  for ob in obs: 
-    orgList.append({'tgeClass': ob[0], 'count': ob[1]})
+@results.route('/experiment')
+def experiment():
+  experiment  = request.args['experiment']
 
-  data = json.dumps(orgList)
-
-  print data
-  return data
-
-
-@results.route('/experiment/<experiment>')
-def experiment(experiment):
   exp  = Experiment.query.filter_by(id=experiment).first_or_404()
   user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
 
@@ -172,23 +117,10 @@ def experiment(experiment):
   return render_template('results/experiment.html', summary = summary, sampleList = sampleList)
 
 
-@results.route('/experiment/<experiment>/experiment.json')
-def expJSON(experiment):
-  sampleList = []
-
-  samples   = Sample.query.filter_by(exp_id=experiment).all()
-
-  for sample in samples:
-    tgePerSample = Observation.query.filter(Observation.sample_id==sample.id).\
-                                distinct(Observation.tge_id).count()
-    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum':tgePerSample })
-
-  data = json.dumps(sampleList)
-
-  return data
-
-@results.route('/protein/<uniprot>')
+@results.route('/protein')
 def protein(uniprot):
+  uniprot  = request.args['uniprot']
+
   obs  = Observation.query.filter_by(uniprot_id=uniprot).all()
   
   tges = TGE.query.join(Observation).filter_by(uniprot_id=uniprot).\
@@ -203,6 +135,44 @@ def protein(uniprot):
 
   return render_template('results/protein.html', tges = tges, uniprot = uniprot)
 
+
+@results.route('/aminoseq')
+def aminoseq():  
+  tgeList = []
+  
+  searchData = request.args['searchData']
+  searchType = request.args['searchType']
+
+  if searchType == 'exact':
+    # We expect only one match for one particular aminoseq
+    tge = TGE.query.filter(TGE.amino_seq == searchData).one()
+    return redirect(url_for('results.tge', accession = tge.accession))
+
+  else:
+    tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all()
+
+    for tge in tges: 
+      obs = Observation.query.join(TGE, TGE.id == Observation.tge_id).\
+                              filter_by(id=tge.id)
+
+      obsNum     = obs.count()
+      organisms  = obs.distinct(Observation.organism)
+      uniprotIDs = obs.distinct(Observation.uniprot_id)
+      tgeClass   = obs.distinct(Observation.tge_class).all()
+      
+      expNum = Sample.query.with_entities(Sample.exp_id).\
+                      join(Observation, Observation.sample_id == Sample.id).\
+                      join(TGE, TGE.id == Observation.tge_id).\
+                      filter_by(id=tge.id).\
+                      distinct(Sample.exp_id).count()
+
+      tgeList.append({'accession': tge.accession, 'length': len(tge.amino_seq), 
+        'obsNum': obsNum, 'organisms': organisms, 'class': tgeClass,  'uniprotIDs': uniprotIDs, 
+        'expNum': expNum, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
+
+  return render_template('search/results.html', tgeList = tgeList)
+
+
 @results.route('/peptide/<peptide>')
 def peptide(peptide):
   return render_template('results/peptide.html')
@@ -215,3 +185,4 @@ def separators( inputText ):
   locale.setlocale(locale.LC_ALL, 'en_US')
   newText = locale.format("%d", inputText, grouping=True)
   return newText
+

@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template
-# Import the database object from the main app module
 from pit_app import db
-
 from pit_app.models import User
 
 users = Blueprint('users',  __name__)
