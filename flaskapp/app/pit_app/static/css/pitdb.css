@@ -100,3 +100,10 @@
   width: 950px !important;
   min-width: 950px !important;
 }
+
+.fade {
+  opacity: 1;
+  transition: opacity .200s ease-in-out;
+  -moz-transition: opacity .200s ease-in-out;
+  -webkit-transition: opacity .200s ease-in-out;
+}

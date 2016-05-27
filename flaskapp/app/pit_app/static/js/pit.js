@@ -46,7 +46,26 @@ $(function() {
     $('#searchFilter').html("Enter "+$(this).val()+":");
   });
 
-  var oTable = $('table').dataTable({
+  // Create DataTables 
+
+  var tgeSummary = $('#tgeSummary').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+  });
+
+  var resTrs = $('#resTrs').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "65%" },
+      { "bVisible": true, "width": "25%" }
+      
+    ],
+  });
+
+  var oTable = $('#proteinRes').dataTable({
+    "bAutoWidth": false,
     "bProcessing": true,
   });
 
@@ -75,23 +94,7 @@ $(function() {
     // }  
   });
 
-  // Create DataTables 
-
-  var tgeSummary = $('#tgeSummary').dataTable({
-    "bAutoWidth": false,
-    "bProcessing": true,
-  });
-
-  var resTrs = $('#resTrs').dataTable({
-    "bAutoWidth": false,
-    "bProcessing": true,
-    "aoColumns": [
-      { "bVisible": true, "width": "10%" },
-      { "bVisible": true, "width": "65%" },
-      { "bVisible": true, "width": "25%" }
-      
-    ],
-  });
+  
 
   // Select by default the first row (index 0)
 
@@ -189,5 +192,122 @@ $(function() {
 
   // Plotly.newPlot('pie_organism', pieOrganism, layout);
   // Plotly.newPlot('pie_sample',   pieSample,   layout);
+
+  var genoverseConfig = {
+    container : '#genoverse',
+    width     : 800,
+    genome    : 'grch38',
+    plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer', 'fileDrop' ],
+    tracks    : [
+      Genoverse.Track.Scalebar,
+      Genoverse.Track.extend({
+        name      : 'Sequence',
+        model     : Genoverse.Track.Model.Sequence.Ensembl,
+        view      : Genoverse.Track.View.Sequence,
+        resizable : 'auto',
+        100000    : false
+      }),
+      Genoverse.Track.extend({
+        name   : 'Genes',
+        height : 200,
+        info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+        
+        // Different settings for different zoom level
+        2000000: { // This one applies when > 2M base-pairs per screen
+          labels : false
+        },
+        100000: { // more than 100K but less then 2M
+          labels : true,
+          model  : Genoverse.Track.Model.Gene.Ensembl,
+          view   : Genoverse.Track.View.Gene.Ensembl
+        },
+        1: { // > 1 base-pair, but less then 100K
+          labels : true,
+          model  : Genoverse.Track.Model.Transcript.Ensembl,
+          view   : Genoverse.Track.View.Transcript.Ensembl
+        }
+      }),
+      Genoverse.Track.extend({
+          name   : 'Test',
+          view   : Genoverse.Track.View.Transcript.extend({
+            setFeatureColor : function () {}
+          }),
+          height : 300,
+          url    : '/data/G10.assemblies.fasta.transdecoder.genome.gff3_identified.gff3',
+          model  : Genoverse.Track.Model.extend({
+            dataType : 'text',
+            parseData: function (text) {
+              var lines = text.split('\n');
+
+              for (var i = 0; i < lines.length; i++) {
+                if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                  continue;
+                }
+                
+                var fields = lines[i].split('\t');
+
+                if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
+
+                  var feature = {
+                    id     : fields.slice(0, 5).join('|'),
+                    start  : parseInt(fields[3], 10),
+                    end    : parseInt(fields[4], 10),
+                    exons  : [],
+                    cds    : []
+                  };
+
+                  if (fields[8]) {
+                    var extraFields = fields[8].split(';');
+                    
+                    for (var j = 0; j < extraFields.length; j++) {
+                      var keyValue = extraFields[j].split('=');
+                      
+                      if (keyValue.length === 2 && !feature[keyValue[0]]) {
+                        feature[keyValue[0].toLowerCase()] = keyValue[1];
+                      }
+                    }
+                  }
+
+                  feature.color = 'rgb(' + feature.color + ')';
+
+                  // CIGAR Gap, here we assume it's always M or D, with D only being surrounded with Ms
+                  if (feature.gap) {
+                    var cursor = feature.start;
+                    var chunks = feature.gap.split(' ');
+                    for (var j=0; j<chunks.length; j++) {
+                      if (chunks[j].charAt(0) === 'M') {
+                        var length = parseInt( chunks[j].substr(1), 10 );
+                        feature.exons.push({
+                          start : cursor,
+                          end   : cursor + length,
+                        });
+                        feature.cds.push({
+                          start : cursor,
+                          end   : cursor + length,
+                          color : feature.color,
+                        });
+                        cursor = cursor + length;
+                      }
+                      else {
+                        var length = parseInt(chunks[j].substr(1), 10);
+                        cursor += length;
+                      }
+                    }
+                  }
+
+                  feature.labelColor = 'black';
+                  feature.label = feature.name;
+
+                  this.insertFeature(feature);
+                }
+
+              }
+            }
+          }),
+        })
+    ]
+  };
+  
+  document.addEventListener('DOMContentLoaded', function () { window.genoverse = new Genoverse(genoverseConfig); });
 });
 

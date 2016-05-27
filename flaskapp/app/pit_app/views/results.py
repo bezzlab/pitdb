@@ -118,7 +118,7 @@ def experiment():
 
 
 @results.route('/protein')
-def protein(uniprot):
+def protein():
   uniprot  = request.args['uniprot']
 
   obs  = Observation.query.filter_by(uniprot_id=uniprot).all()

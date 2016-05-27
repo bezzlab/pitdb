@@ -14,6 +14,7 @@ Genoverse.Track.View.Transcript = Genoverse.Track.View.extend({
     var add    = Math.max(scale, this.widthCorrection);
     var coding = {};
     var i, x, w;
+    
 
     // Get intron lines to be drawn off the left and right edges of the image
     if (!exons.length || exons[0].start > transcript.start) {
@@ -25,7 +26,7 @@ Genoverse.Track.View.Transcript = Genoverse.Track.View.extend({
     }
 
     featureContext.fillStyle = featureContext.strokeStyle = transcript.color || this.color;
-
+    
     for (i = 0; i < cds.length; i++) {
       x = transcript.x + (cds[i].start - transcript.start) * scale;
       w = Math.max((cds[i].end - cds[i].start) * scale + add, this.minScaledWidth);

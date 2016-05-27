@@ -9,10 +9,7 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
 app.config.from_pyfile('config.py')
 # bcrypt = Bcrypt(app)
-
 db = SQLAlchemy(app)
-# db.create_all()
-#make_searchable()
 
 # Sample HTTP error handling
 @app.errorhandler(404)
@@ -24,8 +21,6 @@ def not_found(error):
 def errorNew(error):
   return render_template('error/500.html'), 500
 
-
-# import pit_app.views
 
 from .views.home      import home
 from .views.users     import users

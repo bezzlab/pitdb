@@ -19,11 +19,16 @@ Genoverse.Track.Model.Transcript.GFF3 = Genoverse.Track.Model.Transcript.extend(
 
       var fields = lines[i].split('\t');
 
-      if (fields.length < 5) {
-        continue;
-      }
-
+      // if (fields.length < 5) {
+      //   continue;
+      // }
+      
+      // alert(fields[0])
+      // return;
+      // alert(this.browser.chr)
+      
       if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
+        
         var feature = {};
 
         feature.id     = fields.slice(0, 5).join('|');

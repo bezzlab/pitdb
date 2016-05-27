@@ -1,7 +1,7 @@
-from flask.ext.wtf import Form # , RecaptchaField
 from wtforms.fields import TextField, PasswordField, SelectField, TextAreaField, SubmitField # BooleanField
 from wtforms.validators import Required, Email, EqualTo
 from pit_app.models import User
+from flask.ext.wtf import Form # , RecaptchaField
 
 
 class LoginForm(Form):

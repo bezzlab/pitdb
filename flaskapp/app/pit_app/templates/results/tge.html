@@ -182,48 +182,6 @@ d3.json("/tge/{{ summary.tge.accession }}/tge.json", function(error, data) {
 
 
 </script>
-<script>
-    TESTER = document.getElementById('tester');
-    Plotly.plot( TESTER, [{
-    x: [1, 2, 3, 4, 5],
-    y: [1, 2, 4, 8, 16] }], {
-    margin: { t: 0 } } );
 
-    //alert("{{ jsonDump.values() }}")
-    // var xy; 
-    // jQuery.get('{{ jsonDump }}', function(data) {
-    //   //alert(data)
-    //   xy = JSON.parse(data);
-    // }); 
-    // alert(xy['1']);
-
-    var pieOrganism = [{
-      values: [19, 26],
-    //labels: ["{{ jsonDump.keys() }}"],
-      type: 'pie'
-    }];
-
-    var pieSample = [{
-      values: [19, 26, 55],
-      labels: ['Residential', 'Non-Residential', 'Utility'],
-      type: 'pie'
-    }];
-
-    var layout = {
-      autosize: false,
-      width: 250,
-      height: 250,
-      margin: {
-        l: 40,
-        r: 40,
-        b: 0,
-        t: 20,
-        pad: 0
-      }
-    };
-
-    Plotly.newPlot('pie_organism', pieOrganism, layout);
-    Plotly.newPlot('pie_sample',   pieSample,   layout);
-</script>
 
 {% endblock %}
