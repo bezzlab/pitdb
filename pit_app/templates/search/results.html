@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div id="search-output">
+  <input type="hidden" id="searchData" value={{ searchData }}>
+  <input type="hidden" id="searchType" value={{ searchType }}>
+  <p><h4>List of TGEs:</h4></p><br/>
+
+  <table class="table table-striped table-bordered dataTable no-footer" class="searchRes" id="tgeSearch">
+    <thead>
+      <tr>
+        <th>Accession Number</th>
+        <th>TGE Type</th>
+        <th>Uniprot ID</th>
+        <th>Organisms</th>
+        <th>#Observations</th>
+        <th>#Experiments</th>
+        <th>Length</th>
+      </tr>
+    </thead>
+  	<tbody>
+      {% for tge in tgeList %}
+      	<tr>
+      	  <td>{{ tge.accession }}</td>
+          <td>{{ tge.class }}</td>
+          <td>{{ tge.uniprotID }}</td>
+          <td>{% for org in tge.organisms %}{{ org.organism }}, {% endfor %}</td>
+          <td>{{ tge.obsNum }}</td>
+          <td>{{ tge.expNum }}</td>
+          <td>{{ tge.length }}</td>
+      	  <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
+      	</tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

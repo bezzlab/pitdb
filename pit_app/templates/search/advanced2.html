@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% macro render_field(field, placeholder=None) %}
+{% if field.errors %}
+  <div>
+  {% elif field.flags.error %}
+    <div>
+    {% else %}
+    <div>
+  {% endif %}
+{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+</div>
+{% endmacro %}
+
+<div class="container">
+  <div class="row">    
+    <form id="searchform" class="form-horizontal" role="form" action="/advanced_search" method="POST">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        <label for="filter">Search by</label>
+        <select id="searchOptions" name="searchOptions" class="form-control">
+          <option disabled selected> -- Select an option -- </option>
+          <option role="separator" class="divider"></li>
+          <optgroup label="TGE">
+            <option>Accession Number</option>
+            <option>Amino Acid Sequence</option>
+            <option>...</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Experiment">
+            <option value="experiment">Accession Number</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Species">
+            <option>...</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="contain" id="searchFilter" name="searchFilter">Search</label>
+        <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea"></textarea>
+      </div>
+      <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
+      <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
+      
+      <br/><br/>
+      <button type="submit" class="btn btn-primary">Submit <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
