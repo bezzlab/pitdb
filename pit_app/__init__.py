@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-import views
+# import pit_app.views
 #from sqlalchemy_searchable import make_searchable
 
 application = Flask(__name__, instance_relative_config=True)
@@ -23,19 +23,20 @@ def errorNew(error):
   return render_template('error/500.html'), 500
 
 
-from views.home      import home
-from views.users     import users
-from views.auth      import auth
-from views.search    import search
-from views.results   import results
-from views.data      import data
-from views.plots     import plots
+from pit_app.views.home      import home
+from pit_app.views.users     import users
+# from pit_app.views.search    import search
+from pit_app.views.results   import results
+from pit_app.views.data      import data
+from pit_app.views.plots     import plots
+# from pit_app.views.auth      import auth
 
 # Register blueprint(s)
 application.register_blueprint(home)
 application.register_blueprint(users)
-application.register_blueprint(auth)
-application.register_blueprint(search)
+# application.register_blueprint(search)
 application.register_blueprint(results)
 application.register_blueprint(data)
 application.register_blueprint(plots)
+# application.register_blueprint(auth)
+
