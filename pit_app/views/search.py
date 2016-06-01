@@ -1,6 +1,6 @@
-# from pit_app import db
-# from pit_app.models import *
-# from pit_app.forms import SearchForm
+from pit_app import db
+from pit_app.models import *
+from pit_app.forms import SearchForm
 from flask import Blueprint, render_template, request, redirect, url_for
 
 search = Blueprint('search',  __name__)
