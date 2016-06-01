@@ -17,15 +17,15 @@ def advance():
     searchType   = request.form['searchType']
     searchData   = form.searchArea.data
 
-#     if searchOption == 'Accession Number':
-#       return redirect(url_for('results.tge', accession = searchData))
-#     elif searchOption == 'Amino Acid Sequence':
-#       return redirect(url_for('results.aminoseq', searchType=searchType, searchData = searchData))
-#     elif searchOption == 'Experiment ID':
-#       return redirect(url_for('results.experiment', experiment = searchData))
-#     elif searchOption == 'Uniprot ID':
-#       return redirect(url_for('results.protein', uniprot = searchData))
-#     else:
-#       return redirect(url_for('results.organism', organism = searchOption))
+    if searchOption == 'Accession Number':
+      return redirect(url_for('results.tge', accession = searchData))
+    elif searchOption == 'Amino Acid Sequence':
+      return redirect(url_for('results.aminoseq', searchType=searchType, searchData = searchData))
+    elif searchOption == 'Experiment ID':
+      return redirect(url_for('results.experiment', experiment = searchData))
+    elif searchOption == 'Uniprot ID':
+      return redirect(url_for('results.protein', uniprot = searchData))
+    else:
+      return redirect(url_for('results.organism', organism = searchOption))
 
   return render_template('search/form.html', form=form, organisms = org)
