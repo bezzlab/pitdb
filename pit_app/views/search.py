@@ -5,17 +5,17 @@ from flask import Blueprint, render_template, request, redirect, url_for
 
 search = Blueprint('search',  __name__)
 
-# @search.route('/search',  methods=['GET', 'POST'])
-# def advance():
-#   form = SearchForm(request.form)
+@search.route('/search',  methods=['GET', 'POST'])
+def advance():
+  form = SearchForm(request.form)
 
-#   if request.method == 'GET':
-#     org = Observation.query.with_entities(Observation.organism).distinct(Observation.organism).all()
+  # if request.method == 'GET':
+  #   org = Observation.query.with_entities(Observation.organism).distinct(Observation.organism).all()
 
-#   elif request.method =='POST':
-#     searchOption = request.form['searchOptions']
-#     searchType   = request.form['searchType']
-#     searchData   = form.searchArea.data
+  # elif request.method =='POST':
+  #   searchOption = request.form['searchOptions']
+  #   searchType   = request.form['searchType']
+  #   searchData   = form.searchArea.data
 
 #     if searchOption == 'Accession Number':
 #       return redirect(url_for('results.tge', accession = searchData))
@@ -28,4 +28,4 @@ search = Blueprint('search',  __name__)
 #     else:
 #       return redirect(url_for('results.organism', organism = searchOption))
 
-#   return render_template('search/form.html', form=form, organisms = org)
+  return render_template('search/form.html', form=form, organisms = org)
