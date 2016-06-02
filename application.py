@@ -2,7 +2,8 @@ from flask import Flask
 # from pit_app import application
 
 # EB looks for an 'application' callable by default.
-# application = Flask(__name__)
+application = Flask(__name__)
+
 @application.route('/')
 def hello_world():
 	return 'Hello, World!'
