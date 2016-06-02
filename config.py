@@ -15,6 +15,4 @@ SQLALCHEMY_DATABASE_URI = driver + os.environ['RDS_USERNAME'] + ':' + os.environ
 													+'@' + os.environ['RDS_HOSTNAME']  +  ':' + os.environ['RDS_PORT'] \
 													+ '/' + os.environ['RDS_DB_NAME']
 
-print "***"+SQLALCHEMY_DATABASE_URI
-
 SQLALCHEMY_TRACK_MODIFICATIONS = True
