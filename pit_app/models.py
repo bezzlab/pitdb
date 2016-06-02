@@ -243,4 +243,4 @@ class PSM(Base):
 #   def __repr__(self):
 #     return '<Organism %r>' % (self.name)
 
-# db.create_all()
+db.create_all()
