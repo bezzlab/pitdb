@@ -22,7 +22,7 @@ def errorNew(error):
 
 from pit_app.views.home      import home
 from pit_app.views.search    import search
-# from pit_app.views.results   import results
+from pit_app.views.results   import results
 # from pit_app.views.users     import users
 # from pit_app.views.data      import data
 # from pit_app.views.plots     import plots
@@ -31,7 +31,7 @@ from pit_app.views.search    import search
 # # Register blueprint(s)
 application.register_blueprint(home)
 application.register_blueprint(search)
-# application.register_blueprint(results)
+application.register_blueprint(results)
 # application.register_blueprint(users)
 # application.register_blueprint(data)
 # application.register_blueprint(plots)
