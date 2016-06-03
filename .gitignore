@@ -1,3 +1,5 @@
+*.yml
+*.pyc
 *.pem
 .DS_Store
 
