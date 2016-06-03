@@ -46,11 +46,11 @@
                         <div class="row" style="margin-left:5px">
                             <label>TGE ID:</label> {{ summary.tge.id }}</br>
                             <label>TGE Type:</label> {{ summary.tge.tge_class }}</br>
-                            <label>Uniprot ID:</label><a href="/organism/{{ org }}" target="_blank"> {{ summary.tge.uniprot_id }}</a></br>
+                            <label>Uniprot ID:</label><a href="protein?uniprot={{ summary.tge.uniprot_id }}" target="_blank"> {{ summary.tge.uniprot_id }}</a></br>
                             <label>#Observations:</label> {{ summary.obsCount }}</br>
                             <label>Organisms:</label> 
                             {% for org in summary.organisms %}
-                              <a href="/organism/{{ org }}" target="_blank">{{ org }}</a>,
+                              <a href="organism?organism={{ org }}" target="_blank">{{ org }}</a>,
                             {% endfor %}</br>
                         </div>
                         <!--div class="row">
