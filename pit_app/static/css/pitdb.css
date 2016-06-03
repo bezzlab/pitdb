@@ -54,6 +54,10 @@
   cursor: pointer;
 }
 
+.tgeTable tr {
+  cursor: pointer;
+}
+
 .table .selected {
   background-color: #e8eaf6 !important;
 }

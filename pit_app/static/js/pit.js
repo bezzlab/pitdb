@@ -53,10 +53,13 @@ $(function() {
     "bProcessing": true,
   });
 
-  // var tgeSummary = $('#tgeSummary').dataTable({
-  //   "bAutoWidth": false,
-  //   "bProcessing": true,
-  // });
+  $('.tgeTable tbody tr').click( function () {
+    var aData = oTable.fnGetData(this);
+    window.open("/tge?accession="+aData[0]);
+  });
+
+  // Select by default the first row (index 0)
+  $('.dataTable tbody tr:eq(0)').addClass('selected');
 
   var resTrs = $('#resTrs').dataTable({
     "bAutoWidth": false,
@@ -67,16 +70,6 @@ $(function() {
       { "bVisible": true, "width": "25%" }
       
     ],
-  });
-
-  // var oTable = $('#proteinRes').dataTable({
-  //   "bAutoWidth": false,
-  //   "bProcessing": true,
-  // });
-
-  $('#tgeSearch tbody tr').click( function () {
-    var aData = oTable.fnGetData(this);
-    window.open("/tge?accession="+aData[0]);
   });
 
   $(".wordwrap").html(function(_, html){
@@ -98,14 +91,6 @@ $(function() {
     //   return html.replace(regex, '<span class="red">$1</span>'); 
     // }  
   });
-
-  
-
-  // Select by default the first row (index 0)
-
-  $('#tgeSummary tbody tr:eq(0)').addClass('selected');
-  $('#resTrs tbody tr:eq(0)').addClass('selected');
-  $('#tges tbody tr:eq(0)').addClass('selected');
 
   // Add on-click events
   $('#tgeSummary tbody').on( 'click', 'tr', function () {
