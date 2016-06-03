@@ -48,15 +48,15 @@ $(function() {
 
   // Create DataTables 
 
-  var tgeSearch = $('#tgeSearch').dataTable({
+  var oTable = $('.dataTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
   });
 
-  var tgeSummary = $('#tgeSummary').dataTable({
-    "bAutoWidth": false,
-    "bProcessing": true,
-  });
+  // var tgeSummary = $('#tgeSummary').dataTable({
+  //   "bAutoWidth": false,
+  //   "bProcessing": true,
+  // });
 
   var resTrs = $('#resTrs').dataTable({
     "bAutoWidth": false,
@@ -69,13 +69,13 @@ $(function() {
     ],
   });
 
-  var oTable = $('#proteinRes').dataTable({
-    "bAutoWidth": false,
-    "bProcessing": true,
-  });
+  // var oTable = $('#proteinRes').dataTable({
+  //   "bAutoWidth": false,
+  //   "bProcessing": true,
+  // });
 
   $('#tgeSearch tbody tr').click( function () {
-    var aData = tgeSearch.fnGetData(this);
+    var aData = oTable.fnGetData(this);
     window.open("/tge?accession="+aData[0]);
   });
 
