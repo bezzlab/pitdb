@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layoutPlots.html" %}
 {% block content %}
   
 <div class="navbar-default sidebar" role="navigation">
@@ -29,7 +29,7 @@
 
     <div class="row">
       <div>
-      	<div class="panel panel-default">
+      	<div class="panel panel-default" style="position: relative !important;">
           <div class="panel-heading">
             <i class="fa fa-bar-chart-o fa-fw"></i> Summary
           </div>
@@ -53,7 +53,7 @@
           </div>
           
           <div class="panel-body">
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
+             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#tgeModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
             <br/><br/>
             <table class="table table-striped table-bordered dataTable no-footer tgeTable">
             <thead>
@@ -79,158 +79,60 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
 
-    <!-- Modal content-->
+<!-- Modal -->
+<div id="tgeModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close btn" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+        <h4 class="modal-title">Download TGEs</h4>
       </div>
-      <div class="modal-body">
-        <p>Some text in the modal.</p>
+      <form role="form"  id="downloadForm" name="downloadForm" action="/download" method="POST">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="hidden" id="organism" name="organism" value='{{ summary.organism }}'>
+              <fieldset>
+                <p>
+                  Select the fields to include in the download file: 
+                </p>
+                <div class="checkbox checkbox-primary">
+                  <input id="tgeAcc" type="checkbox" name="check" value="tgeAcc" checked="">
+                  <label for="tgeAcc">
+                    TGE Accession
+                  </label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="tgeType" type="checkbox" name="check" value="tgeType" checked="">
+                  <label for="tgeType">
+                    TGE Type
+                  </label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="protName" type="checkbox" name="check" value="protName" checked="">
+                  <label for="protName">
+                    Protein Name
+                  </label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="aminoSeq" type="checkbox" name="check" value="aminoSeq" checked="">
+                  <label for="aminoSeq">
+                    Amino Acid Sequence
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info btn-lg">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
+    </form>
 
   </div>
 </div>
-
-
-<script src="/static/js/ext/jquery-2.1.4.min.js"></script>
-<script src="//d3js.org/d3.v3.min.js"></script>
-
-<script>
-
-var width = 350,
-    height = 250,
-    radius = Math.min(width, height) / 2, 
-    donutWidth = 50,
-    legendRectSize = 18,
-    legendSpacing = 4;
-
-var color = d3.scale.category20c();
-
-var svg = d3.select("#chart")
-            .append("svg")
-              .attr("width",  width)
-              .attr("height", height)
-            .append("g")
-              .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-var arc = d3.svg.arc()
-            .innerRadius(radius - donutWidth)
-            .outerRadius(radius);
-
-var pie = d3.layout.pie()
-            .value(function(d) { return d.count; })
-            .sort(null);
-
-var tooltip = d3.select('#chart')
-                .append('div')
-                .attr('class', 'tooltip');
-
-tooltip.append('div')
-       .attr('class', 'label');
-
-tooltip.append('div')
-       .attr('class', 'count');
-
-tooltip.append('div')
-       .attr('class', 'percent');
-
-d3.json("/organism/{{ summary.organism }}/organism.json", function(error, data) {
-
-  var path = svg.selectAll('path')
-          .data(pie(data))
-          .enter()
-          .append('path')
-          .attr('d', arc)
-          .attr('fill', function(d, i) { 
-            return color(d.data.tgeClass);
-          })
-          .each(function(d) { this._current = d; });
-
-  path.on('mouseover', function(d) {
-    // var total = d3.sum(data.map(function(d) {
-    //   return (d.enabled) ? d.data.count : 0;                       // 
-    // }));
-    // alert(total);
-    // var percent = Math.round(1000 * d.data.count / total) / 10;
-    //   tooltip.select('.percent').html(percent + '%'); 
-    tooltip.select('.label').html(d.data.tgeClass);
-    tooltip.select('.count').html(d.data.count); 
-    tooltip.style('display', 'block');
-  });
-  
-  path.on('mouseout', function() {
-    //tooltip.style('display', 'none');
-  });
-
-  var legend = svg.selectAll('.legend')
-    .data(color.domain())
-    .enter()
-    .append('g')
-    .attr('class', 'legend')
-    .attr('transform', function(d, i) {
-      var height = legendRectSize + legendSpacing;
-      var offset = height * color.domain().length / 2;
-      var horz   = -2 * legendRectSize;
-      var vert   = i  * height - offset;
-      return 'translate(' + horz + ',' + vert + ')';
-  });
-
-  legend.append('rect')
-        .attr('width',   legendRectSize)
-        .attr('height',  legendRectSize)                                   
-        .style('fill',   color)
-        .style('stroke', color)
-        // .attr('class',  'enabled')                                  
-        .on('click', function(label) {     
-
-          var rect = d3.select(this);                             
-          var enabled = true;                                    
-          // var totalEnabled = d3.sum(data.map(function(d) {     
-          //   return (d.enabled) ? 1 : 0;                           
-          // }));                                                    
-                
-          if (rect.attr('class') === 'disabled') {                
-            rect.attr('class', '');                               
-          } else {                                                
-            // if (totalEnabled < 2) return;                         
-            rect.attr('class', 'disabled');                       
-            enabled = false;                                      
-          }     
-
-          pie.value(function(d) {                                 
-            if (d.tgeClass === label) d.enabled = enabled;           
-            return (d.enabled) ? d.count : 0;                     
-          });     
-
-          path = path.data(pie(data));                         
-          
-          path.transition()                                       
-              .duration(750)                                        
-              .attrTween('d', function(d) {                         
-                var interpolate = d3.interpolate(this._current, d); 
-                this._current = interpolate(0);                     
-                return function(t) {                                
-                  return arc(interpolate(t));                       
-                };                                                  
-              });                                                   
-  });                                                       
-          
-  legend.append('text')
-        .attr('x', legendRectSize + legendSpacing)
-        .attr('y', legendRectSize - legendSpacing)
-        .text(function(d) { return d; });
-});
-
-
-</script>
 
 {% endblock %}
