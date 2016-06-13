@@ -149,6 +149,42 @@ $(function() {
   });
 
   var elem = $(".dna-seq");
+
+  $('#tgeType').click(function(event) {  //on click
+    if (this.checked) { // check select status
+      $('.check_nested').each(function() { //loop through each checkbox
+        this.checked = true;  //select all checkboxes with class "checkbox1"
+      });
+    }else{
+      $('.check_nested').each(function() { //loop through each checkbox
+        this.checked = false; //deselect all checkboxes with class "checkbox1"
+      });
+    }
+  });
+
+  // $("#autocomplete").autocomplete({
+  //   source:function(request, response) {
+  //       $.getJSON("{{url_for('autocomplete')}}",{
+  //           q: request.term, // in flask, "q" will be the argument to look for using request.args
+  //       }, function(data) {
+  //           response(data.matching_results); // matching_results from jsonify
+  //       });
+  //   },
+  //   minLength: 2,
+  //   select: function(event, ui) {
+  //       console.log(ui.item.value); // not in your question, but might help later
+  //   }
+  // });
+
+  // $.ajax({
+  //   url: '{{ url_for("autocomplete") }}'
+  //   }).done(function (data) {
+  //       $('#autocomplete').autocomplete({
+  //           source: data.json_list,
+  //           minLength: 2
+  //       });
+  //   });
+  // });
   
   // if(elem){
   //   if (elem.text().length > 100)
