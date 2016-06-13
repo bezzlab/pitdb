@@ -23,22 +23,24 @@ def download_data(filename):
 @data.route('/download', methods=['POST'])
 def download():
 	organism = str(request.form['organism'])
+	print organism
 	selected = request.form.getlist('check')
+	print selected
 	nested   = request.form.getlist('check_nested')
+	print nested
 
 	tges = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id)
 
 	def generate():
 		for tge in tges:
-			if (tge.tge_class in nested):
-				if ('tgeType' in selected) & ('tgeAcc' in selected): 
-					yield tge.accession + ',' 
-				if ('tgeType' in selected): 
-					yield tge.tge_class + ',' 
-				if ('protName' in selected): 
-					yield tge.uniprot_id + ',' 
-				if ('aminoSeq' in selected): 
-					yield tge.amino_seq + ','
-				yield '\n'
+			if ('tgeAcc' in selected): 
+				yield tge.accession + ',' 
+			if ('tgeType' in selected): 
+				yield tge.tge_class + ',' 
+			if ('protName' in selected): 
+				yield tge.uniprot_id + ',' 
+			if ('aminoSeq' in selected): 
+				yield tge.amino_seq + ','
+			yield '\n'
 
 	return Response(generate(), mimetype='text/csv', headers={"Content-disposition":"attachment; filename=output.csv"})
