@@ -162,6 +162,8 @@ $(function() {
     }
   });
 
+  
+
   // $("#autocomplete").autocomplete({
   //   source:function(request, response) {
   //       $.getJSON("{{url_for('autocomplete')}}",{

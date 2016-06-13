@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layoutPlots.html" %}
 {% block content %}
   
 <div class="navbar-default sidebar" role="navigation">
@@ -57,6 +57,12 @@
                             <div id="pie_organism" class="col-xs-6" style="height:350px;"></div>
                             <div id="pie_sample"   class="col-xs-6 pull-right" style="height:350px;"></div>
                         </div>-->
+                        <div id="sequence"></div>
+                        <div id="chart">
+                          <div id="explanation" style="visibility: hidden;">
+                            <span id="percentage"></span>
+                          </div>
+                        </div>
                     </div>
                 </div>
 
@@ -130,58 +136,5 @@
             </div>
         </div>
     </div>
-<script src="/static/js/ext/jquery-2.1.4.min.js"></script>
-<script src="/static/js/ext/plotly.min.js"></script>
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script>
-
-var width = 400,
-    height = 200,
-    radius = Math.min(width, height) / 2;
-
-var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-var arc = d3.svg.arc()
-    .outerRadius(radius - 10)
-    .innerRadius(0);
-
-var labelArc = d3.svg.arc()
-    .outerRadius(radius - 40)
-    .innerRadius(radius - 40);
-
-var pie = d3.layout.pie()
-    .sort(null)
-    .value(function(d) { return d.count; });
-
-var svg = d3.select("#summary").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-d3.json("/tge/{{ summary.tge.accession }}/tge.json", function(error, data) {
-
-  var g = svg.selectAll(".arc")
-        .data(pie(data))
-        .enter().append("g")
-        .attr("class", "arc");
-
-  g.append("path")
-        .attr("d", arc)
-        .style("fill", function (d) {
-        return color(d.data.organism);
-    });
-
-  g.append("text")
-      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
-      .attr("dy", ".35em")
-      .style("font-size","10px")
-      .text(function(d) { return d.data.organism +" "+d.data.count; });
-});
-
-
-</script>
-
 
 {% endblock %}
