@@ -73,8 +73,10 @@ def organism():
   
   for tge in tges: 
     tgeList.append({'accession': tge.accession, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
-
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList)
+  
+  tgeClasses = list(set([elem['class'] for elem in tgeList]))
+  
+  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
 
 
 @results.route('/experiment')

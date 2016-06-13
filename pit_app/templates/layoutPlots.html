@@ -78,7 +78,7 @@
     <script src="/static/js/pit.js"></script>
 
 <script>
-
+/*
 var width = 350,
     height = 250,
     radius = Math.min(width, height) / 2, 
@@ -203,7 +203,18 @@ d3.json("/organism/{{ summary.organism }}/organism.json", function(error, data) 
         .text(function(d) { return d; });
 });
 
-
+$('#tgeType').click(function(event) {  //on click 
+  if (this.checked) { // check select status
+    $('.check_nested').each(function() { //loop through each checkbox
+      this.checked = true;  //select all checkboxes with class "checkbox1"               
+    });
+  }else{
+    $('.check_nested').each(function() { //loop through each checkbox
+      this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+    });         
+  }
+});
+*/
 </script>
   </body>
 </html>
