@@ -209,18 +209,18 @@ def expJSON(experiment):
       for tran in tranNum: 
         orgList = []
 
-        obs = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('orgCount')).\
+        obs = Observation.query.with_entities(Observation.organism, func.count(distinct(Observation.tge_id)).label('orgCount')).\
                 filter_by(sample_id=sample.id).\
                 group_by(Observation.organism).all()
 
         for ob in obs:
-          orgList.append({ "name": ob.organism, "size": ob.orgCount, "type":"organisms" })
+          orgList.append({ "name": "TGEs from Sample "+sample.name+" in "+ob.organism, "size": ob.orgCount, "type":"organisms" })
 
-        tranNumList.append({ "name": "Number of Transcripts in sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count",  "children":orgList }) 
+        tranNumList.append({ "name": "Transcripts from sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count",  "children":orgList }) 
 
-      pepNumList.append({ "name": "Identified peptides in sample "+sample.name, "size": num.pepSum, "type":"PeptCount",  "children":tranNumList }) 
+      pepNumList.append({ "name": "Identified peptides from sample "+sample.name, "size": num.pepSum, "type":"PeptCount",  "children":tranNumList }) 
 
-    sampleList.append({ "name": "TGEs in Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
+    sampleList.append({ "name": "TGEs from Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
 
   test = {
     "name": "tgeBreakdown",
