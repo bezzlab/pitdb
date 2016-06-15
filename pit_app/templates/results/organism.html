@@ -73,8 +73,8 @@
               {% for tge in tgeList %}
                 <tr>
                   <td>{{ tge.accession }}</td>
-                  <td>{{ tge.class }}</td>
-                  <td>{{ tge.uniprotID }}</td>
+                  <td>{{ tge.tgeClasses|join(', ') }}</td>
+                  <td>{{ tge.uniprotIDs|join(', ') }}</td>
                 </tr>
               {% endfor %}
             </tbody>

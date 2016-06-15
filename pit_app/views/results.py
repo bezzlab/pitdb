@@ -63,28 +63,32 @@ def organism():
   organism  = request.args['organism']
 
   obs       = Observation.query.filter_by(organism=organism)
-  tgeClass  = obs.distinct(Observation.tge_class).all()
+  # tgeClass  = obs.distinct(Observation.tge_class).all()
   tges      = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
   tgeNum    = separators(obs.distinct(Observation.tge_id).count())
   sampleNum = separators(obs.join(Sample).distinct(Sample.id).count())
   expNum    = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
-  uniprotID = obs.distinct(Observation.uniprot_id).all()
+  # uniprotID = obs.distinct(Observation.uniprot_id).all()
 
   trnNum    = separators(Transcript.query.join(Observation, Transcript.obs_id == Observation.id).\
                     filter(Observation.organism==organism).distinct().count())
+
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
                     filter_by(organism=organism).scalar())
 
   summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum};
   
   for tge in tges: 
-    #tgeClasses = Observation.query.filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
-    #uniprotIDs = Observation.query.filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
-    tgeList.append({'accession': tge.accession, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
+    tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
+    uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
+
+    # Flatten out the list of lists to lists (to use in the for loops)
+    tgeClasses = [item for sublist in tgeClasses for item in sublist]
+    uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
+
+    tgeList.append({'accession': tge.accession, 'tgeClasses': tgeClasses, 'uniprotIDs': uniprotIDs })
   
-  tgeClasses = list(set([elem['class'] for elem in tgeList]))
-  
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
+  return render_template('results/organism.html', summary = summary, tgeList= tgeList)
 
 
 @results.route('/experiment')

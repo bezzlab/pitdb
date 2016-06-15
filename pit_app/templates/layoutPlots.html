@@ -181,7 +181,7 @@ function mouseover(d) {
   updateBreadcrumbs(sequenceArray, percentageString);
 
   d3.select("#percentage")
-      .html('<h2>'+d.size+'</h2>\n <div class="wordwrap">'+d.name+'</div>');
+      .html('<h2>'+commaSeparateNumber(d.size)+'</h2>\n <div class="wordwrap">'+d.name+'</div>');
 
   d3.select("#explanation")
       .style("visibility", "");
@@ -481,6 +481,14 @@ $('#tges tbody').on('click', 'tr', function () {
 //         end: 276
 //     }
 // });
+
+function commaSeparateNumber(val){
+  while (/(\d+)(\d{3})/.test(val.toString())){
+    val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+  }
+  return val;
+}
+
 </script>
   </body>
 </html>

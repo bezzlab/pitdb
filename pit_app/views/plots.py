@@ -85,34 +85,43 @@ def tgeJSON(accession):
 def orgJSON(organism):
   orgList = []
 
+  # Find the TGE observations with the given organism
   obs   = Observation.query.with_entities(Observation.tge_class, func.count(Observation.tge_class).label('obsCount')).\
             filter_by(organism=organism).\
-            group_by(Observation.tge_class).\
-            order_by(Observation.tge_class).all()
+            group_by(Observation.tge_class).all()
 
+  # Loop through each available class
   for ob in obs: 
+    pepList = []
 
-    sampleList = []
-    samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
-                join(Observation, Observation.sample_id==Sample.id).\
-                filter_by(organism=organism, tge_class=ob.tge_class).\
-                group_by(Sample.name).all()
+    # Find the number of peptides for this TGE observation and category of organism
+    pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
+                  filter_by(organism=organism, tge_class = ob.tge_class).\
+                  group_by(Observation.tge_class).all() 
+    
+    for num in pepNum:
+      sampleList = []
 
-    for smpl in samples:
-      expList = []
+      samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
+                  join(Observation, Observation.sample_id==Sample.id).\
+                  filter_by(organism=organism, tge_class=ob.tge_class).\
+                  group_by(Sample.name).all()
 
-      exps = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title).label('expCount')).\
-                join(Sample, Experiment.id==Sample.exp_id ).\
-                filter_by(name = smpl.name).\
-                group_by(Experiment.title).all()
+      for smpl in samples:
+    #   expList = []
 
-      for exp in exps:
-        expList.append({ "name": exp.title, "size": exp.expCount, "type":"experiment" })
+    #   exps = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title).label('expCount')).\
+    #             join(Sample, Experiment.id==Sample.exp_id ).\
+    #             join(Observation, Observation.sample_id==Sample.id).\
+    #             filter(Observation.organism == organism, Observation.tge_class == ob.tge_class, Sample.name == smpl.name).\
+    #             group_by(Experiment.title).all()
 
-      sampleList.append({ "name": smpl.name, "size": smpl.smplCount, "children": expList, "type":"sample" })  
+    #   for exp in exps:
+    #     expList.append({ "name": exp.title, "size": exp.expCount, "type":"experiment" })
 
-
-    orgList.append({ "name": ob.tge_class, "size": ob.obsCount, "children": sampleList, "type":"TGE type" })
+        sampleList.append({ "name": "observations belong to sample " + smpl.name, "size": smpl.smplCount, "type":"sample" })  
+      pepList.append({ "name": 'Indentified peptides for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
+    orgList.append({ "name": 'observations with type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
   test = {
     "name": "tgeBreakdown",
