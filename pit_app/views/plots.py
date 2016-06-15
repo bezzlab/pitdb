@@ -11,56 +11,69 @@ plots = Blueprint('plots',  __name__)
 
 @plots.route('/tge/<accession>.json')
 def tgeJSON(accession):
-  tgeList = []
+  obsList = []
+
+  # Get the TGE id for this particular accession 
+  tge  = TGE.query.with_entities(TGE.id).filter_by(accession=accession).one()
   
-  tge  = TGE.query.filter_by(accession=accession).one()
+  # Get all the Observations for this accession ID
   obs  = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
-              join(TGE, TGE.id == Observation.tge_id).\
-              filter_by(accession=accession).\
+              filter_by(tge_id=tge.id).\
               group_by(Observation.organism)
 
+  # We are looping through the distinct organisms
   for ob in obs.all(): 
-    pepList =[]
+    pepNumList = []
 
-    peptides = Peptide.query.with_entities(Peptide.aa_seq, func.count(Peptide.aa_seq).label('pepCount')).\
-                  join(TgeToPeptide, Peptide.id == TgeToPeptide.peptide_id).\
-                  join(Observation,  Observation.id == TgeToPeptide.obs_id).\
-                  filter_by(organism=ob.organism, tge_id=tge.id).\
-                  group_by(Peptide.aa_seq).all()
 
-    for pep in peptides:
-      sampleList = []
+    pepNum = Observation.query.with_entities(func.sum(Observation.peptide_num).label('pepSum')).\
+                    filter_by(organism=ob.organism, tge_id=tge.id).all() 
+    
+    for num in pepNum:
+      pepList = []
 
-      samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
-                join(Observation, Observation.sample_id==Sample.id).\
-                join(TgeToPeptide, Observation.id == TgeToPeptide.obs_id).\
-                join(Peptide, Peptide.id == TgeToPeptide.peptide_id).\
-                filter_by(aa_seq = pep.aa_seq).\
-                group_by(Sample.name).all()
+      # Find the number of peptides for this TGE observation and category of organism
+      peptides = Peptide.query.with_entities(Peptide.aa_seq, func.count(Peptide.aa_seq).label('pepCount')).\
+                    join(TgeToPeptide, Peptide.id == TgeToPeptide.peptide_id).\
+                    join(Observation,  Observation.id == TgeToPeptide.obs_id).\
+                    filter_by(organism=ob.organism, tge_id=tge.id).\
+                    group_by(Peptide.aa_seq).distinct(Peptide.aa_seq).all() 
+      
+      for pep in peptides:
+        sampleList = []
 
-      for smpl in samples:
-        sampleList.append({ "name": smpl.name, "size": smpl.smplCount})
+        samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
+                    join(Observation, Observation.sample_id==Sample.id).\
+                    join(TgeToPeptide, Observation.id == TgeToPeptide.obs_id).\
+                    join(Peptide, Peptide.id == TgeToPeptide.peptide_id).\
+                    filter(Observation.organism == ob.organism, Observation.tge_id == tge.id, Peptide.aa_seq == pep.aa_seq).\
+                    group_by(Sample.name).all()
 
-      # expList = []
+        for smpl in samples:
+          # expList = []
 
-      # exps = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title).label('expCount')).\
-      #           join(Sample, Experiment.id==Sample.exp_id ).\
-      #           filter_by(name = smpl.name).\
-      #           group_by(Experiment.title).all()
+          # exps = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title).label('expCount')).\
+          #           join(Sample, Experiment.id == Sample.exp_id).\
+          #           join(Observation, Observation.sample_id==Sample.id).\
+          #           join(TgeToPeptide, Observation.id == TgeToPeptide.obs_id).\
+          #           join(Peptide, Peptide.id == TgeToPeptide.peptide_id).\
+          #           filter(Observation.organism == ob.organism, Observation.tge_id == tge.id, Peptide.aa_seq == pep.aa_seq, Sample.name == smpl.name).\
+          #           group_by(Experiment.title).all()
 
-      #for exp in exps:
+          # for exp in exps:
+          #   expList.append({ "name": "Expertiments "+exp.title, "size": exp.expCount, "type":"experiments"})
 
-      pepList.append({ "name": pep.aa_seq, "size": pep.pepCount, "children": sampleList}) 
+          sampleList.append({ "name": "Samples "+smpl.name, "size": smpl.smplCount, "type":"samples" })
 
-       # expList.append({ "name": exp.title, "size": exp.expCount})
+        pepList.append({ "name": 'Peptides "'+pep.aa_seq+"'", "size": pep.pepCount, "type":"peptides", "children": sampleList }) 
 
-      #  
+      pepNumList.append({ "name": "Identified peptides in "+ob.organism, "size": num.pepSum, "type":"PeptCount", "children": pepList }) 
 
-    tgeList.append({ "name": ob.organism, "size": ob.obsCount, "children": pepList})
+    obsList.append({ "name": ob.organism, "size": ob.obsCount, "type":"organisms", "children": pepNumList })
 
   test = {
     "name": "tgeBreakdown",
-    "children": tgeList
+    "children": obsList
   }
 
   data = json.dumps(test)
@@ -94,22 +107,12 @@ def orgJSON(organism):
                 group_by(Experiment.title).all()
 
       for exp in exps:
-        pepList =[]
+        expList.append({ "name": exp.title, "size": exp.expCount, "type":"experiment" })
 
-        peptides = TgeToPeptide.query.with_entities(TgeToPeptide.peptide_id, func.count(TgeToPeptide.peptide_id).label('pepCount')).\
-                      join(Observation, Observation.id == TgeToPeptide.obs_id).\
-                      filter_by(organism=organism, tge_class=ob.tge_class).\
-                      group_by(TgeToPeptide.peptide_id).all()
-
-        for pep in peptides:
-          pepList.append({ "name": pep.peptide_id, "size": pep.pepCount}) 
-
-        expList.append({ "name": exp.title, "size": exp.expCount, "children": pepList })
-
-      sampleList.append({ "name": smpl.name, "size": smpl.smplCount, "children": expList })  
+      sampleList.append({ "name": smpl.name, "size": smpl.smplCount, "children": expList, "type":"sample" })  
 
 
-    orgList.append({ "name": ob.tge_class, "size": ob.obsCount, "children": sampleList})
+    orgList.append({ "name": ob.tge_class, "size": ob.obsCount, "children": sampleList, "type":"TGE type" })
 
   test = {
     "name": "tgeBreakdown",
@@ -121,18 +124,51 @@ def orgJSON(organism):
   return data
 
 
+@plots.route('/aminoseq/<amino_seq>.json')
+def aminoseqJSON(amino_seq):
+  obsList = []
+  # Get the list of TGEs for the given amino acid sequence (partial or exact match)
+  tges = TGE.query.with_entities(TGE.id).filter(TGE.amino_seq.like("%"+amino_seq+"%")).all()
+
+  obs  = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
+              filter(Observation.tge_id.in_(tges)).\
+              group_by(Observation.organism)
+
+  for ob in obs: 
+    print ob.organism
+    obsList.append({ "name": ob.organism, "size": ob.obsCount })
+
+  test = {
+    "name": "tgeBreakdown",
+    "children": obsList
+  }
+
+  data = json.dumps(test)
+
+  return data
+
+
+
 @plots.route('/experiment/<experiment>.json')
 def expJSON(experiment):
-  sampleList = []
+  tgeList = []
 
-  samples   = Sample.query.filter_by(exp_id=experiment).all()
+  samples = Sample.query.filter_by(exp_id=experiment).all()
 
-  for sample in samples:
-    tgePerSample = Observation.query.filter(Observation.sample_id==sample.id).\
-                                distinct(Observation.tge_id).count()
-    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum':tgePerSample })
+  tges  = Observation.query.with_entities(Observation.sample_id, func.count(Observation.sample_id).label('tgeCount')).\
+              join(Sample, Observation.sample_id == Sample.id ).\
+              filter(Sample.exp_id == experiment).\
+              group_by(Observation.sample_id)
 
-  data = json.dumps(sampleList)
+  for tge in tges:
+    tgeList.append({ "name": tge.sample_id, "size": tge.tgeCount })
+
+  test = {
+    "name": "tgeBreakdown",
+    "children": tgeList
+  }
+
+  data = json.dumps(test)
 
   return data
 

@@ -73,13 +73,13 @@
 <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
 
 <script type="text/javascript" src="/static/js/genoverse.combined.js"></script>
-<script type="text/javascript" src="/static/js/genomes/grch38.js"></script>
+<script type="text/javascript" src="/static/js/genomes/grch38.js"></script><!-- 
 <script type="text/javascript" src="/static/js/Track/Model/Transcript/GFF3.js"></script>
 <script type="text/javascript" src="/static/js/plugins/fileDrop.js"></script>
 <script type="text/javascript" src="/static/js/Track/View/Transcript.js"></script>
 <script type="text/javascript" src="/static/js/Track/View/Gene/Ensembl.js"></script>
 <script type="text/javascript" src="/static/js/Track/View/Transcript/Ensembl.js"></script>
-<script type="text/javascript" src="/static/js/Track/View.js"></script>
+<script type="text/javascript" src="/static/js/Track/View.js"></script> -->
 
 <script>
   var chrParam = getParam("seqid");
@@ -125,91 +125,91 @@
           view   : Genoverse.Track.View.Transcript.Ensembl
         }
       }),
-      Genoverse.Track.extend({
-        name   : 'Transcript',
-        height : 300,
-        url    : '/data/test',
-        model  : Genoverse.Track.Model.extend({
-          dataType : 'text',
-          typeMap : {
-            exon  : 'exon',
-            cds   : 'cds'
-          },
-          parseData: function (text) {
+      // Genoverse.Track.extend({
+      //   name   : 'Transcript',
+      //   height : 300,
+      //   url    : '/data/test',
+      //   model  : Genoverse.Track.Model.extend({
+      //     dataType : 'text',
+      //     typeMap : {
+      //       exon  : 'exon',
+      //       cds   : 'cds'
+      //     },
+      //     parseData: function (text) {
 
-            var lines = text.split('\n');
+      //       var lines = text.split('\n');
 
-            for (var i = 0; i < lines.length; i++) {
-              if (!lines[i].length || lines[i].indexOf('#') === 0) {
-                continue;
-              }
+      //       for (var i = 0; i < lines.length; i++) {
+      //         if (!lines[i].length || lines[i].indexOf('#') === 0) {
+      //           continue;
+      //         }
 
-              var fields = lines[i].replace(/\s{2,}/g, '\t').split('\t');
+      //         var fields = lines[i].replace(/\s{2,}/g, '\t').split('\t');
               
-              if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
+      //         if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
                 
-                var feature = {};
+      //           var feature = {};
 
-                feature.id     = fields.slice(0, 5).join('|');
-                feature.start  = parseInt(fields[3], 10);
-                feature.end    = parseInt(fields[4], 10);
-                feature.source = fields[1];
-                feature.type   = fields[2];
-                feature.score  = fields[5];
-                feature.strand = fields[6] + '1';
+      //           feature.id     = fields.slice(0, 5).join('|');
+      //           feature.start  = parseInt(fields[3], 10);
+      //           feature.end    = parseInt(fields[4], 10);
+      //           feature.source = fields[1];
+      //           feature.type   = fields[2];
+      //           feature.score  = fields[5];
+      //           feature.strand = fields[6] + '1';
 
-                if (fields[8]) {
-                  var frame = fields[8].split(';');
+      //           if (fields[8]) {
+      //             var frame = fields[8].split(';');
 
-                  for (var j = 0; j < frame.length; j++) {
-                    var keyValue = frame[j].split('=');
+      //             for (var j = 0; j < frame.length; j++) {
+      //               var keyValue = frame[j].split('=');
 
-                    if (keyValue.length === 2) {
-                      feature[keyValue[0].toLowerCase()] = keyValue[1];
-                    }
-                  }
-                }
+      //               if (keyValue.length === 2) {
+      //                 feature[keyValue[0].toLowerCase()] = keyValue[1];
+      //               }
+      //             }
+      //           }
 
-                // sub-feature came earlier than parent feature
-                if (feature.parent && feature.type == "mRNA") {
-                  this.insertFeature(feature);
+      //           // sub-feature came earlier than parent feature
+      //           if (feature.parent && feature.type == "mRNA") {
+      //             this.insertFeature(feature);
 
-                  this.featuresById[feature.id] = {
-                    exons : [],
-                    cds   : []
-                  };
-                }
+      //             this.featuresById[feature.id] = {
+      //               exons : [],
+      //               cds   : []
+      //             };
+      //           }
 
 
-                // If happiness
-                if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
-                  if (!$.grep(this.featuresById[feature.parent].exons, function (exon) { return exon.id === feature.id; }).length) {
-                    this.featuresById[feature.parent].exons.push(feature);
-                  }
-                  //this.insertFeature(feature);
-                } else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
-                  if (!$.grep(this.featuresById[feature.parent].cds, function (exon) { return exon.id === feature.id; }).length) {
-                    this.featuresById[feature.parent].cds.push(feature);
-                  }
-                  //this.insertFeature(feature);
-                } else if (!feature.parent) {
-                  feature.label = feature.name || feature.id || '';
-                  $.extend(feature, { label: feature.name || feature.id || '', exons: [], cds: [] }, this.featuresById[feature.id] || {});
+      //           // If happiness
+      //           if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
+      //             if (!$.grep(this.featuresById[feature.parent].exons, function (exon) { return exon.id === feature.id; }).length) {
+      //               this.featuresById[feature.parent].exons.push(feature);
+      //             }
+      //             //this.insertFeature(feature);
+      //           } else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
+      //             if (!$.grep(this.featuresById[feature.parent].cds, function (exon) { return exon.id === feature.id; }).length) {
+      //               this.featuresById[feature.parent].cds.push(feature);
+      //             }
+      //             //this.insertFeature(feature);
+      //           } else if (!feature.parent) {
+      //             feature.label = feature.name || feature.id || '';
+      //             $.extend(feature, { label: feature.name || feature.id || '', exons: [], cds: [] }, this.featuresById[feature.id] || {});
 
-                  delete this.featuresById[feature.id];
+      //             delete this.featuresById[feature.id];
 
-                  this.insertFeature(feature);
-                } // end of if
-              }
-            }
-            // alert(feature.parent);
-            // alert(this.featuresById[feature.parent].exons.length);
-            // alert(this.featuresById[feature.parent].cds.length);
-            // return;
-          }
-        }),
-        view   : Genoverse.Track.View.Transcript,
-      }), 
+      //             this.insertFeature(feature);
+      //           } // end of if
+      //         }
+      //       }
+      //       // alert(feature.parent);
+      //       // alert(this.featuresById[feature.parent].exons.length);
+      //       // alert(this.featuresById[feature.parent].cds.length);
+      //       // return;
+      //     }
+      //   }),
+      //   view   : Genoverse.Track.View.Transcript,
+      // }), 
       // Genoverse.Track.extend({
       //   name      : 'GFF3',
       //   height    : 200,
@@ -307,6 +307,129 @@
       //     }
       //   }),
       // })
+      Genoverse.Track.extend({
+        name   : 'GFF3',
+        height : 200,
+        //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+        url : '/data/test',
+        //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+        view   : Genoverse.Track.View.Transcript.extend({
+                setFeatureColor : function () {}
+        }),    
+        model : Genoverse.Track.Model.Transcript.extend(
+        {
+        dataType : 'text',
+            typeMap : {
+                exon  : 'exon',
+                cds   : 'cds',
+                mrna  : 'mrna',
+                gene  : 'gene'
+            },
+        parseData: function (text) {
+      //alert(text)
+      //alert("1. parent:"+feature.parent)
+      //alert("1. type:"+feature.type)
+      var lines = text.split('\n');
+                var gene;
+          for (var i = 0; i < lines.length; i++) {
+                    if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                        continue;
+                    }
+                    //alert(lines[i])
+                    var fields = lines[i].split('\t');
+            
+                    if (fields.length < 5) {
+                        continue;
+                    }
+            
+                    if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
+                    {
+                        var feature = {};
+    
+                        feature.id     = fields.slice(0, 5).join('|');
+                        feature.start  = parseInt(fields[3], 10);
+                        feature.end    = parseInt(fields[4], 10);
+                        feature.source = fields[1];
+                        feature.type   = fields[2];
+                        feature.score  = fields[5];
+                        feature.strand = fields[6] + '1';
+    
+                        if (fields[8]) {
+                            var frame = fields[8].split(';');
+                            
+                            for (var j = 0; j < frame.length; j++) {
+                                var keyValue = frame[j].split('=');
+                                
+                                if (keyValue.length === 2) {
+                                    feature[keyValue[0].toLowerCase()] = keyValue[1];
+                                }
+                            }
+                        }
+                        //alert("0. parent:"+feature.parent)
+                        //alert("0. type:"+feature.type)
+                        //alert(gene)
+                        //alert("type:"+feature.type.toLowerCase())
+                        //alert("type:"+this.typeMap.mrna.toLowerCase())
+                        // sub-feature came earlier than parent feature
+                        //if (feature.parent && feature.type.toLowerCase() === this.typeMap.mrna.toLowerCase() && !this.featuresById[feature.id]) {
+                        if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase())
+                        {
+                            //alert("gene");
+                            if(typeof gene !== "undefined" && gene)
+                            {
+                                //alert("gene features entering");
+                                for(var g=0; g<gene.mrna.length; g++)
+                                {
+                                    this.insertFeature(gene.mrna[g]);
+                                }
+                            }
+                            feature.mrna=[];
+                            gene=feature;
+                            //alert("gene id:"+gene.id);
+                            //alert("gene mRNA:"+gene.mrna.length);
+                        }
+                        else if(feature.type.toLowerCase() === this.typeMap.mrna.toLowerCase())
+                        {
+                            //alert('mRNA');
+                            feature.exons=[];
+                            feature.cds=[];
+                            if(gene!==undefined)
+                            {
+                                gene.mrna.push(feature);
+                                //alert("gene not undefined:"+gene.mrna.length);
+                            }
+                            //alert('mRNA2');
+                        }
+                        else if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
+                            //alert("exon");
+                            var idx = gene.mrna.length - 1;
+                            
+                            //alert("idx="+idx)
+                            gene.mrna[idx].exons.push(feature); //assuming last mRNA is the parent of this exon
+                            //alert("exon pushed");
+                        }
+                        else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
+                            //alert("cds");
+                            var idx=gene.mrna.length-1;
+                            feature.color = '#B0171F';
+                            gene.mrna[idx].cds.push(feature); //assuming last mRNA is the parent of this cds
+                            //alert("cds pushed");
+                        }
+                        
+                    } //end of if
+          }//end of forloop
+                if(typeof gene !== "undefined" && gene)
+                {
+                    //alert("gene features entering");
+                    for(var g=0; g<gene.mrna.length; g++)
+                    {
+                        this.insertFeature(gene.mrna[g]);
+                    }
+                }
+                //alert()
+            } //end of function
+      })
+        })//,
     ]
   };
   

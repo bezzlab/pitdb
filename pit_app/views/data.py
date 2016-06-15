@@ -18,7 +18,7 @@ def download_data(filename):
 	#subset.to_csv('/Users/elena/Desktop/PITDB/pitProject/pitdb/flaskapp/app/pit_app/static/data/test.gff3', sep='\t', index = False)
 
 	#return data 
-	return send_file('static/data/'+'flare.json') 
+	return send_file('static/data/'+'test.gff3') 
 
 @data.route('/download', methods=['POST'])
 def download():

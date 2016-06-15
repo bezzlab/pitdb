@@ -36,9 +36,9 @@ $(function() {
     var regex = new RegExp(str, "gi");
 
     return this.each(function() {
-        this.innerHTML = this.innerHTML.replace(regex, function(matched) {
-            return '<span class="red">' + matched + '</span>';
-        });
+      this.innerHTML = this.innerHTML.replace(regex, function(matched) {
+        return '<span class="red">' + matched + '</span>';
+      });
     });
   };
 
@@ -46,20 +46,22 @@ $(function() {
     $('#searchFilter').html("Enter "+$(this).val()+":");
   });
 
-  // Create DataTables 
+  // Create all DataTables 
 
-  var oTable = $('.dataTable').dataTable({
+  var tgeTable = $('.tgeTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
   });
 
-  $('.tgeTable tbody tr').click( function () {
-    var aData = oTable.fnGetData(this);
-    window.open("/tge?accession="+aData[0]);
+  var proteinRes = $('#proteinRes').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
   });
 
-  // Select by default the first row (index 0)
-  $('.dataTable tbody tr:eq(0)').addClass('selected');
+  var smplTable = $('#smplTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+  }); 
 
   var resTrs = $('#resTrs').dataTable({
     "bAutoWidth": false,
@@ -71,6 +73,15 @@ $(function() {
       
     ],
   });
+
+  $('.tgeTable tbody tr').click( function () {
+    var aData = tgeTable.fnGetData(this);
+    window.open("/tge?accession="+aData[0], '_blank');
+  });
+
+
+  // Select by default the first row (index 0)
+  // $('.dataTable tbody tr:eq(0)').addClass('selected');
 
   $(".wordwrap").html(function(_, html){
     var val  = $('#searchData').val();
@@ -122,9 +133,7 @@ $(function() {
     $('#tgeSummary tbody tr:eq('+indx+')').addClass('selected');
   });
 
-  $('#tges tbody').on('click', 'tr', function () {
-    
-  });
+  
 
   // $('#submitSearch').click(function() {
   //   $('#search-output').toggle();
@@ -161,8 +170,6 @@ $(function() {
       });
     }
   });
-
-  
 
   // $("#autocomplete").autocomplete({
   //   source:function(request, response) {

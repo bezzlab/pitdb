@@ -79,6 +79,22 @@
     <script src="//d3js.org/d3.v3.min.js"></script>
     
 <script>
+
+// Get and trim the url of the page to determine the category (organism, tge, aminoacid etc.)
+var url = $(location).attr('href');
+
+function get_path(url) {
+    // following regex extracts the path from URL
+  url = url.replace(/^https?:\/\/[^\/]+\//i, "").replace(/\/$/, "");
+  url = url.replace(/\+/g, " ");
+  arr = url.split(/\?|\=|\&/) 
+
+  return arr
+}
+
+path = get_path(url)
+
+// Set the dimensions of the sunburst graph
 var width = 500;
 var height = 400;
 var radius = Math.min(width, height) / 2;
@@ -111,20 +127,6 @@ var arc = d3.svg.arc()
 // Ordinal scales https://github.com/d3/d3/wiki/Ordinal-Scales#category20 
 var colors = d3.scale.category20c();
 
-var url = $(location).attr('href');
-
-function get_path(url) {
-    // following regex extracts the path from URL
-  url = url.replace(/^https?:\/\/[^\/]+\//i, "").replace(/\/$/, "");
-  url = url.replace(/\+/g, " ");
-  arr = url.split(/\?|\=/) 
-
-  return arr
-}
-
-path = get_path(url)
-
-// d3.json("/organism/{{ summary.organism }}/organism.json", function(error, data) {
 d3.json("/"+path[0]+"/"+path[2]+".json", function(error, data) {
   createVisualization(data);
 });
@@ -147,7 +149,7 @@ function createVisualization(json) {
   var nodes = partition.nodes(json)
       .filter(function(d) {
       return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
-      });
+  });
 
   var path = vis.data([json]).selectAll("path")
       .data(nodes)
@@ -164,12 +166,12 @@ function createVisualization(json) {
 
   // Get total size of the tree = value of root node from partition.
   totalSize = path.node().__data__.value;
- };
+};
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
 
-  var percentage = (100 * d.size / totalSize).toPrecision(3);
+  var percentage = (100 * d.value / totalSize).toPrecision(3);
   var percentageString = percentage + "%";
   if (percentage < 0.1) {
     percentageString = "< 0.1%";
@@ -179,21 +181,25 @@ function mouseover(d) {
   updateBreadcrumbs(sequenceArray, percentageString);
 
   d3.select("#percentage")
-      .text(d.size+'\n'+d.name);
+      .html('<h2>'+d.size+'</h2>\n <div class="wordwrap">'+d.name+'</div>');
 
   d3.select("#explanation")
       .style("visibility", "");
 
   // Fade all the segments.
   d3.selectAll("path")
-      .style("opacity", 0.3);
+    .style("opacity", 0.2)
+    .style("stroke-width", 1)
+    .style("stroke", "white");
 
   // Then highlight only those that are an ancestor of the current segment.
   vis.selectAll("path")
-      .filter(function(node) {
-                return (sequenceArray.indexOf(node) >= 0);
-              })
-      .style("opacity", 1);
+    .filter(function(node) {
+      return (sequenceArray.indexOf(node) >= 0);
+    })
+    .style("opacity", 1)
+    .style("stroke-width", 1.5)
+    .style("stroke", "black");
 }
 
 // Restore everything to full opacity when moving off the visualization.
@@ -201,22 +207,24 @@ function mouseleave(d) {
 
   // Hide the breadcrumb trail
   d3.select("#trail")
-      .style("visibility", "hidden");
+    .style("visibility", "hidden");
 
   // Deactivate all segments during transition.
   d3.selectAll("path").on("mouseover", null);
 
   // Transition each segment to full opacity and then reactivate it.
   d3.selectAll("path")
-      .transition()
-      .duration(1000)
-      .style("opacity", 1)
-      .each("end", function() {
-              d3.select(this).on("mouseover", mouseover);
-            });
+    .transition()
+    .duration(1000)
+    .style("opacity", 1)
+    .style("stroke-width", 1)
+    .style("stroke", "white")
+    .each("end", function() {
+      d3.select(this).on("mouseover", mouseover);
+    });
 
   d3.select("#explanation")
-      .style("visibility", "hidden");
+    .style("visibility", "hidden");
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
@@ -277,7 +285,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
-      .text(function(d) { return d.name; });
+      .text(function(d) { return d.type; });
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
@@ -309,29 +317,29 @@ function drawLegend() {
   };
 
   var legend = d3.select("#legend").append("svg:svg")
-      .attr("width", li.w)
-      .attr("height", d3.keys(colors).length * (li.h + li.s));
+    .attr("width", li.w)
+    .attr("height", d3.keys(colors).length * (li.h + li.s));
 
   var g = legend.selectAll("g")
-      .data(d3.entries(colors))
-      .enter().append("svg:g")
-      .attr("transform", function(d, i) {
-              return "translate(0," + i * (li.h + li.s) + ")";
-           });
+    .data(d3.entries(colors))
+    .enter().append("svg:g")
+    .attr("transform", function(d, i) {
+            return "translate(0," + i * (li.h + li.s) + ")";
+         });
 
   g.append("svg:rect")
-      .attr("rx", li.r)
-      .attr("ry", li.r)
-      .attr("width", li.w)
-      .attr("height", li.h)
-      .style("fill", function(d) { return d.value; });
+    .attr("rx", li.r)
+    .attr("ry", li.r)
+    .attr("width", li.w)
+    .attr("height", li.h)
+    .style("fill", function(d) { return d.value; });
 
   g.append("svg:text")
-      .attr("x", li.w / 2)
-      .attr("y", li.h / 2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
-      .text(function(d) { return d.key; });
+    .attr("x", li.w / 2)
+    .attr("y", li.h / 2)
+    .attr("dy", "0.35em")
+    .attr("text-anchor", "middle")
+    .text(function(d) { return d.key; });
 }
 
 function toggleLegend() {
@@ -343,50 +351,136 @@ function toggleLegend() {
   }
 }
 
-// Take a 2-column CSV and transform it into a hierarchical structure suitable
-// for a partition layout. The first column is a sequence of step names, from
-// root to leaf, separated by hyphens. The second column is a count of how 
-// often that sequence occurred.
-function buildHierarchy(csv) {
-  var root = {"name": "root", "children": []};
-  for (var i = 0; i < csv.length; i++) {
-    var sequence = csv[i][0];
-    var size = +csv[i][1];
-    if (isNaN(size)) { // e.g. if this is a header row
-      continue;
-    }
-    var parts = sequence.split("-");
-    var currentNode = root;
-    for (var j = 0; j < parts.length; j++) {
-      var children = currentNode["children"];
-      var nodeName = parts[j];
-      var childNode;
-      if (j + 1 < parts.length) {
-   // Not yet at the end of the sequence; move down the tree.
-  var foundChild = false;
-  for (var k = 0; k < children.length; k++) {
-    if (children[k]["name"] == nodeName) {
-      childNode = children[k];
-      foundChild = true;
-      break;
-    }
-  }
-  // If we don't already have a child node for this branch, create it.
-  if (!foundChild) {
-    childNode = {"name": nodeName, "children": []};
-    children.push(childNode);
-  }
-  currentNode = childNode;
-      } else {
-  // Reached the end of the sequence; create a leaf node.
-  childNode = {"name": nodeName, "size": size};
-  children.push(childNode);
-      }
-    }
-  }
-  return root;
-};
 
+String.prototype.setEvidence = function(option) {
+  var _parent = option.parent; //Mandatory
+  var _ele = option.element || undefined; //optional
+  var _pos = option.position || undefined; //optional
+
+  if (typeof this === 'object') {
+    _searchKey = this;
+    pos = {}
+
+    if (typeof _pos == 'undefined') {
+      _pos = {};
+      _pos.begin = $("." + _parent).html().indexOf(_searchKey);
+    }
+
+    var _content_string = $("." + _parent).html();
+
+    _content_string = _content_string.substring(0, _pos.begin) + '<span class="_tmp_' + _ele.name + ' _tmp_span"></span>' + _content_string.substring(_pos.begin);
+
+    $("." + _parent).html(_content_string);
+
+    pos = $('._tmp_' + _ele.name).offset();
+    // console.log(pos);
+    
+    $("." + _parent).html(function(index, html) {
+        return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
+    });
+
+    $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
+
+    $('#' + _ele.id).offset({
+        top: pos.top,
+        left: 0
+    });
+
+    $('#' + _ele.id + ' span').css('marginLeft', pos.left + 'px');
+
+  }
+}
+
+var original = $('.test').html()
+
+var tgeTable = $('#tges').DataTable({
+  "order": [[ 0, "desc" ]],
+  "columnDefs": [{
+      "targets": [ 0 ],
+      "visible": false,
+      "searchable": false
+  }]
+});
+
+$('.dataTable tbody tr:eq(0)').addClass('selected');
+
+if (path[0] == "tge") {
+  setTimeout(function() {
+    var indx  = tgeTable.row(this).index()
+    var aData = tgeTable.cell(indx, 6).data()
+    var aData = aData.replace(/<br>|<br>$/g,"").replace(/<strong>([^]*)<\/strong>/, "")
+    var arr   = aData.split(',');
+
+    jQuery.each( arr, function( i, val ) {
+      var searchKey = arr[i];
+
+      searchKey.setEvidence({
+        parent : 'test',
+        element : {
+          name: 'container'+i,
+          id : 'trialId'+i,
+          class : '',
+        }
+      });
+    });
+  }, 2);
+} 
+
+
+$('#tges tbody').on('click', 'tr', function () {
+  if ( $(this).hasClass('selected') ) {
+    $(this).removeClass('selected');
+  }
+  else {
+    $('.test').html(original);
+    tgeTable.$('tr.selected').removeClass('selected');
+    $(this).addClass('selected');
+
+    var indx = tgeTable.row(this).index()
+    var aData = tgeTable.cell(indx, 6).data()
+    var aData = aData.replace(/<br>|<br>$/g,"").replace(/<strong>([^]*)<\/strong>/, "")
+    var arr   = aData.split(',');
+
+    jQuery.each(arr, function( i, val ) {
+      var searchKey = arr[i];
+
+      searchKey.setEvidence({
+        parent : 'test',
+        element : {
+          name: 'container'+i,
+          id : 'trialId'+i,
+          class : '',
+        }
+      });
+    });
+  }
+});
+
+// searchKey3.setEvidence({
+//     parent: 'wordwrap',
+//     element: {
+//         name: 'container2',
+//         id: 'trialId3',
+//         class: '',
+//     },
+//     position: {
+//         begin: 230,
+//         end: 258
+//     }
+// });
+
+// searchKey4.setEvidence({
+//     parent: 'wordwrap',
+//     element: {
+//         name: 'container1',
+//         id: 'trialId4',
+//         class: '',
+//     },
+//     position: {
+//         begin: 249,
+//         end: 276
+//     }
+// });
 </script>
   </body>
 </html>

@@ -3,6 +3,7 @@ import locale
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.sql import func, distinct
+from sqlalchemy import desc
 from pit_app.models import *
 from pit_app import db
 
@@ -11,43 +12,48 @@ results = Blueprint('results',  __name__)
 
 @results.route('/tge')
 def tge():
+  # Get the argument - accession
   accession = request.args['accession']
 
+  # Find the TGE for the given accession number
   tge        = TGE.query.filter_by(accession=accession).one()
-  tgeObs     = Observation.query.filter_by(tge_id=tge.id)
+  tgeObs     = Observation.query.filter_by(tge_id=tge.id).order_by(desc(Observation.peptide_num))
   obsCount   = tgeObs.count()
-  #organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism)
-  tgeClass   = tgeObs.distinct(Observation.tge_class).all()
+  organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
+  tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
+  uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
   avgPeptNum = Observation.query.with_entities(func.avg(Observation.peptide_num).label('average')).one()
 
+  # Flatten out the list of lists to lists (to use in the for loops)
+  organisms  = [item for sublist in organisms for item in sublist]
+  tgeClasses = [item for sublist in tgeClasses for item in sublist]
+  uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
+
+  summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : organisms, 'avgPeptNum' : avgPeptNum, 
+                  'tgeClasses' : tgeClasses, 'obsCount' : obsCount, 'uniprotIDs': uniprotIDs };
+
   results  = []
-  organism = set()
 
-  for obs in tgeObs: 
-  	sample = Sample.query.filter_by(id=obs.sample_id).first()
-  	exp    = Experiment.query.filter_by(id=sample.exp_id).first()
-  	#transc = Transcript.query.filter_by(obs_id=obs.id).first()
-  	tgePep = TgeToPeptide.query.filter_by(obs_id=obs.id).all()
+  for obs in tgeObs:
 
-  	tgeType    = re.search("(?<=type:).*?(?=\s)", obs.long_description).group(0)
-  	tgeLength  = re.search("(?<=len:).*?(?=\s)",  obs.long_description).group(0)
-  	tgeStrand  = re.search("(?<=\().*?(?=\))",    obs.long_description).group(0)
+    sample = Sample.query.filter_by(id=obs.sample_id).first()
+    exp    = Experiment.query.filter_by(id=sample.exp_id).first()
+    #transc = Transcript.query.filter_by(obs_id=obs.id).first()
+    tgePep = TgeToPeptide.query.filter_by(obs_id=obs.id).all()
+    tgeType    = re.search("(?<=type:).*?(?=\s)", obs.long_description).group(0)
+    tgeLength  = re.search("(?<=len:).*?(?=\s)",  obs.long_description).group(0)
+    tgeStrand  = re.search("(?<=\().*?(?=\))",    obs.long_description).group(0)
+    peptides = set()
 
-  	peptides = set()
-  	organism.add(obs.organism)
-  	
-  	for peptide in tgePep: 
-  		pept = Peptide.query.filter_by(id=peptide.peptide_id).first()
-  		peptides.add(pept.aa_seq)
+    for peptide in tgePep: 
+      pept = Peptide.query.filter_by(id=peptide.peptide_id).first()
+      peptides.add(pept.aa_seq)
 
-  	results.append({'id': obs.id, 'observation': obs.name, 'sample': sample.name, 'experiment': exp.title, 
+    results.append({'id': obs.id, 'observation': obs.name, 'sample': sample.name, 'experiment': exp.title, 
       'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
   		'peptide_num': obs.peptide_num, 'peptides': list(peptides)})
 
-
-  summary = { 'tge' : tge, 'tgeObs' : obs, 'organisms' : list(organism), 'avgPeptNum' : avgPeptNum, 'tgeClass' : list(tgeClass), 'obsCount' : obsCount};
-
-  return render_template('results/tge.html', summary = summary, results=results, jsonDump = {'homoSapiens' : 3, 'monkey':5 })
+  return render_template('results/tge.html', summary = summary, results=results)
 
 
 @results.route('/organism')
@@ -57,8 +63,8 @@ def organism():
   organism  = request.args['organism']
 
   obs       = Observation.query.filter_by(organism=organism)
-  tgeClass  = obs.distinct(Observation.tge_class).first()
-  tges      = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id)
+  tgeClass  = obs.distinct(Observation.tge_class).all()
+  tges      = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
   tgeNum    = separators(obs.distinct(Observation.tge_id).count())
   sampleNum = separators(obs.join(Sample).distinct(Sample.id).count())
   expNum    = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
@@ -72,6 +78,8 @@ def organism():
   summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum};
   
   for tge in tges: 
+    #tgeClasses = Observation.query.filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
+    #uniprotIDs = Observation.query.filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
     tgeList.append({'accession': tge.accession, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
   
   tgeClasses = list(set([elem['class'] for elem in tgeList]))
@@ -142,6 +150,7 @@ def protein():
 def aminoseq():  
   tgeList = []
   
+  # Get the two arguments searchData and searchType (exact or partial)
   searchData = request.args['searchData']
   searchType = request.args['searchType']
 
@@ -154,23 +163,24 @@ def aminoseq():
     tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all()
 
     for tge in tges: 
-      obs = Observation.query.join(TGE, TGE.id == Observation.tge_id).\
-                              filter_by(id=tge.id)
-
-      obsNum     = obs.count()
-      organisms  = obs.distinct(Observation.organism)
-      uniprotIDs = obs.distinct(Observation.uniprot_id)
-      tgeClass   = obs.distinct(Observation.tge_class).all()
+      # For each TGE get the obs num, organisms, uniprotID and tgeClass
+      obsNum     = Observation.query.filter_by(tge_id=tge.id).count()
+      organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
+      tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
+      uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
       
-      expNum = Sample.query.with_entities(Sample.exp_id).\
+      # Flatten out the list of lists to lists (to use in the for loops)
+      organisms  = [item for sublist in organisms for item in sublist]
+      tgeClasses = [item for sublist in tgeClasses for item in sublist]
+      uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
+      
+      sampleNum = Sample.query.with_entities(Sample.name).\
                       join(Observation, Observation.sample_id == Sample.id).\
-                      join(TGE, TGE.id == Observation.tge_id).\
-                      filter_by(id=tge.id).\
-                      distinct(Sample.exp_id).count()
+                      filter_by(tge_id=tge.id).\
+                      distinct(Sample.name).count()
 
-      tgeList.append({'accession': tge.accession, 'length': len(tge.amino_seq), 
-        'obsNum': obsNum, 'organisms': organisms, 'class': tgeClass,  'uniprotIDs': uniprotIDs, 
-        'expNum': expNum, 'class': tge.tge_class, 'uniprotID': tge.uniprot_id})
+      tgeList.append({ 'accession': tge.accession, 'length': len(tge.amino_seq), 'obsNum': obsNum, 
+        'organisms': organisms, 'tgeClasses': tgeClasses,  'uniprotIDs': uniprotIDs, 'sampleNum': sampleNum })
 
   return render_template('search/results.html', tgeList = tgeList)
 

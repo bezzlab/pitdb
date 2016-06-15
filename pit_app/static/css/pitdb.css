@@ -50,7 +50,7 @@
   border-bottom-left-radius: 4px;
 }
 
-#resTrs tr, #tgeSummary tr, #tgeSearch tr {
+#resTrs tr, #tgeSummary tr, #tgeSearch tr, #tges tr {
   cursor: pointer;
 }
 
@@ -219,6 +219,7 @@ rect.disabled {
 }
 
 #sequence {
+  margin-top: 20px;
   width: 600px;
   height: 70px;
 }
@@ -242,18 +243,69 @@ rect.disabled {
 
 #explanation {
   position: absolute;
-  top: 150px;
-  left: 185px;
+  top: 140px;
+  left: 180px;
   width: 140px;
   text-align: center;
   color: #666;
   z-index: 1000;
 }
 
-#percentage {
+#percentage h2 {
   font-size: 28px;
 }
 
+#percentage .wordwrap {
+  font-size: 15px;
+}
+
 g text {
-  font-size: 10px;
+  font-size: 13px;
+}
+
+/* overlapping text */
+.contains{
+  position: absolute;
+  padding:0px;
+  background:#ffd7e7;
+  margin: 0px;
+  cursor:pointer;    
+}
+.contains:hover {
+  background:#ff00ff;
+}
+span._tmp_string {
+background: #F9C3C3;
+padding: 2px 7px;
+    cursor:pointer
+}
+.container2{
+  background:red !important;
+  color:red !important;
+  opacity:0.5
+}
+code {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  padding: 0px 0px;
+  pointer-events:none;
+  background-color: transparent !important; 
+}
+span._code_string {
+  background: #4C5CF9;
+  color: #4C5CF9;
+  padding: 0px 0px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-family: Times New Roman;
+  pointer-events:none;
+  opacity:0.2
+}
+.hehe{
+  background:#000;
+  color:#fff
+}
+._tmp_span{
+   
 }
