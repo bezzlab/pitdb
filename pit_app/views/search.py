@@ -1,7 +1,7 @@
 from pit_app import db
 from pit_app.models import *
 from pit_app.forms import SearchForm
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 
 search = Blueprint('search',  __name__)
 
@@ -20,7 +20,7 @@ def advance():
     if searchOption == 'Accession Number':
       return redirect(url_for('results.tge', accession = searchData))
     elif searchOption == 'Amino Acid Sequence':
-      return redirect(url_for('results.aminoseq', searchType=searchType, searchData = searchData))
+      return redirect(url_for('results.aminoseq', searchData = searchData, searchType=searchType))
     elif searchOption == 'Experiment ID':
       return redirect(url_for('results.experiment', experiment = searchData))
     elif searchOption == 'Uniprot ID':
@@ -29,3 +29,14 @@ def advance():
       return redirect(url_for('results.organism', organism = searchOption))
 
   return render_template('search/form.html', form=form, organisms = org)
+
+
+@search.route('/autocomplete', methods=['GET'])
+def autocomplete():
+  results = []
+  search = request.args.get('autocomplete')
+  
+  for mv in TGE.query.filter(accession.like('%' + str(search) + '%')).all():
+    results.append(mv[0])
+  return jsonify(json_list=results) 
+
