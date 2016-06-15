@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% macro render_field(field, placeholder=None) %}
+{% if field.errors %}
+  <div>
+  {% elif field.flags.error %}
+    <div>
+    {% else %}
+    <div>
+  {% endif %}
+{% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+{{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+</div>
+{% endmacro %}
+
+<div class="container">
+  <div class="row">    
+    <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        <label for="filter">Search by</label>
+        <select id="searchOptions" name="searchOptions" class="form-control">
+          <option disabled selected> -- Select an option -- </option>
+          <option role="separator" class="divider"></li>
+          <optgroup label="TGE">
+            <option>Accession Number</option>
+            <option id="aminoSeq">Amino Acid Sequence</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Experiment">
+            <option>Experiment ID</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Protein">
+            <option>Uniprot ID</option>
+          </optgroup>
+          <option role="separator" class="divider"></li>
+          <optgroup label="Species">
+            {% for org in organisms %}
+              <option>{{ org.organism }}</option>
+            {% endfor %}
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group" id="textArea">
+        <label for="contain" id="searchFilter" name="searchFilter">Search</label>
+        <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea"></textarea>
+        <input name="autocomplete" type="text" id="autocomplete" class="form-control input-lg"/>
+      </div>
+      <div class="searchOptions" style="display: none;">
+        <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
+        <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
+      </div>
+
+      <br/><br/>
+      <button id="submitSearch" type="submit" class="btn btn-primary">Submit <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+    </form>
+  </div>
+</div>
+
+
+<div id="search-output" style="display:none;">
+  <input type="hidden" id="searchData" value={{ searchData }}>
+  <input type="hidden" id="searchType" value={{ searchType }}>
+
+  <table class="table table-striped table-bordered dataTable no-footer" id="searchRes" >
+    <thead>
+      <tr>
+        <th>Accession Number</th>
+        <th>TGE Type</th>
+        <th>Uniprot ID</th>
+        <th>Organisms</th>
+        <th>#Observations</th>
+        <th>#Experiments</th>
+        <th>Length</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tge in tgeRes %}
+        <tr>
+          <td>{{ tge.id }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
