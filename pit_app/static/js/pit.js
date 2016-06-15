@@ -79,11 +79,6 @@ $(function() {
     ],
   });
 
-  $('.tgeTable tbody tr').click( function () {
-    var aData = tgeTable.fnGetData(this);
-    window.open("/tge?accession="+aData[0], '_blank');
-  });
-
   $('#orgTable tbody tr').click( function () {
     if ( $(this).hasClass('selected') ) {
       $(this).removeClass('selected');

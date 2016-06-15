@@ -80,7 +80,7 @@
                   <td>
                   {% for uniprotID in uniprotIDs %}
                     <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
-                    {% endfor %}
+                  {% endfor %}
                   </td>
                 </tr>
               {% endfor %}

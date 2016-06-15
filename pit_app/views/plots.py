@@ -133,23 +133,49 @@ def orgJSON(organism):
   return data
 
 
-@plots.route('/aminoseq/<amino_seq>.json')
-def aminoseqJSON(amino_seq):
-  obsList = []
+@plots.route('/aminoseq/<aminoSeq>.json')
+def aminoseqJSON(aminoSeq):
+  tgeList = []
   # Get the list of TGEs for the given amino acid sequence (partial or exact match)
-  tges = TGE.query.with_entities(TGE.id).filter(TGE.amino_seq.like("%"+amino_seq+"%")).all()
+  #tges = TGE.query.with_entities(TGE.id).filter(TGE.amino_seq.like("%"+amino_seq+"%")).all()
 
-  obs  = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
-              filter(Observation.tge_id.in_(tges)).\
-              group_by(Observation.organism)
+  tges  = Observation.query.with_entities(Observation.organism, func.count(distinct(Observation.tge_id)).label('orgCount')).\
+              join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%")).\
+              group_by(Observation.organism).all()
 
-  for ob in obs: 
-    print ob.organism
-    obsList.append({ "name": ob.organism, "size": ob.obsCount })
+  for tge in tges: 
+    obsList = []
+
+    obs = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
+              join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism).\
+              group_by(Observation.organism).all()
+
+    for ob in obs:
+      classList = []
+
+      classes = Observation.query.with_entities(Observation.tge_class, func.count(Observation.tge_class).label('classCount')).\
+                  join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism).\
+                  group_by(Observation.tge_class).all()
+
+      for tgeClass in classes:
+        sampleList = []
+
+        samples = Sample.query.with_entities(Sample.name, func.count(Observation.tge_id).label('sampleCount')).\
+                  join(Observation).join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism, Observation.tge_class == tgeClass.tge_class).\
+                  group_by(Sample.name).all()
+
+        for sample in samples:
+          sampleList.append({ "name": 'TGE observations from sample "' + sample.name +'"', "size": sample.sampleCount, "type": "samples" })
+
+        classList.append({ "name": 'TGE observations with type "' + tgeClass.tge_class+'"', "size": tgeClass.classCount, "type": "classes", "children": sampleList })
+
+      obsList.append({ "name": "TGE Observations in " + ob.organism, "size": ob.obsCount, "type": "observations", "children": classList })
+
+    tgeList.append({ "name": "TGEs in " + tge.organism, "size": tge.orgCount, "type": "organism", "children": obsList })
 
   test = {
     "name": "tgeBreakdown",
-    "children": obsList
+    "children": tgeList
   }
 
   data = json.dumps(test)
@@ -181,7 +207,16 @@ def expJSON(experiment):
                     filter(Observation.sample_id==sample.id).all() 
 
       for tran in tranNum: 
-        tranNumList.append({ "name": "Number of Transcripts in sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count" }) 
+        orgList = []
+
+        obs = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('orgCount')).\
+                filter_by(sample_id=sample.id).\
+                group_by(Observation.organism).all()
+
+        for ob in obs:
+          orgList.append({ "name": ob.organism, "size": ob.orgCount, "type":"organisms" })
+
+        tranNumList.append({ "name": "Number of Transcripts in sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count",  "children":orgList }) 
 
       pepNumList.append({ "name": "Identified peptides in sample "+sample.name, "size": num.pepSum, "type":"PeptCount",  "children":tranNumList }) 
 

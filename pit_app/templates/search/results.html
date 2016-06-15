@@ -2,44 +2,59 @@
 
 {% block content %}
 
-<div id="search-output">
+<div id="page-wrap">
   <input type="hidden" id="searchData" value={{ searchData }}>
   <input type="hidden" id="searchType" value={{ searchType }}>
-  <div id="sequence"></div>
-  <div id="chart">
-    <div id="explanation" style="visibility: hidden;">
-      <span id="percentage"></span>
+  <p> Graph of TGE breakdown</p>
+  <div class="col-md-8 col-md-offset-3">
+    <div id="sequence"></div>
+    <div id="chart">
+      <div id="explanation" style="visibility: hidden;">
+        <span id="percentage"></span>
+      </div>
     </div>
   </div>
-  <p><h4>List of TGEs:</h4></p><br/>
+  <div style="clear: both;"></div>
+  <div>
+    <p><h4>List of TGEs:</h4></p><br/>
 
-  <table class="table table-striped table-bordered dataTable no-footer tgeTable" id="tgeSearch">
-    <thead>
-      <tr>
-        <th>Accession Number</th>
-        <th>TGE Type</th>
-        <th>Uniprot ID</th>
-        <th>Organisms</th>
-        <th>#Observations</th>
-        <th>#Samples</th>
-        <th>Length</th>
-      </tr>
-    </thead>
-  	<tbody>
-      {% for tge in tgeList %}
-      	<tr>
-      	  <td>{{ tge.accession }}</td>
-          <td>{{ tge.tgeClasses|join(', ') }}</td>
-          <td>{{ tge.uniprotIDs|join(', ') }}</td>
-          <td>{{ tge.organisms|join(', ') }}</td>
-          <td>{{ tge.obsNum }}</td>
-          <td>{{ tge.sampleNum }}</td>
-          <td>{{ tge.length }}</td>
-      	  <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
-      	</tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <table class="table table-striped table-bordered dataTable no-footer tgeTable" id="tgeSearch">
+      <thead>
+        <tr>
+          <th>Accession Number</th>
+          <th>TGE Type</th>
+          <th>Uniprot ID</th>
+          <th>Organisms</th>
+          <th>#Observations</th>
+          <th>#Samples</th>
+          <th>Length</th>
+        </tr>
+      </thead>
+    	<tbody>
+        {% for tge in tgeList %}
+          {% set uniprotIDs = tge.uniprotIDs.split(',') %}
+        	<tr>
+        	  <td><a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a></td>
+            <td>{{ tge.tgeClasses }}</td>
+            <td>
+            {% for uniprotID in uniprotIDs %}
+              <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+            </td>
+            <td>
+            {% for org in tge.organisms %}
+              <a href="organism?organism={{ org }}" target="_blank">{{ org }}</a>{% if not loop.last %},{% endif %}
+            {% endfor %}
+            </td>
+            <td>{{ tge.obsNum }}</td>
+            <td>{{ tge.sampleNum }}</td>
+            <td>{{ tge.length }}</td>
+        	  <!--td class="wordwrap">{{ tge.amino_seq }}</td>-->
+        	</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 {% endblock %}

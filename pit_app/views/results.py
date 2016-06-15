@@ -62,7 +62,7 @@ def organism():
 
   organism   = request.args['organism']
   obs        = Observation.query.filter_by(organism=organism)
-  
+
   # tgeClasses is to be used in the modal window
   tgeClasses = Observation.query.with_entities(Observation.tge_class).distinct(Observation.tge_class).all()
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
@@ -165,13 +165,11 @@ def aminoseq():
       # For each TGE get the obs num, organisms, uniprotID and tgeClass
       obsNum     = Observation.query.filter_by(tge_id=tge.id).count()
       organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
-      tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
-      uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
+      tgeClasses = tge.tge_class
+      uniprotIDs = tge.uniprot_id
       
       # Flatten out the list of lists to lists (to use in the for loops)
       organisms  = [item for sublist in organisms for item in sublist]
-      tgeClasses = [item for sublist in tgeClasses for item in sublist]
-      uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
       
       sampleNum = Sample.query.with_entities(Sample.name).\
                       join(Observation, Observation.sample_id == Sample.id).\

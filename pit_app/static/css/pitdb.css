@@ -101,6 +101,15 @@
   min-width: 950px !important;
 }
 
+#page-wrap {
+  width: 1140px !important;
+  min-width: 1140px !important;
+  margin: 0px;
+  background-color: #fff;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
 .fade {
   opacity: 1;
   transition: opacity .200s ease-in-out;
