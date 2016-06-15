@@ -119,7 +119,7 @@ def orgJSON(organism):
     #   for exp in exps:
     #     expList.append({ "name": exp.title, "size": exp.expCount, "type":"experiment" })
 
-        sampleList.append({ "name": "observations belong to sample " + smpl.name, "size": smpl.smplCount, "type":"sample" })  
+        sampleList.append({ "name": "observations belong to sample " + smpl.name, "size": smpl.smplCount, "type":"samples" })  
       pepList.append({ "name": 'Indentified peptides for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
     orgList.append({ "name": 'observations with type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
@@ -160,21 +160,36 @@ def aminoseqJSON(amino_seq):
 
 @plots.route('/experiment/<experiment>.json')
 def expJSON(experiment):
-  tgeList = []
+  sampleList = []
 
   samples = Sample.query.filter_by(exp_id=experiment).all()
 
-  tges  = Observation.query.with_entities(Observation.sample_id, func.count(Observation.sample_id).label('tgeCount')).\
-              join(Sample, Observation.sample_id == Sample.id ).\
-              filter(Sample.exp_id == experiment).\
-              group_by(Observation.sample_id)
+  for sample in samples:
+    pepNumList = []
 
-  for tge in tges:
-    tgeList.append({ "name": tge.sample_id, "size": tge.tgeCount })
+    obsNum = Observation.query.filter(Observation.sample_id==sample.id).distinct(Observation.tge_id).count()
+
+    pepNum = Observation.query.with_entities(Observation.sample_id, func.sum(Observation.peptide_num).label('pepSum')).\
+                    filter(Observation.sample_id==sample.id).\
+                    group_by(Observation.sample_id).all() 
+    
+    for num in pepNum:
+      tranNumList = []
+
+      tranNum = Observation.query.with_entities(func.count(Observation.id).label('tranCount')).\
+                    join(Transcript, Observation.id==Transcript.obs_id).\
+                    filter(Observation.sample_id==sample.id).all() 
+
+      for tran in tranNum: 
+        tranNumList.append({ "name": "Number of Transcripts in sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count" }) 
+
+      pepNumList.append({ "name": "Identified peptides in sample "+sample.name, "size": num.pepSum, "type":"PeptCount",  "children":tranNumList }) 
+
+    sampleList.append({ "name": "TGEs in Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
 
   test = {
     "name": "tgeBreakdown",
-    "children": tgeList
+    "children": sampleList
   }
 
   data = json.dumps(test)
