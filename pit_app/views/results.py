@@ -60,26 +60,30 @@ def tge():
 def organism():
   tgeList = []
 
-  organism  = request.args['organism']
-
-  obs       = Observation.query.filter_by(organism=organism)
-  tges      = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
-  tgeNum    = separators(obs.distinct(Observation.tge_id).count())
-  sampleNum = separators(obs.join(Sample).distinct(Sample.id).count())
-  expNum    = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
+  organism   = request.args['organism']
+  obs        = Observation.query.filter_by(organism=organism)
   
+  # tgeClasses is to be used in the modal window
+  tgeClasses = Observation.query.with_entities(Observation.tge_class).distinct(Observation.tge_class).all()
+  tgeClasses = [item for sublist in tgeClasses for item in sublist]
+
+  tges       = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
+  tgeNum     = separators(obs.distinct(Observation.tge_id).count())
+  sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
+  expNum     = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
+
   trnNum    = separators(Transcript.query.join(Observation, Transcript.obs_id == Observation.id).\
                     filter(Observation.organism==organism).distinct().count())
 
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
                     filter_by(organism=organism).scalar())
 
-  summary   = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum};
+  summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum, 'tgeClasses': tgeClasses };
   
   for tge in tges: 
     tgeList.append({'accession': tge.accession, 'tgeClasses': tge.tge_class, 'uniprotIDs': tge.uniprot_id}) #  })
   
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList)
+  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
 
 
 @results.route('/experiment')
