@@ -11,13 +11,13 @@ data = Blueprint('data',  __name__)
 
 @data.route('/data/<uniprot>')
 def download_data(uniprot):
-	data = pd.DataFrame()
+	result = pd.DataFrame()
 	obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
 					join(Sample).join(Observation).\
 					filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
-		df = pd.read_table("/Users/elena/Desktop/aws_pit/eb-pitdb/pit_app/static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		df = pd.read_table("/static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
 						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
@@ -27,11 +27,11 @@ def download_data(uniprot):
 			mRNA = arr[0]
 			gene = arr[1]
 			subset = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
-			data = pd.concat([data, subset], axis=0)
+			result = pd.concat([result, subset], axis=0)
 			
-	data = data.to_csv(None, sep='\t', index = False)
+	result = result.to_csv(None, sep='\t', index = False)
 
-	return data 
+	return result 
 	
 
 @data.route('/download', methods=['POST'])
