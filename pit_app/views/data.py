@@ -7,7 +7,7 @@ from flask import Blueprint, send_file, request, Response
 
 data = Blueprint('data',  __name__)
 
-@data.route('/data/<uniprot>')
+@data.route('/genoverse/<uniprot>')
 def download_data(uniprot):
 	result = pd.DataFrame()
 	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
