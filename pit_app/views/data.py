@@ -5,9 +5,6 @@ import pandas as pd
 from pit_app.models import *
 from flask import Blueprint, send_file, request, Response
 
-# app = Flask(__name__, static_folder='data/GFF3')
-# app = Flask(__name__, static_url_path='/data')
-
 data = Blueprint('data',  __name__)
 
 @data.route('/data/<uniprot>')
@@ -18,7 +15,8 @@ def download_data(uniprot):
 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
-		df = pd.read_table(os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		df = pd.read_table("/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		# df = pd.read_table(os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
 						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
