@@ -1,4 +1,5 @@
 import re
+import os
 import pandas as pd
 
 from pit_app.models import *
@@ -12,12 +13,12 @@ data = Blueprint('data',  __name__)
 @data.route('/data/<uniprot>')
 def download_data(uniprot):
 	result = pd.DataFrame()
-	obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
-					join(Sample).join(Observation).\
-					filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
+	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+						join(Sample).join(Observation).\
+						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
-		df = pd.read_table("/static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		df = pd.read_table(os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
 						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
