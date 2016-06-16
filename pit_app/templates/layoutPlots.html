@@ -66,19 +66,19 @@
     <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
     <script src="/static/js/ext/bootstrap.min.js"></script>
     
-    <script src="/static/js/ext/datatables.min.js"></script>
-    <!-- <script src="/static/js/ext/jquery.dataTables.js"></script> -->
-    
     <!--<script src="/static/js/ext/metisMenu.min.js"></script>-->
-    <!--<script src="/static/js/ext/plotly.min.js"></script>-->
-    <!--<script src="/static/js/ext/sb-admin-2.js"></script>-->
-    <!--<script src="/static/js/ext/validator.js"></script>-->
-    <!--script src="/static/js/ext/bootstrap-select.js"></script>-->
 
     <script src="/static/js/pit.js"></script>
-    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="/static/js/ext/d3.js"></script>
+    <script type="text/javascript" src="/static/js/genoverse.combined.js"></script>
+    <script src="/static/js/ext/jquery.dataTables.js"></script>
+    <!-- <script src="/static/js/ext/datatables.min.js"></script> -->
     
 <script>
+
+$('#chart').ready(function() { 
+  $('#percentage').html('<span class="sunburstInfo"><p>Rollover the map to see the magic happen</p></span>') 
+})
 
 // Get and trim the url of the page to determine the category (organism, tge, aminoacid etc.)
 var url = $(location).attr('href');
@@ -101,7 +101,7 @@ var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
-  w: 75, h: 30, s: 3, t: 10
+  w: 100, h: 34, s: 3, t: 10
 };
 
 // Total size of all segments; we set this later, after loading the data.
@@ -183,8 +183,8 @@ function mouseover(d) {
   d3.select("#percentage")
       .html('<h2>'+commaSeparateNumber(d.size)+'</h2>\n <div class="wordwrap">'+d.name+'</div>');
 
-  d3.select("#explanation")
-      .style("visibility", "");
+  // d3.select("#explanation")
+  //     .style("visibility", "");
 
   // Fade all the segments.
   d3.selectAll("path")
@@ -223,8 +223,9 @@ function mouseleave(d) {
       d3.select(this).on("mouseover", mouseover);
     });
 
-  d3.select("#explanation")
-    .style("visibility", "hidden");
+  // d3.select("#explanation")
+  //   .style("visibility", "hidden");
+  d3.select("#percentage").html('<span class="sunburstInfo"><p>Rollover the map to see the magic happen</p></span>')
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor

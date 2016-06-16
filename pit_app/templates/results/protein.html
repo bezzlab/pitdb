@@ -1,21 +1,13 @@
-{% extends "layoutTables.html" %}
+{% extends "layoutPlots.html" %}
 {% block content %}
   
 <div class="navbar-default sidebar" role="navigation">
   <div class="sidebar-nav navbar-collapse">
     <ul class="nav" id="side-menu">
-      <li class="sidebar-search">
-        <div class="input-group custom-search-form">
-          <input type="text" class="form-control" placeholder="Search...">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button">
-              <i class="fa fa-search"></i>
-            </button>
-          </span>
-        </div>
-
-      </li>
-      <li><a href="#summary"><i class="fa fa-dashboard fa-fw"></i> TGEs</a></li>
+      <li><h5>Navigation Panel</h5></li>
+      <li><a href="#protGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
+      <li><a href="#protSummary"><i class="fa fa-comment-o fa-fw"></i> TGEs</a></li>
+      <li><a href="#genoGraph"><i class="fa fa fa-picture-o fa-fw"></i> Genoverse</a></li>
     </ul>
     </div>
   </div>
@@ -28,14 +20,30 @@
     </div>
 
     <div class="row">
-      <div>
-      	<div class="panel panel-default" id="summary">
-          <div class="panel-heading">
-            <i class="fa fa-bar-chart-o fa-fw"></i> TGEs
+      <div id="protGraph" class="panel panel-default sunburst" style="position: relative !important;">
+        <div class="panel-heading">
+          <i class="fa fa-pie-chart fa-fw"></i> Graph
+        </div>
+
+        <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of organism breakdown</h5></p></span>
+        <div class="col-md-8 col-md-offset-2">
+          <div id="sequence"></div>
+          <div id="chart">
+            <div id="explanation">
+              <span id="percentage"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>
+            </div>
           </div>
-          
-          <div class="panel-body">
-            <div class="row" style="margin-left:5px">
+        </div>
+        <div style="clear: both;"></div>
+      </div>
+
+    	<div class="panel panel-default" id="protSummary">
+        <div class="panel-heading">
+          <i class="fa fa-comment-o fa-fw"></i> TGEs
+        </div>
+        
+        <div class="panel-body">
+          <div class="row" style="margin-left:5px">
             <table id="proteinRes" class="table table-striped table-bordered dataTable no-footer" class="searchRes">
             <thead>
               <tr>
@@ -46,26 +54,25 @@
             <tbody>
               {% for tge in tges %}
                 <tr>
-                  <td>{{ tge.accession }}</td>
+                  <td><a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a></td>
                   <td>{{ tge.tge_class }}</td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
-          	</div>
-          </div>
+        </div>
       </div>
+    </div>
 
-      <div>
-        <div class="panel panel-default" id="summary">
-          <div class="panel-heading">
-            <i class="fa fa-bar-chart-o fa-fw"></i> Genoverse
-          </div>
-          
-          <div class="panel-body">
-            <div id="genoverse"></div>
-          </div>
-      </div>
+    <div>
+      <div class="panel panel-default" id="genoGraph">
+        <div class="panel-heading">
+          <i class="fa fa fa-picture-o fa-fw"></i> Genoverse
+        </div>
+        
+        <div class="panel-body">
+          <div id="genoverse"></div>
+        </div>
     </div>
   </div>
 </div>
@@ -73,13 +80,7 @@
 <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
 
 <script type="text/javascript" src="/static/js/genoverse.combined.js"></script>
-<script type="text/javascript" src="/static/js/genomes/grch38.js"></script><!-- 
-<script type="text/javascript" src="/static/js/Track/Model/Transcript/GFF3.js"></script>
-<script type="text/javascript" src="/static/js/plugins/fileDrop.js"></script>
-<script type="text/javascript" src="/static/js/Track/View/Transcript.js"></script>
-<script type="text/javascript" src="/static/js/Track/View/Gene/Ensembl.js"></script>
-<script type="text/javascript" src="/static/js/Track/View/Transcript/Ensembl.js"></script>
-<script type="text/javascript" src="/static/js/Track/View.js"></script> -->
+<!-- <script type="text/javascript" src="/static/js/genomes/grch38.js"></script> -->
 
 <script>
   var chrParam = getParam("seqid");
@@ -87,20 +88,42 @@
   if (chrParam == null || chrParam == '') {
     chrParam = 2;
   }
+  var organism = "{{ organism }}";
+  var genomeName, org; 
+
+  switch (organism) {
+    case 'Homo sapiens':
+      genomeName = 'grch38';
+      org = 'human';
+      break;
+    case 'Aedes aegypti':
+      genomeName = 'grch38';
+      break;
+    case 'Pteropus alecto':
+      genomeName = 'grch38';
+      break;
+    case 'Mus musculus':
+      genomeName = 'mouse';
+      org = 'mouse';
+      break;
+}
+
 
   var genoverseConfig = {
     container : '#genoverse',
     width     : 900,
-    genome    : 'grch38',
-    chr       : chrParam,
+    genome    : genomeName,
+    chr       : 2,
     start     : 215350030,
     end       : 215436000,
-    plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer', 'fileDrop' ],
+    plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer' ],
     tracks    : [
       Genoverse.Track.Scalebar,
       Genoverse.Track.extend({
-        name      : 'Sequence',
-        model     : Genoverse.Track.Model.Sequence.Ensembl,
+        name  : 'Sequence',
+        model : Genoverse.Track.Model.Sequence.Ensembl.extend({
+          url : '//rest.ensembl.org/sequence/region/'+org+'/__CHR__:__START__..__END__:0?content-type=application/json'
+        }),
         view      : Genoverse.Track.View.Sequence,
         resizable : 'auto',
         100000    : false
@@ -109,204 +132,26 @@
         name   : 'Genes',
         height : 200,
         info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
-        
+
         // Different settings for different zoom level
         2000000: { // This one applies when > 2M base-pairs per screen
           labels : false
         },
         100000: { // more than 100K but less then 2M
           labels : true,
-          model  : Genoverse.Track.Model.Gene.Ensembl,
+          model  : Genoverse.Track.Model.Gene.Ensembl.extend({
+            url : '//rest.ensembl.org/overlap/region/'+org+'/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
+          }),
           view   : Genoverse.Track.View.Gene.Ensembl
         },
         1: { // > 1 base-pair, but less then 100K
           labels : true,
-          model  : Genoverse.Track.Model.Transcript.Ensembl,
+          model  : Genoverse.Track.Model.Transcript.Ensembl.extend({
+              url : '//rest.ensembl.org/overlap/region/'+org+'/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
+          }),
           view   : Genoverse.Track.View.Transcript.Ensembl
         }
       }),
-      // Genoverse.Track.extend({
-      //   name   : 'Transcript',
-      //   height : 300,
-      //   url    : '/data/test',
-      //   model  : Genoverse.Track.Model.extend({
-      //     dataType : 'text',
-      //     typeMap : {
-      //       exon  : 'exon',
-      //       cds   : 'cds'
-      //     },
-      //     parseData: function (text) {
-
-      //       var lines = text.split('\n');
-
-      //       for (var i = 0; i < lines.length; i++) {
-      //         if (!lines[i].length || lines[i].indexOf('#') === 0) {
-      //           continue;
-      //         }
-
-      //         var fields = lines[i].replace(/\s{2,}/g, '\t').split('\t');
-              
-      //         if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
-                
-      //           var feature = {};
-
-      //           feature.id     = fields.slice(0, 5).join('|');
-      //           feature.start  = parseInt(fields[3], 10);
-      //           feature.end    = parseInt(fields[4], 10);
-      //           feature.source = fields[1];
-      //           feature.type   = fields[2];
-      //           feature.score  = fields[5];
-      //           feature.strand = fields[6] + '1';
-
-      //           if (fields[8]) {
-      //             var frame = fields[8].split(';');
-
-      //             for (var j = 0; j < frame.length; j++) {
-      //               var keyValue = frame[j].split('=');
-
-      //               if (keyValue.length === 2) {
-      //                 feature[keyValue[0].toLowerCase()] = keyValue[1];
-      //               }
-      //             }
-      //           }
-
-      //           // sub-feature came earlier than parent feature
-      //           if (feature.parent && feature.type == "mRNA") {
-      //             this.insertFeature(feature);
-
-      //             this.featuresById[feature.id] = {
-      //               exons : [],
-      //               cds   : []
-      //             };
-      //           }
-
-
-      //           // If happiness
-      //           if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
-      //             if (!$.grep(this.featuresById[feature.parent].exons, function (exon) { return exon.id === feature.id; }).length) {
-      //               this.featuresById[feature.parent].exons.push(feature);
-      //             }
-      //             //this.insertFeature(feature);
-      //           } else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
-      //             if (!$.grep(this.featuresById[feature.parent].cds, function (exon) { return exon.id === feature.id; }).length) {
-      //               this.featuresById[feature.parent].cds.push(feature);
-      //             }
-      //             //this.insertFeature(feature);
-      //           } else if (!feature.parent) {
-      //             feature.label = feature.name || feature.id || '';
-      //             $.extend(feature, { label: feature.name || feature.id || '', exons: [], cds: [] }, this.featuresById[feature.id] || {});
-
-      //             delete this.featuresById[feature.id];
-
-      //             this.insertFeature(feature);
-      //           } // end of if
-      //         }
-      //       }
-      //       // alert(feature.parent);
-      //       // alert(this.featuresById[feature.parent].exons.length);
-      //       // alert(this.featuresById[feature.parent].cds.length);
-      //       // return;
-      //     }
-      //   }),
-      //   view   : Genoverse.Track.View.Transcript,
-      // }), 
-      // Genoverse.Track.extend({
-      //   name      : 'GFF3',
-      //   height    : 200,
-      //   model     : Genoverse.Track.Model.Transcript.GFF3,
-      //   view      : Genoverse.Track.View.Transcript,
-      //   resizable : 'false',
-      //   url       : '/data/test',
-      //   // 2000000: { // This one applies when > 2M base-pairs per screen
-      //   //   labels : false
-      //   // },
-      //   // 100000: { // more than 100K but less then 2M
-      //   //   labels : true,
-      //   //   view   : Genoverse.Track.View.Transcript
-      //   // },
-      //   // 1: { // > 1 base-pair, but less then 100K
-      //   //   labels : true,
-      //   //   view   : Genoverse.Track.View.Transcript.Ensembl
-      //   // }
-      // }),
-      // Genoverse.Track.extend({
-      //   name   : 'Shyama',
-      //   view   : Genoverse.Track.View.Transcript.extend({
-      //     setFeatureColor : function () {}
-      //   }),
-      //   height : 100,
-      //   url    : '/data/test',
-      //   model  : Genoverse.Track.Model.extend({
-      //     dataType : 'text',
-      //     parseData: function (text) {
-      //       var lines = text.split('\n');
-      //       for (var i = 0; i < lines.length; i++) {
-
-      //         if (!lines[i].length || lines[i].indexOf('#') === 0) {
-      //           continue;
-      //         }
-              
-      //         var fields = lines[i].split('\t');
-
-      //         if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
-
-      //           var feature = {
-      //             id     : fields.slice(0, 5).join('|'),
-      //             start  : parseInt(fields[3], 10),
-      //             end    : parseInt(fields[4], 10),
-      //             exons  : [],
-      //             cds    : []
-      //           };
-
-      //           if (fields[8]) {
-      //             var extraFields = fields[8].split(';');
-                  
-      //             for (var j = 0; j < extraFields.length; j++) {
-      //               var keyValue = extraFields[j].split('=');
-                    
-      //               if (keyValue.length === 2 && !feature[keyValue[0]]) {
-      //                 feature[keyValue[0].toLowerCase()] = keyValue[1];
-      //               }
-      //             }
-      //           }
-
-      //           feature.color = 'rgb(' + feature.color + ')';
-
-      //           // CIGAR Gap, here we assume it's always M or D, with D only being surrounded with Ms
-      //           if (feature.gap) {
-      //             var cursor = feature.start;
-      //             var chunks = feature.gap.split(' ');
-      //             for (var j=0; j<chunks.length; j++) {
-      //               if (chunks[j].charAt(0) === 'M') {
-      //                 var length = parseInt( chunks[j].substr(1), 10 );
-      //                 feature.exons.push({
-      //                   start : cursor,
-      //                   end   : cursor + length,
-      //                 });
-      //                 feature.cds.push({
-      //                   start : cursor,
-      //                   end   : cursor + length,
-      //                   color : feature.color,
-      //                 });
-      //                 cursor = cursor + length;
-      //               }
-      //               else {
-      //                 var length = parseInt(chunks[j].substr(1), 10);
-      //                 cursor += length;
-      //               }
-      //             }
-      //           }
-
-      //           feature.labelColor = 'black';
-      //           feature.label = feature.name;
-
-      //           this.insertFeature(feature);
-      //         }
-
-      //       }
-      //     }
-      //   }),
-      // })
       Genoverse.Track.extend({
         name   : 'GFF3',
         height : 200,

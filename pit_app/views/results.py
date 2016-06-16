@@ -22,15 +22,27 @@ def tge():
   organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
   tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
   uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
+  
+  pepLengths = Peptide.query.with_entities(func.length(Peptide.aa_seq).label('pepLength')).\
+                    join(TgeToPeptide, Peptide.id == TgeToPeptide.peptide_id).\
+                    join(Observation,  Observation.id == TgeToPeptide.obs_id).\
+                    join(TGE, TGE.id == Observation.tge_id ).\
+                    filter_by(id=tge.id).\
+                    group_by(Peptide.aa_seq).all() 
+
   avgPeptNum = Observation.query.with_entities(func.avg(Observation.peptide_num).label('average')).one()
+
+  # avgPeptCov = len(tge.amino_seq) / (pepLengthSum)
 
   # Flatten out the list of lists to lists (to use in the for loops)
   organisms  = [item for sublist in organisms for item in sublist]
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
   uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
+  pepLengths = [item for sublist in pepLengths for item in sublist]
 
-  summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : organisms, 'avgPeptNum' : avgPeptNum, 
-                  'tgeClasses' : tgeClasses, 'obsCount' : obsCount, 'uniprotIDs': uniprotIDs };
+  summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : organisms, 'avgPeptNum' : avgPeptNum.average, 
+                  'tgeClasses' : tgeClasses, 'obsCount' : obsCount, 'uniprotIDs': uniprotIDs, 
+                  'avgPeptCov': float(len(tge.amino_seq))/sum(pepLengths) };
 
   results  = []
 
@@ -50,7 +62,7 @@ def tge():
       peptides.add(pept.aa_seq)
 
     results.append({'id': obs.id, 'observation': obs.name, 'sample': sample.name, 'experiment': exp.title, 
-      'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
+      'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 'uniprotID': obs.uniprot_id,
   		'peptide_num': obs.peptide_num, 'peptides': list(peptides)})
 
   return render_template('results/tge.html', summary = summary, results=results)
@@ -64,8 +76,8 @@ def organism():
   obs        = Observation.query.filter_by(organism=organism)
 
   # tgeClasses is to be used in the modal window
-  tgeClasses = Observation.query.with_entities(Observation.tge_class).distinct(Observation.tge_class).all()
-  tgeClasses = [item for sublist in tgeClasses for item in sublist]
+  #tgeClasses = Observation.query.with_entities(distinct(Observation.tge_class)).filter_by(organism=organism).all()
+  #tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
   tges       = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
   tgeNum     = separators(obs.distinct(Observation.tge_id).count())
@@ -78,12 +90,18 @@ def organism():
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
                     filter_by(organism=organism).scalar())
 
-  summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum, 'tgeClasses': tgeClasses };
+  summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
   
   for tge in tges: 
-    tgeList.append({'accession': tge.accession, 'tgeClasses': tge.tge_class, 'uniprotIDs': tge.uniprot_id}) #  })
+    tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id = tge.id).all()
+    uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id = tge.id).all()
+
+    tgeClasses = [item for sublist in tgeClasses for item in sublist]
+    uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
+
+    tgeList.append({'accession': tge.accession, 'tgeClasses': tgeClasses, 'uniprotIDs':uniprotIDs }) #  })
   
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
+  return render_template('results/organism.html', summary = summary, tgeList= tgeList)
 
 
 @results.route('/experiment')
@@ -121,7 +139,7 @@ def experiment():
 
   for sample in samples:
     tgePerSample = Observation.query.filter(Observation.sample_id==sample.id).distinct(Observation.tge_id).count()
-    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum':tgePerSample })
+    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum': separators(tgePerSample) })
 
   return render_template('results/experiment.html', summary = summary, sampleList = sampleList)
 
@@ -130,8 +148,10 @@ def experiment():
 def protein():
   uniprot  = request.args['uniprot']
 
-  obs  = Observation.query.filter_by(uniprot_id=uniprot).all()
-  
+  obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all()
+  organism = [item for sublist in obs for item in sublist]
+  organism = ''.join(organism)
+
   tges = TGE.query.join(Observation).filter_by(uniprot_id=uniprot).\
               distinct(Observation.tge_id)
 
@@ -142,7 +162,7 @@ def protein():
   
   #   tgeList.append({'accession':sample.id, 'name': sample.name, 'tgeNum':tgePerSample })
 
-  return render_template('results/protein.html', tges = tges, uniprot = uniprot)
+  return render_template('results/protein.html', tges = tges, uniprot = uniprot, organism = organism)
 
 
 @results.route('/aminoseq')

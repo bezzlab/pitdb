@@ -50,24 +50,11 @@ def tgeJSON(accession):
                     group_by(Sample.name).all()
 
         for smpl in samples:
-          # expList = []
-
-          # exps = Experiment.query.with_entities(Experiment.title, func.count(Experiment.title).label('expCount')).\
-          #           join(Sample, Experiment.id == Sample.exp_id).\
-          #           join(Observation, Observation.sample_id==Sample.id).\
-          #           join(TgeToPeptide, Observation.id == TgeToPeptide.obs_id).\
-          #           join(Peptide, Peptide.id == TgeToPeptide.peptide_id).\
-          #           filter(Observation.organism == ob.organism, Observation.tge_id == tge.id, Peptide.aa_seq == pep.aa_seq, Sample.name == smpl.name).\
-          #           group_by(Experiment.title).all()
-
-          # for exp in exps:
-          #   expList.append({ "name": "Expertiments "+exp.title, "size": exp.expCount, "type":"experiments"})
-
           sampleList.append({ "name": "Samples "+smpl.name, "size": smpl.smplCount, "type":"samples" })
 
-        pepList.append({ "name": 'Peptides "'+pep.aa_seq+"'", "size": pep.pepCount, "type":"peptides", "children": sampleList }) 
+        pepList.append({ "name": 'Peptides "'+pep.aa_seq+'"', "size": pep.pepCount, "type":"peptides", "children": sampleList }) 
 
-      pepNumList.append({ "name": "Identified peptides in "+ob.organism, "size": num.pepSum, "type":"PeptCount", "children": pepList }) 
+      pepNumList.append({ "name": "Identified peptides in "+ob.organism, "size": num.pepSum, "type":"peptide count", "children": pepList }) 
 
     obsList.append({ "name": ob.organism, "size": ob.obsCount, "type":"organisms", "children": pepNumList })
 
@@ -86,7 +73,7 @@ def orgJSON(organism):
   orgList = []
 
   # Find the TGE observations with the given organism
-  obs   = Observation.query.with_entities(Observation.tge_class, func.count(Observation.tge_class).label('obsCount')).\
+  obs   = Observation.query.with_entities(Observation.tge_class, func.count(distinct(Observation.tge_id)).label('obsCount')).\
             filter_by(organism=organism).\
             group_by(Observation.tge_class).all()
 
@@ -119,9 +106,9 @@ def orgJSON(organism):
     #   for exp in exps:
     #     expList.append({ "name": exp.title, "size": exp.expCount, "type":"experiment" })
 
-        sampleList.append({ "name": "observations belong to sample " + smpl.name, "size": smpl.smplCount, "type":"samples" })  
-      pepList.append({ "name": 'Indentified peptides for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
-    orgList.append({ "name": 'observations with type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
+        sampleList.append({ "name": "TGEs belong to sample " + smpl.name, "size": smpl.smplCount, "type":"samples" })  
+      pepList.append({ "name": 'Peptide count for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
+    orgList.append({ "name": 'TGE type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
   test = {
     "name": "tgeBreakdown",
@@ -214,17 +201,72 @@ def expJSON(experiment):
                 group_by(Observation.organism).all()
 
         for ob in obs:
-          orgList.append({ "name": "TGEs from Sample "+sample.name+" in "+ob.organism, "size": ob.orgCount, "type":"organisms" })
+          orgList.append({ "name": "TGEs in organism "+ob.organism, "size": ob.orgCount, "type":"organisms" })
 
-        tranNumList.append({ "name": "Transcripts from sample "+sample.name, "size": tran.tranCount, "type":"Transcript Count",  "children":orgList }) 
+        tranNumList.append({ "name": "Transcripts from sample "+sample.name, "size": tran.tranCount, "type":"transcripts",  "children":orgList }) 
 
-      pepNumList.append({ "name": "Identified peptides from sample "+sample.name, "size": num.pepSum, "type":"PeptCount",  "children":tranNumList }) 
+      pepNumList.append({ "name": "Identified peptides from sample "+sample.name, "size": num.pepSum, "type":"peptides",  "children":tranNumList }) 
 
     sampleList.append({ "name": "TGEs from Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
 
   test = {
     "name": "tgeBreakdown",
     "children": sampleList
+  }
+
+  data = json.dumps(test)
+
+  return data
+
+@plots.route('/protein/<uniprotID>.json')
+def protJSON(uniprotID):
+  obsList = []
+
+  obs  = Observation.query.with_entities(Observation.tge_class, func.count(distinct(Observation.tge_id)).label('obsCount')).\
+                     filter_by(uniprot_id = uniprotID).group_by(Observation.tge_class).\
+                     order_by(Observation.tge_class).all()
+
+  for ob in obs:
+    pepNumList = []
+
+
+    pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
+                    filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
+                    group_by(Observation.tge_class).\
+                    order_by(Observation.tge_class).all() 
+    
+    for num in pepNum:
+      pepList = []
+
+      # Find the number of peptides for this TGE observation and category of organism
+      peptides = Peptide.query.with_entities(Peptide.aa_seq, func.count(Peptide.aa_seq).label('pepCount')).\
+                    join(TgeToPeptide, Peptide.id == TgeToPeptide.peptide_id).\
+                    join(Observation,  Observation.id == TgeToPeptide.obs_id).\
+                    filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
+                    group_by(Peptide.aa_seq).distinct(Peptide.aa_seq).all() 
+      
+      for pep in peptides:
+      #   sampleList = []
+
+      #   samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
+      #               join(Observation, Observation.sample_id==Sample.id).\
+      #               join(TgeToPeptide, Observation.id == TgeToPeptide.obs_id).\
+      #               join(Peptide, Peptide.id == TgeToPeptide.peptide_id).\
+      #               filter(Observation.organism == ob.organism, Observation.tge_id == tge.id, Peptide.aa_seq == pep.aa_seq).\
+      #               group_by(Sample.name).all()
+
+      #   for smpl in samples:
+      #     sampleList.append({ "name": "Samples "+smpl.name, "size": smpl.smplCount, "type":"samples" })
+
+        pepList.append({ "name": 'Peptides "'+pep.aa_seq+'"', "size": pep.pepCount, "type":"peptides" }) 
+
+      pepNumList.append({ "name": 'Identified peptides of type "'+num.tge_class+'"', "size": num.pepSum, "type":"peptide count", "children": pepList }) 
+
+    obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGEs", "children":pepNumList })
+
+  test = {
+    "name": "tgeBreakdown",
+    "children": obsList
   }
 
   data = json.dumps(test)

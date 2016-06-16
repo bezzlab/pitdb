@@ -4,23 +4,13 @@
 <div class="navbar-default sidebar" role="navigation">
   <div class="sidebar-nav navbar-collapse">
     <ul class="nav" id="side-menu">
-      <li class="sidebar-search">
-        <div class="input-group custom-search-form">
-          <input type="text" class="form-control" placeholder="Search...">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button">
-              <i class="fa fa-search"></i>
-            </button>
-          </span>
-        </div>
-      </li>
-      <li><a href="#summary"><i class="fa fa-dashboard fa-fw"></i> Summary</a></li>
-      <li><a href="#observations"><i class="fa fa-dashboard fa-fw"></i> TGE Observations</a></li>
-      <li><a href="#sequences"><i class="fa fa-edit fa-fw"></i> Sequences</a></li>
-      <li><a href="#massspec_stats"><i class="fa fa-edit fa-fw"></i> Mass-Spectrometry Data Statistics</a></li>
-      <li><a href="#psm"><i class="fa fa-edit fa-fw"></i> PSM</a></li>
-      <li><a href="#genomic"><i class="fa fa-wrench fa-fw"></i> Genomic Context</span></a></li>
-      <li><a href="#mass_statistics"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics</span></a></li>
+      <li><h5>Navigation Panel</h5></li>
+      <li><a href="#tgeSummary"><i class="fa fa-comment-o fa-fw"></i> Summary</a></li>
+      <li><a href="#tgeGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
+      <li><a href="#tgeBreakdown"><i class="fa fa-bars fa-fw"></i> TGE breakdown</a></li>
+
+      <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics</span></a></li>
+      <li><a href="#"><i class="fa fa-edit fa-fw"></i> PSM</a></li>
       <li><a href="tables.html"><i class="fa fa-table fa-fw"></i>Expression Data Statistics </a></li>
     </ul>
     </div>
@@ -35,7 +25,7 @@
 
     <div class="row">
       <div>
-        <div class="panel panel-default" id="summary">
+        <div class="panel panel-default" id="tgeSummary">
           <div class="panel-heading"><i class="fa fa-bar-chart-o fa-fw"></i> Summary</div>
           
           <div class="panel-body">
@@ -52,19 +42,29 @@
               {% endfor %}</br>
               <label>Number of observations:</label> {{ summary.obsCount }}</br>
             </div>
-            
-            <div id="sequence"></div>
-            <div id="chart">
-              <div id="explanation" style="visibility: hidden;">
-                <span id="percentage"></span>
-              </div>
-            </div>
         </div>
       </div>
 
-      <div class="panel panel-default" id="observations">
+      <div id="tgeGraph" class="panel panel-default sunburst" style="position: relative !important;">
         <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> TGE Observations
+          <i class="fa fa-pie-chart fa-fw"></i> Graph
+        </div>
+        
+        <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of TGE breakdown</h5></p></span>
+        <div class="col-md-8 col-md-offset-2">
+          <div id="sequence"></div>
+          <div id="chart">
+            <div id="explanation">
+              <span id="percentage"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>
+            </div>
+          </div>
+        </div>
+        <div style="clear: both;"></div>
+      </div>
+
+      <div class="panel panel-default" id="tgeBreakdown">
+        <div class="panel-heading">
+          <i class="fa fa-bar-chart-o fa-fw"></i> TGE Breakdown
         </div>
         
         <div class="panel-body">
@@ -74,12 +74,13 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Obs</th>
-                <th>Experiment</th>
-                <th>Sample</th>
+                <th>Observation</th>
+                <th>Uniprot&nbsp;ID</th>
                 <th>Organism</th>
                 <th>Type&nbsp;/&nbsp;Strand</th>
                 <th>Identified Peptides</th>
+                <th>Sample</th>
+                <th>Experiment</th>
               </tr>
             </thead>
             <tbody>
@@ -87,11 +88,12 @@
                 <tr>
                   <td>{{ res.peptide_num }}</td>
                   <td>{{ res.observation }}</td>
-                  <td>{{ res.experiment }}</td>
-                  <td>{{ res.sample }}</td>
+                  <td><a href="protein?uniprot={{ res.uniprotID }}" target="_blank">{{ res.uniprotID }}</a></td>                  
                   <td>{{ res.organism }}</td>
-                  <td>{{ res.type }}&nbsp;({{ res.strand }})</td>
+                  <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
                   <td class="wordwrap"><strong>Total: {{ res.peptide_num }}</strong><br/>{% for pep in res.peptides %}{{ pep }}, <br/>{% endfor %}</td>
+                  <td class="wordwrap">{{ res.sample }}</td>
+                  <td>{{ res.experiment }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -107,30 +109,14 @@
           
         <div class="panel-body collapse in">
           <div class="row" style="margin-left:5px">
-            <label>Average peptide coverage:</label> </br>
-            <label>Average peptides per TGE:</label> {{ avgPeptNum }}</br>
-            <label>Average PSM count per peptide:</label>  </br>
-            <label>Score:</label>  </br>
-            <label>Software:</label>  </br>
+            <label>Average peptide coverage:</label> {{ summary.avgPeptCov }} </br>
+            <label>Average peptides per TGE:</label> {{ summary.avgPeptNum }}</br>
+            <!-- <label>Average PSM count per peptide:</label>  </br> -->
+            <!-- <label>Score:</label>  </br> -->
+            <label>Software:</label> MSGF+</br>
           </div>
         </div>
-      </div>
-
-      <div class="panel panel-default" id="mass_statistics">
-        <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Data Statistics
-        </div>
-        
-        <div class="panel-body">
-          <label>Average peptide coverage:</label> <br>
-          <label>Average peptides per TGE:</label> <br/>
-          <label>Average PSM count per peptide:</label> <br/>
-          <label>Score:</label> <br/>
-          <label>Software: </label>
-          <div id="tester" style="width:700px;height:450px;"></div>
-        </div>
-      </div>
-        
+      </div>    
     </div>
   </div>
 </div>
