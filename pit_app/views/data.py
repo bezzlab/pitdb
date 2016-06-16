@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 from pit_app.models import *
-from flask import Blueprint, send_file, request, Response
+from flask import Blueprint, send_file, request, Response, url_for
 
 data = Blueprint('data',  __name__)
 
@@ -15,8 +15,12 @@ def download_data(uniprot):
 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
-		df = pd.read_table("/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
-		# df = pd.read_table(os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		# file = url_for('static', filename="data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3")
+	
+		# df = pd.read_table(file, sep="\t", index_col = None) 
+		file = os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+		
+		df = pd.read_table(file, sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
 						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
@@ -31,7 +35,7 @@ def download_data(uniprot):
 	result = result.to_csv(None, sep='\t', index = False)
 
 	return result 
-	
+
 
 @data.route('/download', methods=['POST'])
 def download():
