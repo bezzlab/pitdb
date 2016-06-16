@@ -1,12 +1,10 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 # from flask_bcrypt import Bcrypt
-# import pit_app.views
-#from sqlalchemy_searchable import make_searchable
 
 application = Flask(__name__, instance_relative_config=True)
 application.config.from_object('config')
-# application.config.from_pyfile('config.py')
+
 # bcrypt = Bcrypt(application)
 db = SQLAlchemy(application)
 

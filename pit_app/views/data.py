@@ -34,7 +34,29 @@ def download_data(uniprot):
 			
 	result = result.to_csv(None, sep='\t', index = False)
 
-	return result 
+	return result
+
+
+# @data.route('/chromosome/<uniprot>')
+# def chrom(uniprot):
+# 	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+# 						join(Sample).join(Observation).\
+# 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
+	
+# 	file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+# 	df   = pd.read_table(file, sep="\t", index_col = None) 
+		
+# 	obs  = Observation.query.with_entities(Observation.long_description).\
+# 						filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
+
+# 	arr  = obs.long_description.split(" ")
+# 	mRNA = arr[0]
+# 	gene = arr[1]
+	
+# 	chromosome = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")].iloc[0,0]
+# 	chromosome = re.search(r'\d+', chromosome).group()
+
+# 	return chromosome
 
 
 @data.route('/download', methods=['POST'])

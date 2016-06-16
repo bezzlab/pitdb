@@ -1,5 +1,7 @@
+import os
 import re
 import locale
+import pandas as pd
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.sql import func, distinct
@@ -155,14 +157,29 @@ def protein():
   tges = TGE.query.join(Observation).filter_by(uniprot_id=uniprot).\
               distinct(Observation.tge_id)
 
-  tgeList = []
+  obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+          join(Sample).join(Observation).\
+          filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
 
-  # for tge in tges:
-  #   tgePerSample = Observation.query.filter(Observation.tge_id==tge.id).all()
+  file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+  df   = pd.read_table(file, sep="\t", index_col = None) 
+
+  obs  = Observation.query.with_entities(Observation.long_description).\
+            filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
+
+  arr  = obs.long_description.split(" ")
+  mRNA = arr[0]
+  gene = arr[1]
   
-  #   tgeList.append({'accession':sample.id, 'name': sample.name, 'tgeNum':tgePerSample })
+  row = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
+  chrom = re.search(r'\d+', row.iloc[0,0]).group()
+  start = row.iloc[0,3]
+  end   = row.iloc[0,4]
 
-  return render_template('results/protein.html', tges = tges, uniprot = uniprot, organism = organism)
+
+  genoverse  = { 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
+
+  return render_template('results/protein.html', tges = tges, uniprot = uniprot, genoverse = genoverse)
 
 
 @results.route('/aminoseq')

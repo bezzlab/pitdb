@@ -15,7 +15,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Uniprot ID: {{ uniprot }}</h1>
+        <h1 class="page-header">Uniprot ID: <a href="http://www.uniprot.org/uniprot/{{ uniprot }}" target="_blank">{{ uniprot }}</a></h1>
       </div>
     </div>
 
@@ -88,7 +88,7 @@
   if (chrParam == null || chrParam == '') {
     chrParam = 2;
   }
-  var organism = "{{ organism }}";
+  var organism = "{{ genoverse.organism }}";
   var genomeName, org; 
 
   switch (organism) {
@@ -108,14 +108,13 @@
       break;
 }
 
-
   var genoverseConfig = {
     container : '#genoverse',
     width     : 900,
     genome    : genomeName,
-    chr       : 6,
-    start     : 26124189,
-    end       : 26124200,
+    chr       : "{{ genoverse.chr }}",
+    start     : "{{ genoverse.start }}",
+    end       : "{{ genoverse.end }}",
     plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer' ],
     tracks    : [
       Genoverse.Track.Scalebar,
