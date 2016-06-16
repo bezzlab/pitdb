@@ -113,9 +113,9 @@
     container : '#genoverse',
     width     : 900,
     genome    : genomeName,
-    chr       : 2,
-    start     : 215350030,
-    end       : 215436000,
+    chr       : 6,
+    start     : 26124189,
+    end       : 26124200,
     plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer' ],
     tracks    : [
       Genoverse.Track.Scalebar,
@@ -154,9 +154,9 @@
       }),
       Genoverse.Track.extend({
         name   : 'GFF3',
-        height : 200,
+        height : 400,
         //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
-        url : '/data/test',
+        url : '/data/'+"{{ uniprot }}",
         //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
         view   : Genoverse.Track.View.Transcript.extend({
                 setFeatureColor : function () {}
@@ -171,6 +171,7 @@
                 gene  : 'gene'
             },
         parseData: function (text) {
+
       //alert(text)
       //alert("1. parent:"+feature.parent)
       //alert("1. type:"+feature.type)
@@ -186,7 +187,7 @@
                     if (fields.length < 5) {
                         continue;
                     }
-            
+                  
                     if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
                     {
                         var feature = {};

@@ -1,7 +1,7 @@
 import re
 import pandas as pd
 
-from pit_app.models import TGE, Observation
+from pit_app.models import *
 from flask import Blueprint, send_file, request, Response
 
 # app = Flask(__name__, static_folder='data/GFF3')
@@ -9,16 +9,30 @@ from flask import Blueprint, send_file, request, Response
 
 data = Blueprint('data',  __name__)
 
-@data.route('/data/<filename>')
-def download_data(filename):
-	df = pd.read_table("/Users/elena/Desktop/aws_pit/eb-pitdb/pit_app/static/data/G10.assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+@data.route('/data/<uniprot>')
+def download_data(uniprot):
+	data = pd.DataFrame()
+	obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+					join(Sample).join(Observation).\
+					filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
-	subset = df[df['attributes'].str.contains("asmbl_66693\|m.1109188[;.]")]
-	#data = subset.to_string(header = False, index = False)
-	#subset.to_csv('/Users/elena/Desktop/PITDB/pitProject/pitdb/flaskapp/app/pit_app/static/data/test.gff3', sep='\t', index = False)
+	for sample in obj:
+		df = pd.read_table("/Users/elena/Desktop/aws_pit/eb-pitdb/pit_app/static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3", sep="\t", index_col = None) 
+		
+		obs  = Observation.query.with_entities(Observation.long_description).\
+						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
 
-	#return data 
-	return send_file('static/data/'+'test.gff3') 
+		for ob in obs: 
+			arr  = ob.long_description.split(" ")
+			mRNA = arr[0]
+			gene = arr[1]
+			subset = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
+			data = pd.concat([data, subset], axis=0)
+			
+	data = data.to_csv(None, sep='\t', index = False)
+
+	return data 
+	
 
 @data.route('/download', methods=['POST'])
 def download():
