@@ -113,29 +113,35 @@ def experiment():
   exp  = Experiment.query.filter_by(id=experiment).first_or_404()
   user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
 
-  samples   = Sample.query.filter_by(exp_id=experiment).all()
-  sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
+  samples = Sample.query.with_entities(Sample.id, Sample.name).\
+              filter_by(exp_id=experiment).\
+              group_by(Sample.id, Sample.name).all()
 
-  obsNum = separators(Observation.query.join(Sample, Observation.sample_id==Sample.id).\
-        join(Experiment, Experiment.id==Sample.exp_id ).\
-        filter(Experiment.id==experiment).distinct().count())
+  # organisms  = [item for sublist in organisms for item in sublist]
+  # sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
 
-  tgeNum = separators(TGE.query.join(Observation, TGE.id == Observation.tge_id).\
-        join(Sample, Observation.sample_id==Sample.id).\
-        join(Experiment, Experiment.id==Sample.exp_id ).\
-        filter(Experiment.id==experiment).distinct(Observation.tge_id).count()) #distinct() -- removed distinct for now
+  obsNum = Observation.query.join(Sample).\
+              join(Experiment).\
+              filter_by(id=experiment).distinct().count()
 
-  trnNum = separators(Transcript.query.join(Observation, Transcript.obs_id == Observation.id).\
-        join(Sample, Observation.sample_id==Sample.id).\
-        join(Experiment, Experiment.id==Sample.exp_id ).\
-        filter(Experiment.id==experiment).distinct().count())
+  tgeNum = TGE.query.join(Observation).\
+              join(Sample).\
+              join(Experiment).\
+              filter_by(id=experiment).distinct(Observation.tge_id).count()
 
-  pepNum = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
-        join(Sample, Observation.sample_id==Sample.id).\
-        join(Experiment, Experiment.id==Sample.exp_id ).\
-        filter(Experiment.id==experiment).scalar())
+  trnNum = Transcript.query.join(Observation).\
+              join(Sample).\
+              join(Experiment).\
+              filter_by(id=experiment).distinct().count()
 
-  summary = {'id': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': sampleNum, 'tgeNum' : tgeNum, 'obsNum' : obsNum, 'trnNum' : trnNum, 'pepNum' : pepNum};
+  pept = Observation.query.with_entities(func.sum(Observation.peptide_num).label("pepNum")).\
+              join(Sample).\
+              join(Experiment).\
+              filter_by(id=experiment).one()
+
+  summary = {'id': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
+            'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
+            'pepNum' : separators(pept.pepNum) };
    
   sampleList = []
 
