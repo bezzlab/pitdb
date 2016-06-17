@@ -191,40 +191,50 @@ def expJSON(experiment):
 
 @plots.route('/protein/<uniprotID>.json')
 def protJSON(uniprotID):
-  obsList = []
+  orgList = []
 
-  obs  = Observation.query.with_entities(Observation.tge_class, func.count(distinct(Observation.tge_id)).label('obsCount')).\
-                     filter_by(uniprot_id = uniprotID).group_by(Observation.tge_class).\
-                     order_by(Observation.tge_class).all()
+  organisms  = Observation.query.with_entities(Observation.organism, func.count(distinct(Observation.tge_id)).label('orgCount')).\
+                     filter_by(uniprot_id = uniprotID).group_by(Observation.organism).all()
 
-  for ob in obs:
-    pepNumList = []
+  for org in organisms:
+    obsList = []
 
+    obs  = Observation.query.with_entities(Observation.tge_class, func.count(distinct(Observation.tge_id)).label('obsCount')).\
+                       filter_by(uniprot_id = uniprotID, organism = org.organism).group_by(Observation.tge_class).\
+                       order_by(Observation.tge_class).all()
+    for ob in obs:
+      pepNumList = []
 
-    pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
-                    filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
-                    group_by(Observation.tge_class).\
-                    order_by(Observation.tge_class).all() 
+      pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
+                      filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
+                      group_by(Observation.tge_class).order_by(Observation.tge_class).all()
+
+      for num in pepNum:
+        pepList = []
+
+        # Find the number of peptides for this TGE observation and category of organism
+        peptides = Peptide.query.with_entities(Peptide.aa_seq, func.count(Peptide.aa_seq).label('pepCount')).\
+                      join(TgeToPeptide).join(Observation).\
+                      filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
+                      group_by(Peptide.aa_seq).distinct(Peptide.aa_seq).all() 
+        
+        for pep in peptides:
+          pepList.append({ "name": 'Peptides "'+pep.aa_seq+'"', "size": pep.pepCount, "type":"peptides" }) 
+        
+        pepNumList.append({ "name": 'Identified peptides from TGEs with type "'+num.tge_class+'"', "size": num.pepSum, "type":"peptide count", "children": pepList }) 
+
+      obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children": pepNumList })
+   
+    orgList.append({ "name": 'TGEs in '+org.organism, "size": org.orgCount, "type":"organism", "children":obsList })
+
     
-    for num in pepNum:
-      pepList = []
-
-      # Find the number of peptides for this TGE observation and category of organism
-      peptides = Peptide.query.with_entities(Peptide.aa_seq, func.count(Peptide.aa_seq).label('pepCount')).\
-                    join(TgeToPeptide).join(Observation).\
-                    filter_by(uniprot_id = uniprotID, tge_class=ob.tge_class).\
-                    group_by(Peptide.aa_seq).distinct(Peptide.aa_seq).all() 
       
-      for pep in peptides:
-        pepList.append({ "name": 'Peptides "'+pep.aa_seq+'"', "size": pep.pepCount, "type":"peptides" }) 
-      
-      pepNumList.append({ "name": 'Identified peptides of type "'+num.tge_class+'"', "size": num.pepSum, "type":"peptide count", "children": pepList }) 
     
-    obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGEs", "children":pepNumList })
-
+    #   obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children":pepNumList })
+   
   data = {
     "name": "tgeBreakdown",
-    "children": obsList
+    "children": orgList
   }
 
   return json.dumps(data)
