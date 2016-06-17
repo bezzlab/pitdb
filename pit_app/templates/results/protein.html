@@ -15,7 +15,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Uniprot ID: <a href="http://www.uniprot.org/uniprot/{{ uniprot }}" target="_blank">{{ uniprot }}</a></h1>
+        <h1 class="page-header">Uniprot ID: <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ genoverse.uniprot }}</a></h1>
       </div>
     </div>
 
@@ -154,7 +154,7 @@
         name   : 'GFF3',
         height : 400,
         //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
-        url : '/genoverse/'+"{{ uniprot }}",
+        url : '/genoverse/'+"{{ genoverse.uniprot }}",
         //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
         view   : Genoverse.Track.View.Transcript.extend({
                 setFeatureColor : function () {}

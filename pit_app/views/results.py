@@ -26,15 +26,10 @@ def tge():
   uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
   
   pepLengths = Peptide.query.with_entities(func.length(Peptide.aa_seq).label('pepLength')).\
-                    join(TgeToPeptide, Peptide.id == TgeToPeptide.peptide_id).\
-                    join(Observation,  Observation.id == TgeToPeptide.obs_id).\
-                    join(TGE, TGE.id == Observation.tge_id ).\
-                    filter_by(id=tge.id).\
-                    group_by(Peptide.aa_seq).all() 
+                    join(TgeToPeptide).join(Observation).join(TGE).\
+                    filter_by(id=tge.id).group_by(Peptide.aa_seq).all() 
 
   avgPeptNum = Observation.query.with_entities(func.avg(Observation.peptide_num).label('average')).one()
-
-  # avgPeptCov = len(tge.amino_seq) / (pepLengthSum)
 
   # Flatten out the list of lists to lists (to use in the for loops)
   organisms  = [item for sublist in organisms for item in sublist]
@@ -120,23 +115,17 @@ def experiment():
   # organisms  = [item for sublist in organisms for item in sublist]
   # sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
 
-  obsNum = Observation.query.join(Sample).\
-              join(Experiment).\
+  obsNum = Observation.query.join(Sample).join(Experiment).\
               filter_by(id=experiment).distinct().count()
 
-  tgeNum = TGE.query.join(Observation).\
-              join(Sample).\
-              join(Experiment).\
+  tgeNum = TGE.query.join(Observation).join(Sample).join(Experiment).\
               filter_by(id=experiment).distinct(Observation.tge_id).count()
 
-  trnNum = Transcript.query.join(Observation).\
-              join(Sample).\
-              join(Experiment).\
+  trnNum = Transcript.query.join(Observation).join(Sample).join(Experiment).\
               filter_by(id=experiment).distinct().count()
 
   pept = Observation.query.with_entities(func.sum(Observation.peptide_num).label("pepNum")).\
-              join(Sample).\
-              join(Experiment).\
+              join(Sample).join(Experiment).\
               filter_by(id=experiment).one()
 
   summary = {'id': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
@@ -161,11 +150,11 @@ def protein():
   organism = ''.join(organism)
 
   tges = TGE.query.join(Observation).filter_by(uniprot_id=uniprot).\
-              distinct(Observation.tge_id)
+            distinct(Observation.tge_id)
 
   obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
-          join(Sample).join(Observation).\
-          filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
+            join(Sample).join(Observation).filter_by(uniprot_id=uniprot).\
+            group_by(Experiment.title, Sample.name, Sample.id).first()
 
   file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
   df   = pd.read_table(file, sep="\t", index_col = None) 
@@ -177,15 +166,14 @@ def protein():
   mRNA = arr[0]
   gene = arr[1]
   
-  row = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
+  row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
   chrom = re.search(r'\d+', row.iloc[0,0]).group()
   start = row.iloc[0,3]
   end   = row.iloc[0,4]
 
+  genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
 
-  genoverse  = { 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
-
-  return render_template('results/protein.html', tges = tges, uniprot = uniprot, genoverse = genoverse)
+  return render_template('results/protein.html', tges = tges, genoverse = genoverse)
 
 
 @results.route('/aminoseq')
