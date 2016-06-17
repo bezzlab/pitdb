@@ -72,11 +72,10 @@ def organism():
   organism   = request.args['organism']
   obs        = Observation.query.filter_by(organism=organism)
 
-  # tgeClasses is to be used in the modal window
-  #tgeClasses = Observation.query.with_entities(distinct(Observation.tge_class)).filter_by(organism=organism).all()
-  #tgeClasses = [item for sublist in tgeClasses for item in sublist]
+  tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
+                      " FROM observation, tge where organism = '"+ organism +"' AND tge.id = observation.tge_id "+
+                      " GROUP BY tge.accession").fetchall(); 
 
-  tges       = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
   tgeNum     = separators(obs.distinct(Observation.tge_id).count())
   sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
   expNum     = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
@@ -90,13 +89,7 @@ def organism():
   summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
   
   for tge in tges: 
-    tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id = tge.id).all()
-    uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id = tge.id).all()
-
-    tgeClasses = [item for sublist in tgeClasses for item in sublist]
-    uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
-
-    tgeList.append({'accession': tge.accession, 'tgeClasses': tgeClasses, 'uniprotIDs':uniprotIDs }) #  })
+    tgeList.append({'accession': tge[0], 'tgeClasses': tge[1], 'uniprotIDs': tge[2] }) #  })
   
   return render_template('results/organism.html', summary = summary, tgeList= tgeList)
 

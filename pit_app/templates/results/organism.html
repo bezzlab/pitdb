@@ -79,7 +79,8 @@
                 </td>
                 <td>{{ tge.tgeClasses }}</td>
                 <td>
-                {% for uniprotID in tge.uniprotIDs %}
+                {% set uniprotIDs = tge.uniprotIDs.split(',') %}
+                {% for uniprotID in uniprotIDs %}
                   <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
                 {% endfor %}
                 </td>

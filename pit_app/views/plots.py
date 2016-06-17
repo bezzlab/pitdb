@@ -95,7 +95,7 @@ def orgJSON(organism):
     "children": orgList
   }
 
-  return json.dumps(structure)
+  return json.dumps(data)
 
 
 @plots.route('/aminoseq/<aminoSeq>.json')
@@ -226,10 +226,6 @@ def protJSON(uniprotID):
       obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children": pepNumList })
    
     orgList.append({ "name": 'TGEs in '+org.organism, "size": org.orgCount, "type":"organism", "children":obsList })
-
-    
-      
-    
     #   obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children":pepNumList })
    
   data = {
