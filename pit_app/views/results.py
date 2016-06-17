@@ -213,8 +213,11 @@ def aminoseq():
   return render_template('search/results.html', tgeList = tgeList)
 
 
-@results.route('/peptide/<peptide>')
+@results.route('/peptide')
 def peptide(peptide):
+  uniprot  = request.args['peptide']
+
+
   return render_template('results/peptide.html')
 
 @results.route('/transcript/<transcript>')
