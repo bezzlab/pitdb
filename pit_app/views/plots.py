@@ -88,7 +88,7 @@ def orgJSON(organism):
       for smpl in samples:
         sampleList.append({ "name": "TGEs belong to sample " + smpl.name, "size": smpl.smplCount, "type":"samples" })  
       pepList.append({ "name": 'Peptide count for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
-    orgList.append({ "name": 'TGE type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
+    orgList.append({ "name": 'TGEs of type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
   data = {
     "name": "tgeBreakdown",
