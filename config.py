@@ -16,7 +16,8 @@ if 'RDS_HOSTNAME' in os.environ:
 	SQLALCHEMY_DATABASE_URI = driver + os.environ['RDS_USERNAME'] + ':' + os.environ['RDS_PASSWORD'] \
 													+'@' + os.environ['RDS_HOSTNAME']  +  ':' + os.environ['RDS_PORT'] \
 													+ '/' + os.environ['RDS_DB_NAME']
-# else:
+else:
+	print "Error"
 # 	BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
 # 	stream   = open(os.path.join(BASE_DIR, 'db.yml'), "r")
 # 	db       = yaml.load(stream)
