@@ -21,6 +21,8 @@ def advance():
       return redirect(url_for('results.tge', accession = searchData))
     elif searchOption == 'Amino Acid Sequence':
       return redirect(url_for('results.aminoseq', searchData = searchData, searchType=searchType))
+    elif searchOption == 'Peptide Sequence':
+      return redirect(url_for('results.peptide',  searchData = searchData, searchType=searchType))
     elif searchOption == 'Experiment ID':
       return redirect(url_for('results.experiment', experiment = searchData))
     elif searchOption == 'Uniprot ID':

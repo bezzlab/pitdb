@@ -87,13 +87,13 @@
               {% for res in results %}
                 <tr>
                   <td>{{ res.peptide_num }}</td>
-                  <td>{{ res.observation }}</td>
+                  <td><a href="transcript?obsID={{ res.id }}" target="_blank">{{ res.observation }}</a></td>
                   <td><a href="protein?uniprot={{ res.uniprotID }}" target="_blank">{{ res.uniprotID }}</a></td>                  
-                  <td>{{ res.organism }}</td>
+                  <td class="wordwrap"><a href="organism?organism={{ res.organism }}" target="_blank">{{ res.organism }}</a></td>
                   <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
-                  <td class="wordwrap"><strong>Total: {{ res.peptide_num }}</strong><br/>{% for pep in res.peptides %}{{ pep }}, <br/>{% endfor %}</td>
-                  <td class="wordwrap">{{ res.sample }}</td>
-                  <td>{{ res.experiment }}</td>
+                  <td class="wordwrap" style="font-size: 12px; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/>{% for pep in res.peptides %}{{ pep }}{% if not loop.last %}, {% endif %}<br/>{% endfor %}</td>
+                  <td class="wordwrap">{{ res.sampleName }}</td>
+                  <td><a href="experiment?experiment={{ res.expID }}" target="_blank">{{ res.expTitle }}</a></td>
                 </tr>
               {% endfor %}
             </tbody>

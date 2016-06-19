@@ -58,6 +58,11 @@ $(function() {
     "bProcessing": true,
   });
 
+  var pepTable = $('#pepTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+  });
+
   var smplTable = $('#smplTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
@@ -94,14 +99,14 @@ $(function() {
   // Select by default the first row (index 0)
   // $('.dataTable tbody tr:eq(0)').addClass('selected');
 
-  $(".wordwrap").html(function(_, html){
-    var val  = $('#searchData').val();
-    var type = $('#searchType').val();
-    if (type != "exact"){
-      var regex = new RegExp("(" + val + "+)", "g");
-      return html.replace(regex, '<span class="red">$1</span>'); 
-    }  
-  });
+  // $(".wordwrap").html(function(_, html){
+  //   var val  = $('#searchData').val();
+  //   var type = $('#searchType').val();
+  //   if (type != "exact"){
+  //     var regex = new RegExp("(" + val + "+)", "g");
+  //     return html.replace(regex, '<span class="red">$1</span>'); 
+  //   }  
+  // });
 
   $("#tgeSeq").html(function(_, html){
     var val  = $('.peptide_seq').val();
@@ -160,8 +165,8 @@ $(function() {
     } else {
       $("#textArea").show();
 
-      if (str == "Amino Acid Sequence"){
-        $(".searchOptions").toggle();
+      if (str == "Amino Acid Sequence" || str == "Peptide Sequence"){
+        $(".searchOptions").show();
       } else {
         $(".searchOptions").hide();
       }

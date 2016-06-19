@@ -92,7 +92,7 @@ def orgJSON(organism):
     orgList.append({ "name": 'TGEs of type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
   data = {
-    "name": "tgeBreakdown",
+    "name": "orgBreakdown",
     "children": orgList
   }
 
@@ -140,7 +140,7 @@ def aminoseqJSON(aminoSeq):
     tgeList.append({ "name": "TGEs in " + tge.organism, "size": tge.orgCount, "type": "organism", "children": obsList })
 
   data = {
-    "name": "tgeBreakdown",
+    "name": "aminoBreakdown",
     "children": tgeList
   }
 
@@ -184,7 +184,7 @@ def expJSON(experiment):
     sampleList.append({ "name": "TGEs from Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
 
   data = {
-    "name": "tgeBreakdown",
+    "name": "expBreakdown",
     "children": sampleList
   }
 
@@ -230,8 +230,57 @@ def protJSON(uniprotID):
     #   obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children":pepNumList })
    
   data = {
-    "name": "tgeBreakdown",
+    "name": "protBreakdown",
     "children": orgList
+  }
+
+  return json.dumps(data)
+
+
+@plots.route('/peptide/<pepSeq>.json')
+def peptideJSON(pepSeq):
+  tgeList = []
+
+  # Get the list of TGEs for the given amino acid sequence (partial or exact match)
+  #tges = TGE.query.with_entities(TGE.id).filter(TGE.amino_seq.like("%"+amino_seq+"%")).all()
+
+  tgeNum  = TGE.query.with_entities(func.count(distinct(TGE.id)).label('tgeCount')).\
+              join(Observation).join(TgeToPeptide).join(Peptide).\
+              filter_by(aa_seq = pepSeq).all()
+
+  for tge in tgeNum: 
+    obsList = []
+
+  #   obs = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
+  #             join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism).\
+  #             group_by(Observation.organism).all()
+
+  #   for ob in obs:
+  #     classList = []
+
+  #     classes = Observation.query.with_entities(Observation.tge_class, func.count(Observation.tge_class).label('classCount')).\
+  #                 join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism).\
+  #                 group_by(Observation.tge_class).all()
+
+  #     for tgeClass in classes:
+  #       sampleList = []
+
+  #       samples = Sample.query.with_entities(Sample.name, func.count(Observation.tge_id).label('sampleCount')).\
+  #                 join(Observation).join(TGE).filter(TGE.amino_seq.like("%"+aminoSeq+"%"), Observation.organism == tge.organism, Observation.tge_class == tgeClass.tge_class).\
+  #                 group_by(Sample.name).all()
+
+  #       for sample in samples:
+  #         sampleList.append({ "name": 'TGE observations from sample "' + sample.name +'"', "size": sample.sampleCount, "type": "samples" })
+
+  #       classList.append({ "name": 'TGE observations with type "' + tgeClass.tge_class+'"', "size": tgeClass.classCount, "type": "classes", "children": sampleList })
+
+  #     obsList.append({ "name": "TGE Observations in " + ob.organism, "size": ob.obsCount, "type": "observations", "children": classList })
+
+    tgeList.append({ "name": 'TGEs for the peptide "' + pepSeq+'"', "size": tge.tgeCount, "type": "TGEs" })
+
+  data = {
+    "name": "pepBreakdown",
+    "children": tgeList
   }
 
   return json.dumps(data)

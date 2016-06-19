@@ -44,23 +44,23 @@ def tge():
   results  = []
 
   for obs in tgeObs:
+    exp = Experiment.query.with_entities(Experiment.id, Experiment.title, Sample.name).\
+                    join(Sample).join(Observation).filter_by(id=obs.id).one()
 
-    sample = Sample.query.filter_by(id=obs.sample_id).first()
-    exp    = Experiment.query.filter_by(id=sample.exp_id).first()
+    # sample = Sample.query.filter_by(id=obs.sample_id).first()
+    # exp    = Experiment.query.filter_by(id=sample.exp_id).first()
     #transc = Transcript.query.filter_by(obs_id=obs.id).first()
-    tgePep = TgeToPeptide.query.filter_by(obs_id=obs.id).all()
+    
     tgeType    = re.search("(?<=type:).*?(?=\s)", obs.long_description).group(0)
     tgeLength  = re.search("(?<=len:).*?(?=\s)",  obs.long_description).group(0)
     tgeStrand  = re.search("(?<=\().*?(?=\))",    obs.long_description).group(0)
-    peptides = set()
 
-    for peptide in tgePep: 
-      pept = Peptide.query.filter_by(id=peptide.peptide_id).first()
-      peptides.add(pept.aa_seq)
+    peptides = Peptide.query.with_entities(Peptide.aa_seq).join(TgeToPeptide).filter_by(obs_id=obs.id).order_by(Peptide.aa_seq).all()
+    peptides = [item for sublist in peptides for item in sublist]
 
-    results.append({'id': obs.id, 'observation': obs.name, 'sample': sample.name, 'experiment': exp.title, 
-      'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 'uniprotID': obs.uniprot_id,
-  		'peptide_num': obs.peptide_num, 'peptides': list(peptides)})
+    results.append({'id': obs.id, 'observation': obs.name, 'sampleName': exp.name, 'expTitle': exp.title, 
+                    'expID': exp.id, 'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
+                    'uniprotID': obs.uniprot_id, 'peptide_num': obs.peptide_num, 'peptides': peptides })
 
   return render_template('results/tge.html', summary = summary, results=results)
 
@@ -207,15 +207,46 @@ def aminoseq():
 
 
 @results.route('/peptide')
-def peptide(peptide):
-  uniprot  = request.args['peptide']
+def peptide():
+  # Get the two arguments searchData and searchType (exact or partial)
+  searchData = request.args['searchData']
+  searchType = request.args['searchType']
 
+  if searchType == 'exact':
+    # We expect only one match for one particular aminoseq
+    peptide = Peptide.query.filter(Peptide.aa_seq == searchData).one()
+    return render_template('results/peptide.html', peptide = peptide)
+
+  else:
+    pep = Peptide.query.filter(Peptide.aa_seq.like("%"+searchData+"%")).all()
+
+    # for tge in tges: 
+    #   # For each TGE get the obs num, organisms, uniprotID and tgeClass
+    #   obsNum     = Observation.query.filter_by(tge_id=tge.id).count()
+    #   organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
+    #   tgeClasses = tge.tge_class
+    #   uniprotIDs = tge.uniprot_id
+      
+    #   # Flatten out the list of lists to lists (to use in the for loops)
+    #   organisms  = [item for sublist in organisms for item in sublist]
+      
+    #   sampleNum = Sample.query.with_entities(Sample.name).\
+    #                   join(Observation, Observation.sample_id == Sample.id).\
+    #                   filter_by(tge_id=tge.id).\
+    #                   distinct(Sample.name).count()
+
+    #   tgeList.append({ 'accession': tge.accession, 'length': len(tge.amino_seq), 'obsNum': obsNum, 
+    #     'organisms': organisms, 'tgeClasses': tgeClasses,  'uniprotIDs': uniprotIDs, 'sampleNum': sampleNum })
 
   return render_template('results/peptide.html')
 
-@results.route('/transcript/<transcript>')
-def transcript(transcript):
-  return render_template('results/transcript.html')
+@results.route('/transcript/')
+def transcript():
+  trns = Transcript.query.with_entities(Transcript.dna_seq, Observation.name).join(Observation).\
+              filter(Transcript.obs_id == request.args['obsID']).first_or_404()
+
+
+  return render_template('results/transcript.html', trns = trns)
 
 def separators( inputText ):
   locale.setlocale(locale.LC_ALL, 'en_US')
