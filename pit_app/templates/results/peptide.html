@@ -62,31 +62,23 @@
         </div>
         
         <div class="panel-body">
-
-          <!-- <table class="table table-striped table-bordered dataTable no-footer" id = "pepTable">
+          <table class="table table-striped table-bordered dataTable no-footer" id = "pepTable">
           <thead>
             <tr>
               <th>TGE Accession</th>
-              <th>TGE Type(s)</th>
-              <th>Uniprot ID(s)</th>
+              <th>TGE Amino Seq</th>
             </tr>
           </thead>
           <tbody>
-            {% for tge in tgeList %}
+            {% for tge in tges %}
               <tr>
                 <td>
                 <a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a>
                 </td>
-                <td>{{ tge.tgeClasses }}</td>
-                <td>
-                {% set uniprotIDs = tge.uniprotIDs.split(',') %}
-                {% for uniprotID in uniprotIDs %}
-                  <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
-                {% endfor %}
-                </td>
+                <td><div class="wordwrap" style="width: 700px; font-size: 13px">{{ tge.amino_seq }}</div></td>
               </tr>
             {% endfor %}
-          </tbody> -->
+          </tbody>
         </table>
       </div>
     </div>

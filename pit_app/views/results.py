@@ -8,7 +8,7 @@ from sqlalchemy.sql import func, distinct
 from sqlalchemy import desc
 from pit_app.models import *
 from pit_app import db
-
+from flask import Markup
 
 results = Blueprint('results',  __name__)
 
@@ -208,6 +208,7 @@ def aminoseq():
 
 @results.route('/peptide')
 def peptide():
+  tgeList = []
   # Get the two arguments searchData and searchType (exact or partial)
   searchData = request.args['searchData']
   searchType = request.args['searchType']
@@ -215,7 +216,13 @@ def peptide():
   if searchType == 'exact':
     # We expect only one match for one particular aminoseq
     peptide = Peptide.query.filter(Peptide.aa_seq == searchData).one()
-    return render_template('results/peptide.html', peptide = peptide)
+    tges = TGE.query.with_entities(TGE.accession, TGE.amino_seq).\
+            join(Observation).join(TgeToPeptide).filter_by(peptide_id = peptide.id).all()
+
+    for tge in tges:  
+      tgeList.append({ 'accession': tge.accession, 'amino_seq': Markup((tge.amino_seq).replace(searchData, "<span style='color:red; font-weight: bold;'>"+searchData+"</span>")) }) 
+
+    return render_template('results/peptide.html', peptide = peptide, tges = tgeList)
 
   else:
     pep = Peptide.query.filter(Peptide.aa_seq.like("%"+searchData+"%")).all()
