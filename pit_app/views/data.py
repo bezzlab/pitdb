@@ -15,6 +15,7 @@ def download_data(uniprot):
 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
+		# result = pd.concat([result, "##"+sample.name], axis=0)
 		# file = url_for('static', filename="data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3")
 	
 		# df = pd.read_table(file, sep="\t", index_col = None) 

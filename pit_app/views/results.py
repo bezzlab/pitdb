@@ -71,6 +71,10 @@ def organism():
 
   organism   = request.args['organism']
   obs        = Observation.query.filter_by(organism=organism)
+  tgeClasses = Observation.query.with_entities(Observation.tge_class).\
+                  filter_by(organism=organism).group_by(Observation.tge_class).all()
+  
+  tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
   tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
                       " FROM observation, tge where organism = '"+ organism +"' AND tge.id = observation.tge_id "+
@@ -91,7 +95,7 @@ def organism():
   for tge in tges: 
     tgeList.append({'accession': tge[0], 'tgeClasses': tge[1], 'uniprotIDs': tge[2] }) #  })
   
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList)
+  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
 
 
 @results.route('/experiment')

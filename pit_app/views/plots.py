@@ -226,7 +226,7 @@ def protJSON(uniprotID):
 
       obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children": pepNumList })
    
-    orgList.append({ "name": 'TGEs in '+org.organism, "size": org.orgCount, "type":"organism", "children":obsList })
+    orgList.append({ "name": 'TGEs in '+org.organism, "size": org.orgCount, "type":"TGEs", "children":obsList })
     #   obsList.append({ "name": 'TGEs of type "'+ ob.tge_class+'"', "size": ob.obsCount, "type":"TGE types", "children":pepNumList })
    
   data = {
