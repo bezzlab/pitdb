@@ -68,7 +68,7 @@ def orgJSON(organism):
 
   # Find the TGE observations with the given organism
   obs   = Observation.query.with_entities(Observation.tge_class, func.count(distinct(Observation.tge_id)).label('obsCount')).\
-            filter_by(organism=organism).group_by(Observation.tge_class).all()
+            filter(Observation.organism.like("%"+organism+"%")).group_by(Observation.tge_class).all()
 
   # Loop through each available class
   for ob in obs: 
@@ -76,14 +76,14 @@ def orgJSON(organism):
 
     # Find the number of peptides for this TGE observation and category of organism
     pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
-                  filter_by(organism=organism, tge_class = ob.tge_class).\
+                  filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).\
                   group_by(Observation.tge_class).all() 
     
     for num in pepNum:
       sampleList = []
 
-      samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).\
-                  join(Observation).filter_by(organism=organism, tge_class=ob.tge_class).\
+      samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).join(Observation).\
+                  filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).\
                   group_by(Sample.name).all()
 
       for smpl in samples:

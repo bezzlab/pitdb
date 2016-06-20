@@ -72,8 +72,8 @@ def organism():
   organism   = request.args['organism']
   obs        = Observation.query.filter_by(organism=organism)
   tgeClasses = Observation.query.with_entities(Observation.tge_class).\
-                  filter_by(organism=organism).group_by(Observation.tge_class).all()
-  
+                  filter(Observation.organism.like("%"+organism+"%")).group_by(Observation.tge_class).all()
+
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
   tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
@@ -85,10 +85,10 @@ def organism():
   expNum     = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
 
   trnNum    = separators(Transcript.query.join(Observation, Transcript.obs_id == Observation.id).\
-                    filter(Observation.organism==organism).distinct().count())
+                    filter(Observation.organism.like("%"+organism+"%")).distinct().count())
 
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
-                    filter_by(organism=organism).scalar())
+                    filter(Observation.organism.like("%"+organism+"%")).scalar())
 
   summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
   
