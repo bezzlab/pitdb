@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>PITDB</title>    
-    <!--link rel="stylesheet" href="/static/css/ext/bootstrap-theme.min.css"-->
+<html lang="en">
 
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>PITDB</title>
+
+    <!-- <link rel="stylesheet" href="/static/css/ext/bootstrap.css"> -->
+    <link rel="stylesheet" href="/static/css/ext/landing-page.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link rel="stylesheet" href="/static/css/ext/font-awesome.css"> -->
     <link rel="stylesheet" href="/static/css/ext/metisMenu.min.css">
     <!--link rel="stylesheet" href="/static/css/ext/timeline.css">-->
     <link rel="stylesheet" href="/static/css/ext/morris.css">
@@ -15,34 +23,109 @@
     <link rel="stylesheet" href="/static/css/ext/sb-admin-2.css">
     
     <link rel="stylesheet" href="/static/css/pitdb.css">
-  </head>
+</head>
+
   <body>
-    <header>
-      <div class="container">
-        <a href="/" style="text-decoration : none; color : #000000;"><h1 class="logo">PITDB</h1></a>
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+      <div class="container topnav">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-left">
+            <li id="page-content"></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/#about">About</a></li>
+            <li><a data-toggle="modal" data-target="#search" style="cursor: pointer;">Search</a></li>
+          </ul>
+        </div>
       </div>
-    </header>
+    </nav>
 
-    <div class="container">
-      <div id="wrapper">
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0"></nav>
+    {% block content %}
+    {% endblock %}
+
+    <!-- Modal -->
+    <div id="search" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Search PIT-DB</h4>
+          </div>
+          <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
+            <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
+              <div class="form-group">
+                <p>Four main types of search are available:
+                <ul> 
+                  <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence.</li>
+                  <li><label>Experiment:</label> View summary information for a particular experiment ID, e.g. experiment 4.</li>
+                  <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID, e.g. P12111.</li>
+                  <li><label>Species:</label> Find all TGEs observed for a particular species, selected from the drop down list.</li>
+                </ul>
+                </p>
+                <br/>
+                <label for="filter">Search by</label>
+                
+                <select id="searchOptions" name="searchOptions" class="form-control">
+                  <option disabled selected> -- Select an option -- </option>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="TGE">
+                    <option>Accession Number</option>
+                    <option id="aminoSeq">Amino Acid Sequence</option>
+                  </optgroup>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Experiment">
+                    <option>Experiment ID</option>
+                  </optgroup>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Protein">
+                    <option>Uniprot ID</option>
+                  </optgroup>
+                  <!-- <option role="separator" class="divider"></li> -->
+                  <!-- <optgroup label="Peptide">
+                    <option>Peptide Sequence</option>
+                  </optgroup> -->
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Species">
+                    <option>Homo sapiens</option>
+                    <option>Aedes aegypti</option>
+                    <option>Mus musculus</option>
+                    <option>Pteropus alecto</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="form-group" id="textArea">
+                <label for="contain" id="searchFilter" name="searchFilter">Search</label>
+                <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea" placeholder="Enter a search term"></textarea>
+              </div>
+              <div class="searchOptions" style="display: none;">
+                <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
+                <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="submitSearch" type="submit" class="btn btn-primary">Submit <i class="fa fa-search" aria-hidden="true"></i></button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
       </div>
-      {% block content %}
-      {% endblock %}
     </div>
-
+    
     <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
     <script src="/static/js/ext/bootstrap.min.js"></script>
-    <script src="/static/js/ext/datatables.min.js"></script>
-    <!-- <script src="/static/js/ext/jquery.dataTables.js"></script> -->
     
-    <!--<script src="/static/js/ext/metisMenu.min.js"></script>-->
-    <!--<script src="/static/js/ext/plotly.min.js"></script>-->
-    <!--<script src="/static/js/ext/sb-admin-2.js"></script>-->
-    <!--<script src="/static/js/ext/validator.js"></script>-->
-    <!--script src="/static/js/ext/bootstrap-select.js"></script>-->
-
+    <script src="/static/js/ext/d3.js"></script>
+    <!-- <script src="/static/js/ext/jquery.dataTables.js"></script> -->
+    <!-- <script type="text/javascript" src="/static/js/genoverse.combined.js"></script> -->
+    <script src="/static/js/ext/datatables.min.js"></script>
     <script src="/static/js/pit.js"></script>
-
-  </body>
+</body>
 </html>
