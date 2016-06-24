@@ -18,7 +18,7 @@ def tge():
   accession = request.args['accession']
 
   # Find the TGE for the given accession number
-  tge        = TGE.query.filter_by(accession=accession).one()
+  tge        = TGE.query.filter_by(accession=accession).first_or_404()
   tgeObs     = Observation.query.filter_by(tge_id=tge.id).order_by(desc(Observation.peptide_num))
   obsCount   = tgeObs.count()
   organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
@@ -37,9 +37,14 @@ def tge():
   uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
   pepLengths = [item for sublist in pepLengths for item in sublist]
 
+  avgPeptCov = '-'
+  
+  if (sum(pepLengths)):
+    avgPeptCov = float(len(tge.amino_seq))/sum(pepLengths)
+
   summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : organisms, 'avgPeptNum' : avgPeptNum.average, 
                   'tgeClasses' : tgeClasses, 'obsCount' : obsCount, 'uniprotIDs': uniprotIDs, 
-                  'avgPeptCov': float(len(tge.amino_seq))/sum(pepLengths) };
+                  'avgPeptCov': avgPeptCov };
 
   results  = []
 
@@ -142,7 +147,7 @@ def experiment():
 def protein():
   uniprot  = request.args['uniprot']
 
-  obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all()
+  obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all_or_404()
   organism = [item for sublist in obs for item in sublist]
   organism = ''.join(organism)
 
@@ -183,11 +188,11 @@ def aminoseq():
 
   if searchType == 'exact':
     # We expect only one match for one particular aminoseq
-    tge = TGE.query.filter(TGE.amino_seq == searchData).one()
+    tge = TGE.query.filter(TGE.amino_seq == searchData).first_or_404()
     return redirect(url_for('results.tge', accession = tge.accession))
 
   else:
-    tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all()
+    tges = TGE.query.filter(TGE.amino_seq.like("%"+searchData+"%")).all_or_404()
 
     for tge in tges: 
       # For each TGE get the obs num, organisms, uniprotID and tgeClass
@@ -219,7 +224,7 @@ def peptide():
 
   if searchType == 'exact':
     # We expect only one match for one particular aminoseq
-    peptide = Peptide.query.filter(Peptide.aa_seq == searchData).one()
+    peptide = Peptide.query.filter(Peptide.aa_seq == searchData).first_or_404()
     tges = TGE.query.with_entities(TGE.accession, TGE.amino_seq).\
             join(Observation).join(TgeToPeptide).filter_by(peptide_id = peptide.id).all()
 
