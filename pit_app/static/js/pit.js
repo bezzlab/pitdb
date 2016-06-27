@@ -1,4 +1,17 @@
 $(function() {
+  var url = $(location).attr('href');
+
+  function get_path(url) {
+      // following regex extracts the path from URL
+    url = url.replace(/^https?:\/\/[^\/]+\//i, "").replace(/\/$/, "");
+    url = url.replace(/\+/g, " ");
+    arr = url.split(/\?|\=|\&/) 
+
+    return arr
+  }
+
+  path = get_path(url)
+
   $('a[href*=#]:not([href=#])').click(function() {
     if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
       var target = $(this.hash);
@@ -97,8 +110,17 @@ $(function() {
   });
 
 
-  // Select by default the first row (index 0)
-  // $('.dataTable tbody tr:eq(0)').addClass('selected');
+  $('#searchform').submit(function(e){
+    var str = $( "#searchOptions option:selected" ).val();
+    
+    if (str == "default"){
+      $(".modalWarning").html('** You need to select one option from the drop-down list.');
+      return false;
+    }
+    
+  });
+
+
 
   $(".wordwrap").html(function(_, html){
     // var val  = $('#searchData').val();
@@ -152,6 +174,7 @@ $(function() {
   });
 
   $("#searchOptions").change(function() {
+    $(".modalWarning").hide()
     var str = $( "#searchOptions option:selected" ).text();
     var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');
     $("#textArea").show();
@@ -181,56 +204,45 @@ $(function() {
     }
   });
 
-  // Get and trim the url of the page to determine the category (organism, tge, aminoacid etc.)
-  var url = $(location).attr('href');
+  if ( $( "#chart" ).length > 0 ) {
+    // Set the dimensions of the sunburst graph
+    var width = 500;
+    var height = 400;
+    var radius = Math.min(width, height) / 2;
 
-  function get_path(url) {
-      // following regex extracts the path from URL
-    url = url.replace(/^https?:\/\/[^\/]+\//i, "").replace(/\/$/, "");
-    url = url.replace(/\+/g, " ");
-    arr = url.split(/\?|\=|\&/) 
+    // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+    var b = {
+      w: 100, h: 34, s: 3, t: 10
+    };
 
-    return arr
+    // Total size of all segments; we set this later, after loading the data.
+    var totalSize = 0; 
+
+    var vis = d3.select("#chart").append("svg:svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("svg:g")
+      .attr("id", "container")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    var partition = d3.layout.partition()
+      .size([2 * Math.PI, radius * radius])
+      .value(function(d) { return d.size; });
+
+    var arc = d3.svg.arc()
+      .startAngle(function(d) { return d.x; })
+      .endAngle(function(d) { return d.x + d.dx; })
+      .innerRadius(function(d) { return Math.sqrt(d.y); })
+      .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+
+    // Ordinal scales https://github.com/d3/d3/wiki/Ordinal-Scales#category20 
+    var colors = d3.scale.category20c();
+
+    d3.json("/"+path[0]+"/"+path[2]+".json", function(error, data) {
+      createVisualization(data);
+    });
+
   }
-
-  path = get_path(url)
-
-  // Set the dimensions of the sunburst graph
-  var width = 500;
-  var height = 400;
-  var radius = Math.min(width, height) / 2;
-
-  // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-  var b = {
-    w: 100, h: 34, s: 3, t: 10
-  };
-
-  // Total size of all segments; we set this later, after loading the data.
-  var totalSize = 0; 
-
-  var vis = d3.select("#chart").append("svg:svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("svg:g")
-    .attr("id", "container")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-  var partition = d3.layout.partition()
-    .size([2 * Math.PI, radius * radius])
-    .value(function(d) { return d.size; });
-
-  var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
-    .endAngle(function(d) { return d.x + d.dx; })
-    .innerRadius(function(d) { return Math.sqrt(d.y); })
-    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
-  // Ordinal scales https://github.com/d3/d3/wiki/Ordinal-Scales#category20 
-  var colors = d3.scale.category20c();
-
-  d3.json("/"+path[0]+"/"+path[2]+".json", function(error, data) {
-    createVisualization(data);
-  });
 
   // Main function to draw and set up the visualization, once we have the data.
   function createVisualization(json) {
