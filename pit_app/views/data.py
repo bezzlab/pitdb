@@ -79,16 +79,30 @@ def download():
 				for elem in nested:
 					if (elem in classes):
 						# print accession number
+						yield ">"
 						if ('tgeAcc' in selected):
-							yield tge.accession + ','
+							yield tge.accession + ' ' # + ','
 						# print the tge class 
-						yield tge.tge_class + ','
+						yield tge.tge_class + ' ' #+ ','
 						# print protName
 						if ('protName' in selected):
-							yield tge.uniprot_id + ',' 
+							yield tge.uniprot_id +' ' #+ ',' 
 						# print amino acid seq
 						if ('aminoSeq' in selected):
-							yield tge.amino_seq + ','
+							yield '\n'+tge.amino_seq #+ ','
 						yield '\n'
 
-	return Response(generate(), mimetype='text/csv', headers={"Content-disposition":"attachment; filename=output.csv"})
+	return Response(generate(), mimetype='text/fasta', headers={"Content-disposition":"attachment; filename=tges.fasta"})
+
+
+@data.route('/downloadTranscript', methods=['POST'])
+def downloadTrn():
+	asmbl   = str(request.form['asmbl'])
+	dna_seq = str(request.form['dna_seq'])
+
+	def generate():
+		yield ">"
+		yield asmbl + '\n'
+		yield dna_seq + '\n' 
+
+	return Response(generate(), mimetype='text/fasta', headers={"Content-disposition":"attachment; filename=transcript.fasta"})
