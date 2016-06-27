@@ -25,20 +25,44 @@
         <hr class="section-heading-spacer">
         <div class="clearfix"></div>
         <p class="lead">PIT-DB is a publicly available database for sharing of results from PIT (proteomics informed by transcriptomics) experiments. PIT [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by integration of the acquired data to provide an unprecedented level of information about which genomic elements are being transcribed and translated within a given sample, even if the organism under study does not have an annotated genome. Observed translated genomic elements (TGEs) are BLASTed against reference proteomes using a published workflow [<a href="#ref2">2</a>] to determine whether they are known proteins, protein variants or novel gene products. </p>
-        <hr class="section-heading-spacer">
+
+        <h2 class="section-heading" style="padding-top: 30px">Database Statistics</h2>
+        <hr class="section-heading-spacer" style="width: 280px">
+        <div class="clearfix"></div>
+        As of June 2016, the PIT-DB data consist of:<br/><br/>
+        <div class="giant-number-block col-xs-3">
+          <span class="giant-number">{{ expNum }} </span>
+          <span class="text-muted">experiments</span>
+        </div>
+
+        <div class="giant-number-block col-xs-3">
+          <span class="giant-number">{{ smlNum }}</span>
+          <span class="text-muted">samples</span>
+        </div>
+
+        <div class="giant-number-block col-xs-3">
+          <span class="giant-number">{{ species }}</span>
+          <span class="text-muted">Organisms</span>
+        </div>
+
+        <div class="giant-number-block col-xs-3">
+          <span class="giant-number">{{ tges }}</span>
+          <span class="text-muted">TGes</span>
+        </div>
+        <!-- <hr class="section-heading-spacer"> -->
         <div class="clearfix"></div>
       </div>
       <div>
-        <h2 class="section-heading">Acknowledgements</h2>
-        <hr class="section-heading-spacer">
+        <h2 class="section-heading" style="padding-top: 30px">Acknowledgements</h2>
+        <hr class="section-heading-spacer" style="width: 280px">
         <div class="clearfix"></div>
         <p class="lead">Developed by Elena Chatzimichali and Shyamasree Saha under the supervision of Conrad Bessant (Queen Mary University of London) and David Matthews (University of Bristol). Funded by BBSRC (grants BB/M020118/1 and BB/K016075/1) and Queen Mary University of London.
         <ol style="line-height: 1.7em">
         <li id="ref1">Evans, V.C., et al., De novo derivation of proteomes from transcriptomes for transcript and protein identification. Nature Methods, 2012. 9(12): p. 1207-U111.</li>
-        <li id="ref2">Fan, J., et al., Galaxy Integrated Omics: Web-based Standards-Compliant Workflows for Proteomics Informed by Transcriptomics. Mol Cell Proteomics, 2015. 14(11): p. 3087-93.</li>
+        <li id="ref2" style="padding-bottom: 20px">Fan, J., et al., Galaxy Integrated Omics: Web-based Standards-Compliant Workflows for Proteomics Informed by Transcriptomics. Mol Cell Proteomics, 2015. 14(11): p. 3087-93.</li>
         </ol>
         </p>
-        <hr class="section-heading-spacer">
+        <hr class="section-heading-spacer" style="padding-top: 20px">
         <div class="clearfix"></div>
       </div>
     </div>

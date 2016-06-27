@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
 
 <head>
@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/static/css/ext/landing-page.css">
 
     <!-- Custom Fonts -->
-    <!-- <link rel="stylesheet" href="/static/css/ext/font-awesome.css"> -->
     <link rel="stylesheet" href="/static/css/ext/metisMenu.min.css">
     <!--link rel="stylesheet" href="/static/css/ext/timeline.css">-->
     <link rel="stylesheet" href="/static/css/ext/morris.css">
@@ -74,7 +73,7 @@
                 <label for="filter">Search by</label>
                 
                 <select id="searchOptions" name="searchOptions" class="form-control">
-                  <option disabled selected> -- Select an option -- </option>
+                  <option disabled selected value="default">-- Select an option --</option>
                   <option role="separator" class="divider"></li>
                   <optgroup label="TGE">
                     <option>Accession Number</option>
@@ -109,6 +108,7 @@
                 <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
                 <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
               </div>
+              <span class="modalWarning" style="color: #c12e2a; font-weight: bold;"></span>
             </div>
             <div class="modal-footer">
               <button id="submitSearch" type="submit" class="btn btn-primary">Submit <i class="fa fa-search" aria-hidden="true"></i></button>

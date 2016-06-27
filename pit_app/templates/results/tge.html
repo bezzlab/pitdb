@@ -109,8 +109,8 @@
             
           <div class="panel-body collapse in">
             <div class="row" style="margin-left:5px">
-              <label>Average peptide coverage:</label> {{ summary.avgPeptCov }} </br>
-              <label>Average peptides per TGE:</label> {{ summary.avgPeptNum }}</br>
+              <label>Average peptide coverage:</label> {{'%0.2f'| format(summary.avgPeptCov|float)}}</br>
+              <label>Average peptides per TGE:</label> {{'%0.2f'| format(summary.avgPeptNum|float)}}</br>
               <!-- <label>Average PSM count per peptide:</label>  </br> -->
               <!-- <label>Score:</label>  </br> -->
               <label>Software:</label> MSGF+</br>

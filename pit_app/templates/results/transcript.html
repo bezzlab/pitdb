@@ -28,7 +28,12 @@
         
         <div class="panel-body">
           <div class="row" style="margin-left:5px">
-          <h5 style="padding-bottom: 10px">Transcript Sequence for "{{ trns.name }}": </h5> <div class= "wordwrap" style="font-size: 14px; font-style: italic; font-family: Serif, Times New Roman, Georgia; color: gray; padding-right: 18px">{{ trns.dna_seq }} </div><br/> <br/>
+            <form role="form" action="/downloadTranscript" method="POST">
+              <input type="hidden" id="asmbl" name="asmbl" value='{{ trns.name }}'>
+              <input type="hidden" id="dna_seq" name="dna_seq" value='{{ trns.dna_seq }}'>
+              <button type="submit" class="btn btn-info btn-lg" style="margin-bottom: 20px"><i class="fa fa-download"></i>&nbsp;Download Sequence</button>
+            </form>
+            <h5 style="padding-bottom: 10px">Transcript Sequence for "{{ trns.name }}": </h5> <div class= "wordwrap" style="font-size: 14px; font-style: italic; font-family: Serif, Times New Roman, Georgia; color: gray; padding-right: 18px">{{ trns.dna_seq }} </div><br/> <br/>
           </div>
         </div>
       </div>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>PITDB</title>
+
+    <!-- <link rel="stylesheet" href="/static/css/ext/bootstrap.css"> -->
+    <link rel="stylesheet" href="/static/css/ext/landing-page.css">
+
+    <!-- Custom Fonts -->
+    <link rel="stylesheet" href="/static/css/ext/metisMenu.min.css">
+    <!--link rel="stylesheet" href="/static/css/ext/timeline.css">-->
+    <link rel="stylesheet" href="/static/css/ext/morris.css">
+    
+    <link rel="stylesheet" href="/static/css/ext/font-awesome.css">
+    <link rel="stylesheet" href="/static/css/ext/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/ext/bootstrap-select.css">
+    <link rel="stylesheet" href="/static/css/ext/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/static/css/ext/sb-admin-2.css">
+    
+    <link rel="stylesheet" href="/static/css/pitdb.css">
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+      <div class="container topnav">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-left">
+            <li id="page-content"></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/#about">About</a></li>
+            <li><a data-toggle="modal" data-target="#search" style="cursor: pointer;">Search</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Modal -->
+    <div id="search" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Search PIT-DB</h4>
+          </div>
+          <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
+            <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
+              <div class="form-group">
+                <p>Four main types of search are available:
+                <ul> 
+                  <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence.</li>
+                  <li><label>Experiment:</label> View summary information for a particular experiment ID, e.g. experiment 4.</li>
+                  <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID, e.g. P12111.</li>
+                  <li><label>Species:</label> Find all TGEs observed for a particular species, selected from the drop down list.</li>
+                </ul>
+                </p>
+                <br/>
+                <label for="filter">Search by</label>
+                
+                <select id="searchOptions" name="searchOptions" class="form-control">
+                  <option disabled selected value="default">-- Select an option --</option>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="TGE">
+                    <option>Accession Number</option>
+                    <option id="aminoSeq">Amino Acid Sequence</option>
+                  </optgroup>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Experiment">
+                    <option>Experiment ID</option>
+                  </optgroup>
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Protein">
+                    <option>Uniprot ID</option>
+                  </optgroup>
+                  <!-- <option role="separator" class="divider"></li> -->
+                  <!-- <optgroup label="Peptide">
+                    <option>Peptide Sequence</option>
+                  </optgroup> -->
+                  <option role="separator" class="divider"></li>
+                  <optgroup label="Species">
+                    <option>Homo sapiens</option>
+                    <option>Aedes aegypti</option>
+                    <option>Mus musculus</option>
+                    <option>Pteropus alecto</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="form-group" id="textArea">
+                <label for="contain" id="searchFilter" name="searchFilter">Search</label>
+                <textarea rows="4" cols="50" class="form-control" id="searchArea" name="searchArea" placeholder="Enter a search term"></textarea>
+              </div>
+              <div class="searchOptions" style="display: none;">
+                <label class="radio-inline"><input type="radio" name="searchType" value="exact" checked="checked">Exact Match</label>
+                <label class="radio-inline"><input type="radio" name="searchType" value="partial">Contains Sequence</label>
+              </div>
+              <span class="modalWarning" style="color: #c12e2a; font-weight: bold;"></span>
+            </div>
+            <div class="modal-footer">
+              <button id="submitSearch" type="submit" class="btn btn-primary">Submit <i class="fa fa-search" aria-hidden="true"></i></button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
+    <script src="/static/js/ext/bootstrap.min.js"></script>
+    
+    <script src="/static/js/ext/d3.js"></script>
+    
+    <script type="text/javascript" src="/static/js/genoverse.combined.js"></script>
+    <script src="/static/js/ext/jquery.dataTables.js"></script>
+    <!-- <script src="/static/js/ext/datatables.min.js"></script> -->
+    <script src="/static/js/pit.js"></script>
+
+<script>
+  var chrParam = getParam("seqid");
+  
+  if (chrParam == null || chrParam == '') {
+    chrParam = 2;
+  }
+  var organism = "{{ genoverse.organism }}";
+  var genomeName, org; 
+
+  switch (organism) {
+    case 'Homo sapiens':
+      genomeName = 'grch38';
+      org = 'human';
+      break;
+    case 'Aedes aegypti':
+      //genomeName = 'grch38';
+      break;
+    case 'Pteropus alecto':
+      genomeName = 'bat';
+      break;
+    case 'Mus musculus':
+      genomeName = 'mouse';
+      org = 'mouse';
+      break;
+}
+
+  var genoverseConfig = {
+    container : '#genoverse',
+    width     : 900,
+    genome    : genomeName,
+    chr       : "{{ genoverse.chr }}",
+    start     : "{{ genoverse.start }}",
+    end       : "{{ genoverse.end }}",
+    plugins   : [ 'controlPanel', 'karyotype', 'trackControls', 'resizer' ],
+    tracks    : [
+      Genoverse.Track.Scalebar,
+      Genoverse.Track.extend({
+        name  : 'Sequence',
+        model : Genoverse.Track.Model.Sequence.Ensembl.extend({
+          url : '//rest.ensembl.org/sequence/region/'+org+'/__CHR__:__START__..__END__:0?content-type=application/json'
+        }),
+        view      : Genoverse.Track.View.Sequence,
+        resizable : 'auto',
+        100000    : false
+      }),
+      Genoverse.Track.extend({
+        name   : 'Genes',
+        height : 200,
+        info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+
+        // Different settings for different zoom level
+        2000000: { // This one applies when > 2M base-pairs per screen
+          labels : false
+        },
+        100000: { // more than 100K but less then 2M
+          labels : true,
+          model  : Genoverse.Track.Model.Gene.Ensembl.extend({
+            url : '//rest.ensembl.org/overlap/region/'+org+'/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
+          }),
+          view   : Genoverse.Track.View.Gene.Ensembl
+        },
+        1: { // > 1 base-pair, but less then 100K
+          labels : true,
+          model  : Genoverse.Track.Model.Transcript.Ensembl.extend({
+              url : '//rest.ensembl.org/overlap/region/'+org+'/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
+          }),
+          view   : Genoverse.Track.View.Transcript.Ensembl
+        }
+      }),
+      Genoverse.Track.extend({
+            name   : 'ORFs',
+            height : 200,
+            //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+            500000: { // more than 500k
+                labels : true,
+                model  : Genoverse.Track.Model.Gene.extend({
+                url : '/genoverse/'+"{{ genoverse.uniprot }}",
+        dataType : 'text',
+        typeMap : {
+            exon  : 'exon',
+            cds   : 'cds',
+            mrna  : 'mrna',
+            gene  : 'gene'
+        },
+                                                                                                                                                                                                    
+        parseData: function (text) {
+            var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];                                                            
+                var fColor = colors[Math.floor(Math.random() * colors.length)];                                                    
+            var sample=0;                                                                           
+      var lines = text.split('\n');
+                  var gene;
+      for (var i = 0; i < lines.length; i++) {
+                        if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                //this is where I need to check for sample name and change color scheme
+                if(lines[i].indexOf('gff3')<0)
+                {
+                    fColor = colors[sample%colors.length];
+                    sample=sample+1
+                }
+                continue;
+        }
+        //alert(lines[i])
+        var fields = lines[i].split('\t');
+           
+        if (fields.length < 5) {
+          continue;
+        }
+            
+                      if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
+                      {
+                          var feature = {};
+    
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+    
+                    if (fields[8]) {
+                        var frame = fields[8].split(';');
+                        
+                        for (var j = 0; j < frame.length; j++) {
+                            var keyValue = frame[j].split('=');
+                            
+                            if (keyValue.length === 2) {
+                                feature[keyValue[0].toLowerCase()] = keyValue[1];
+                            }
+                        }
+                    }
+                        
+                    if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase())
+                    {
+            feature.color=fColor;
+            feature.label=feature.id;
+                        this.insertFeature(feature) 
+                    }
+                    
+                        
+                      } //end of if
+    }//end of forloop
+                
+              }//end of model
+                }),
+                view   : Genoverse.Track.View.Gene.extend({
+      setFeatureColor : function () {}
+    })
+            },//end of 100k
+      1: { // > 1 base-pair, but less then 100K
+                labels : true,
+                model : Genoverse.Track.Model.Transcript.extend(
+            {
+    url : '/genoverse/'+"{{ genoverse.uniprot }}",
+        dataType : 'text',
+        typeMap : {
+            exon  : 'exon',
+            cds   : 'cds',
+            mrna  : 'mrna',
+            gene  : 'gene'
+        },
+                                                                                                                                                                                                    
+        parseData: function (text) {
+            var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];                                                         
+                var fColor = colors[Math.floor(Math.random() * colors.length)];                                                    
+            var sample=0;                                                                           
+      var lines = text.split('\n');
+                  var gene;
+      for (var i = 0; i < lines.length; i++) {
+                        if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                //this is where I need to check for sample name and change color scheme
+                if(lines[i].indexOf('gff3')<0)
+                {
+                    fColor = colors[sample];
+                    sample=sample+1
+                }
+                continue;
+        }
+        //alert(lines[i])
+        var fields = lines[i].split('\t');
+           
+        if (fields.length < 5) {
+          continue;
+        }
+            
+                      if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
+                      {
+                          var feature = {};
+    
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+    
+                    if (fields[8]) {
+                        var frame = fields[8].split(';');
+                        
+                        for (var j = 0; j < frame.length; j++) {
+                            var keyValue = frame[j].split('=');
+                            
+                            if (keyValue.length === 2) {
+                                feature[keyValue[0].toLowerCase()] = keyValue[1];
+                            }
+                        }
+                    }
+                        
+                    if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase())
+                    {
+                        //alert("gene");
+                        if(typeof gene !== "undefined" && gene)
+                        {
+                            //alert("gene features entering");
+                            for(var g=0; g<gene.mrna.length; g++)
+                            {
+                                this.insertFeature(gene.mrna[g]);
+                            }
+                        }
+                        feature.mrna=[];
+                        gene=feature;
+                        //alert("gene id:"+gene.id);
+                        //alert("gene mRNA:"+gene.mrna.length);
+                    }
+                    else if(feature.type.toLowerCase() === this.typeMap.mrna.toLowerCase())
+                    {
+                        //alert('mRNA');
+                        feature.exons=[];
+                        feature.cds=[];
+            feature.label=feature.id;
+                        if(gene!==undefined)
+                        {
+                            gene.mrna.push(feature);
+                            //alert("gene not undefined:"+gene.mrna.length);
+                        }
+                        //alert('mRNA2');
+                    }
+                    else if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
+                        //alert("exon");
+                        var idx = gene.mrna.length - 1;
+                        
+                        //alert("idx="+idx)
+                        gene.mrna[idx].exons.push(feature); //assuming last mRNA is the parent of this exon
+                        //alert("exon pushed");
+                    }
+                    else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
+                        //alert("cds");
+                        var idx=gene.mrna.length-1;
+                        feature.color =fColor;
+                        gene.mrna[idx].cds.push(feature); //assuming last mRNA is the parent of this cds
+                        //alert("cds pushed");
+                    }
+                        
+                      } //end of if
+    }//end of forloop
+                if(typeof gene !== "undefined" && gene)
+                {
+                    //alert("gene features entering");
+                    for(var g=0; g<gene.mrna.length; g++)
+                    {
+                        this.insertFeature(gene.mrna[g]);
+                    }
+                }
+                //alert()
+            } //end of function
+      }),//end of model
+            view   : Genoverse.Track.View.Transcript.extend({
+                setFeatureColor : function () {}
+            })
+            }//end of section for 1
+     }),//end of track
+  Genoverse.Track.extend({
+            name   : 'Peptide',
+            height : 200,
+            //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
+      500000: { // more than 500k
+                labels : false,
+                model  : Genoverse.Track.Model.Gene.extend({
+                url : '/genoverse/'+"{{ genoverse.uniprot }}",
+        dataType : 'text',
+        typeMap : {
+            exon  : 'exon',
+            cds   : 'cds',
+            mrna  : 'mrna',
+            gene  : 'gene',
+      pep   : 'peptide'
+        },
+                                                                                                                                                                                                    
+        parseData: function (text) {
+            var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];                                                            
+                var fColor = 'red'; //colors[Math.floor(Math.random() * colors.length)];                                                    
+            var sample=0;                                                                           
+      var lines = text.split('\n');
+                  var overPeptide;
+            var patternOverlap=/pep\d+_\d+\./i
+      var pattern=/pep\d+\./i
+      for (var i = 0; i < lines.length; i++) {
+                        if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                //this is where I need to check for sample name and change color scheme
+                if(lines[i].indexOf('gff3')<0)
+                {
+                    //fColor = colors[sample%colors.length];
+                    sample=sample+1
+                }
+          else
+          {
+            fColor='blue'
+          }
+                continue;
+        }
+        //alert(lines[i])
+        var fields = lines[i].split('\t');
+           
+        if (fields.length < 5) {
+          continue;
+        }
+            
+                      if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
+                      {
+                          var feature = {};
+    
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+    
+                    if (fields[8]) {
+                        var frame = fields[8].split(';');
+                        
+                        for (var j = 0; j < frame.length; j++) {
+                            var keyValue = frame[j].split('=');
+                            
+                            if (keyValue.length === 2) {
+                                feature[keyValue[0].toLowerCase()] = keyValue[1];
+                            }
+                        }
+                    }
+                        
+                    if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase())
+                    {
+            feature.color=fColor;
+            if(patternOverlap.test(feature.id))
+            {
+          //alert("1:"+feature.id)
+          feature.id=feature.id.replace(/(pep\d+)_\d+/,"$1")
+          //alert("2: "+feature.id)
+            }
+            feature.label=feature.id;
+            if (this.featuresById[feature.id])
+            {
+          this.featuresById[feature.id].end=feature.end;
+            }
+            else
+            {
+          //alert(feature.id+" inserting")
+                          this.insertFeature(feature) 
+            }
+                    }
+                    
+                        
+                      } //end of if
+    }//end of forloop
+                
+              }//end of model
+                }),
+                view   : Genoverse.Track.View.Gene.extend({
+      setFeatureColor : function () {}
+    })
+            },//end of 100k
+      1: { // > 1 base-pair, but less then 100K
+                labels : true,
+                model : Genoverse.Track.Model.Transcript.extend(
+            {
+    url : '/genoverse/'+"{{ genoverse.uniprot }}",
+        dataType : 'text',
+        typeMap : {
+            exon  : 'exon',
+            cds   : 'cds',
+            mrna  : 'mrna',
+            gene  : 'gene',
+      pep   : 'peptide'
+        },
+                                                                                                                                                                                                    
+        parseData: function (text) {
+            var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];                                                         
+                var fColor = 'red';//colors[Math.floor(Math.random() * colors.length)];                                                    
+            var sample=0;                                                                           
+      var lines = text.split('\n');
+                  var patternOverlap=/pep\d+_\d+\./i
+      var pattern=/pep\d+\./i
+      for (var i = 0; i < lines.length; i++) {
+                        if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                //this is where I need to check for sample name and change color scheme
+                if(lines[i].indexOf('gff3')<0)
+                {
+                    //fColor = colors[sample];
+                    sample=sample+1
+                }
+                continue;
+        }
+        //alert(lines[i])
+        var fields = lines[i].split('\t');
+           
+        if (fields.length < 5) {
+          continue;
+        }
+            
+                      if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$'))
+                      {
+                          var feature = {};
+    
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+    
+                    if (fields[8]) {
+                        var frame = fields[8].split(';');
+                        
+                        for (var j = 0; j < frame.length; j++) {
+                            var keyValue = frame[j].split('=');
+                            
+                            if (keyValue.length === 2) {
+                                feature[keyValue[0].toLowerCase()] = keyValue[1];
+                            }
+                        }
+                    }
+                        
+        if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase())
+                    {
+            feature.color=fColor;
+            if(patternOverlap.test(feature.id))
+            {
+          //alert("1:"+feature.id)
+          copyFeature=feature
+          feature.id=feature.id.replace(/(pep\d+)_\d+/,"$1")
+          //alert("2: "+feature.id)
+          if (this.featuresById[feature.id]){
+            this.featuresById[feature.id].exons.push(copyFeature)
+            this.featuresById[feature.id].cds.push(copyFeature)
+          }
+          else{
+            feature.exons=[]
+            feature.cds=[]
+            feature.exons.push(copyFeature)
+            feature.cds.push(copyFeature)
+          }
+            }
+            feature.label=feature.id;
+            if (!this.featuresById[feature.id])
+            {   
+          if(pattern.test(feature.id))
+              {
+            feature.exons=[feature]
+            feature.cds=[feature]     
+          }
+          this.insertFeature(feature) 
+            }
+            
+                    }                                           
+                      } //end of if
+    }//end of forloop
+                if(typeof gene !== "undefined" && gene)
+                {
+                    //alert("gene features entering");
+                    for(var g=0; g<gene.mrna.length; g++)
+                    {
+                        this.insertFeature(gene.mrna[g]);
+                    }
+                }
+                //alert()
+            } //end of function
+      }),//end of model
+            view   : Genoverse.Track.View.Transcript.extend({
+                setFeatureColor : function () {}
+            })
+            }
+      
+        })
+    ]
+}
+  
+  document.addEventListener('DOMContentLoaded', function () { 
+    window.genoverse = new Genoverse(genoverseConfig); 
+  });
+
+  function getParam(name){
+    if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+      return decodeURIComponent(name[1]);
+  }
+</script>
+</body>
+</html>
