@@ -387,3 +387,35 @@ span._code_string {
 .sidebar-nav {
   margin-top: 20px !important;
 }
+
+.giant-number-block>span {
+  display:block;text-align:center;margin:auto
+}
+
+.giant-number{
+  font-size:250%;
+  font-weight:500
+}
+
+.giant-number>.text-muted{
+  font-size:80%;
+  text-transform:uppercase;letter-spacing:.01em
+}
+
+.giant-number-block>:first-child{
+  margin-top:8px;
+  padding-top:8px
+}
+
+.giant-number-block>:last-child{
+  padding-bottom:8px;
+  margin-bottom:8px
+}
+
+.section-heading-spacer {
+  margin-top: -10px !important;
+}
+
+.clearfix {
+  margin-bottom: 10px !important;
+}
