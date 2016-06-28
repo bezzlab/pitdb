@@ -490,7 +490,7 @@ $(function() {
       // console.log(pos);
       
       $("." + _parent).html(function(index, html) {
-          return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
+        return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
       });
 
       $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
@@ -505,7 +505,7 @@ $(function() {
     }
   }
 
-  var original = $('.test').html()
+  var original = $('#tgeSeq').html()
 
   var tgeTable = $('#tges').DataTable({
     "order": [[ 0, "desc" ]],
@@ -521,51 +521,57 @@ $(function() {
   if (path[0] == "tge") {
     setTimeout(function() {
       var indx  = tgeTable.row(this).index()
-      var aData = tgeTable.cell(indx, 6).data()
-      var aData = aData.replace(/<br>|<br>$/g,"").replace(/<strong>([^]*)<\/strong>/, "")
-      var arr   = aData.split(',');
-
+      var aData = tgeTable.cell(indx, 5).data()
+      var arr   = aData.split('<li>');
+      
       jQuery.each( arr, function( i, val ) {
-        var searchKey = arr[i];
+        if (i > 0) {
+          var searchKey = arr[i];
+          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
 
-        searchKey.setEvidence({
-          parent : 'test',
-          element : {
-            name: 'container'+i,
-            id : 'trialId'+i,
-            class : '',
-          }
-        });
+          searchKey.setEvidence({
+            parent : 'test',
+            element : {
+              name: 'container'+i,
+              id : 'trialId'+i,
+              class : '',
+            }
+          });
+        }
       });
     }, 2);
   } 
 
 
   $('#tges tbody').on('click', 'tr', function () {
+    // alert($('.test').html())
+    $('#tgeSeq').html(original);
     if ( $(this).hasClass('selected') ) {
       $(this).removeClass('selected');
     }
     else {
-      $('.test').html(original);
+
       tgeTable.$('tr.selected').removeClass('selected');
       $(this).addClass('selected');
 
       var indx = tgeTable.row(this).index()
-      var aData = tgeTable.cell(indx, 6).data()
-      var aData = aData.replace(/<br>|<br>$/g,"").replace(/<strong>([^]*)<\/strong>/, "")
-      var arr   = aData.split(',');
+      var aData = tgeTable.cell(indx, 5).data()
+      var arr   = aData.split('<li>');
+      
+      jQuery.each( arr, function( i, val ) {
+        if (i > 0) {
+          var searchKey = arr[i];
+          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
 
-      jQuery.each(arr, function( i, val ) {
-        var searchKey = arr[i];
-
-        searchKey.setEvidence({
-          parent : 'test',
-          element : {
-            name: 'container'+i,
-            id : 'trialId'+i,
-            class : '',
-          }
-        });
+          searchKey.setEvidence({
+            parent : 'test',
+            element : {
+              name: 'container'+i,
+              id : 'trialId'+i,
+              class : '',
+            }
+          });
+        }
       });
     }
   });
