@@ -423,3 +423,7 @@ span._code_string {
 .clearfix {
   margin-bottom: 10px !important;
 }
+
+#description p {
+  padding-right: 15px;
+}

@@ -18,10 +18,10 @@ $(function() {
         $("#description").html("<p>This experiment was carried out on Pteropus alecto cell line infected with Nelson Bay virus.</p><br/><p style='padding-right: 15px'>Pteropus alecto cell line was infected with Nelson Bay virus.  The Pteropus alecto cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy Pteropus alecto), with 13C-labeled arginine and lysine (medium Pteropus alecto) or with normal isotopes (light Pteropus alecto). The medium and light HeLa cells were infected with nelson bay virus, and the heavy Pteropus alecto cells were mock infected. At 8 h post-infection, the light Pteropus alecto cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly collected. Triplicates of cytoplasmic mRNA were harvested from the same three samples at each time point. </p>");
         break;
       case '2': //Oliver
-        $("#description").html("<p style='padding-right: 15px'>The data from this experiment consist of human ovarian cancer data. The whole transcriptome was sequenced for this experiment. Mass-spectrometry was carried out only on ECM. Tissues from different stage, grade have been used for this experiment to find underlying mechanism of drug response.</p>");
+        $("#description").html("<p>The data from this experiment consist of human ovarian cancer data. The whole transcriptome was sequenced for this experiment. Mass-spectrometry was carried out only on ECM. Tissues from different stage, grade have been used for this experiment to find underlying mechanism of drug response.</p><br/><p style='font-size: 11px; font-style: italic;'>* Deconstructing a Metastatic Human Tumor Microenvironment. O.M.T. Pearce, R. Delaine-Smith, E. Maniati, S. Nichols, J. Wang, S. Böhm, V. Rajeeve, D. Ullah, P. Chakravarty, R.R. Jones, A. Monfort, T. Dowe, J. Connelly, J.D. Brenton, C. Chelala, P. R. Cutillas, M. Lockley, C. Bessant, M. Knight, F.R. Balkwill (submitted to Nature Medicine)</p>");
         break;
       case '3': // Mosquito?
-        $("#description").html("<p>An immortalised Ae. aegypti cell line commonly used for arbovirus research has been used in this experiment.</p><br/><p style='padding-right: 15px'>Initially total RNA and protein was isolated from the same population of exponentially growing Aag2 cells.</p>");
+        $("#description").html("<p>An immortalised Ae. aegypti cell line commonly used for arbovirus research has been used in this experiment. Initially total RNA and protein was isolated from the same population of exponentially growing Aag2 cells.</p><br/><span style='font-size: 11px; font-style: italic;'>* Proteomics Informed by Transcriptomics for Characterising Active Transposable Elements and Genome Annotation in Aedes Aegypti . K. Maringer, A. Yousuf, K.J. Heesom, J. Fan, A. Fernandez-Sesma, C. Bessant, D.A. Matthews, A.D. Davidson (submitted to BMC Biology)</span>");
         break;
       case '4': // Mouse
         $("#description").html("<p>L929 mouse cell line infected with Bat virus Nelson Bay has been used for this experiment.</p><br/><p style='padding-right: 15px'>The L929 cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy L929 ), with 13C-labeled arginine and lysine (medium L929 ) or with normal isotopes (light L929 ). The medium and light L929 cells were infected with nelson bay virus, and the heavy L929 cells were mock infected. At 8 h post-infection, the light Pteropus alecto cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly collected. Triplicates of cytoplasmic mRNA were harvested from the same three samples at each time point. </p>");
@@ -137,18 +137,6 @@ $(function() {
       return false;
     }
     
-  });
-
-
-
-  $(".wordwrap").html(function(_, html){
-    // var val  = $('#searchData').val();
-    // var type = $('#searchType').val();
-    // if (type != "exact"){
-    //   var regex = new RegExp("(" + val + "+)", "g");
-    //   return html.replace(regex, '<span class="red">$1</span>'); 
-    // }  
-    // alert("hey")
   });
 
   // $("#tgeSeq").html(function(_, html){
@@ -544,7 +532,8 @@ $(function() {
       var arr   = aData.split('<li>');
       
       jQuery.each( arr, function( i, val ) {
-        if (i > 0) {
+        // if (i > 0) {
+        if (i < 4 && i >0) {
           var searchKey = arr[i];
           var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
 

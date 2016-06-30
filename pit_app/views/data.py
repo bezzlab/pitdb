@@ -50,7 +50,7 @@ def peptides(uniprot):
 	
 		# df = pd.read_table(file, sep="\t", index_col = None) 
 		file = os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified_peptide.gff3"
-		
+		print file
 		df = pd.read_table(file, sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
@@ -61,7 +61,16 @@ def peptides(uniprot):
 			mRNA = arr[0]
 
 			subset = df[df['attributes'].str.contains(re.escape(mRNA)+"[;.]")]
+			subset[['start', 'end']] = subset[['start', 'end']].astype(int)
+
+			# if "chr" not in subset['seqid']:
+			# 	# "chr"+subset['seqid']
+			# 	print "ye"
+			# print subset['seqid']
 			result = pd.concat([result, subset], axis=0)
+			# break
+		print result
+		# break
 			
 	result = result.to_csv(None, sep='\t', index = False)
 
