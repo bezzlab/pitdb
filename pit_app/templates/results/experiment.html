@@ -6,8 +6,8 @@
     <div class="sidebar-nav navbar-collapse">
       <ul class="nav" id="side-menu">
         <li><h5>Navigation Panel</h5></li>
-        <li><a href="#expDescr"><i class="fa fa-info" aria-hidden="true" style="margin-left: 8px; padding-right:5px"></i> Description</a></li>
         <li><a href="#expSummary"><i class="fa fa-comment-o fa-fw"></i> Summary</a></li>
+        <li><a href="#expDescr"><i class="fa fa-info" aria-hidden="true" style="margin-left: 8px; padding-right:5px"></i> Description</a></li>
         <li><a href="#expGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
         <li><a href="#expBreakdown"><i class="fa fa-bars fa-fw"></i> Experiment breakdown</a></li>
       </ul>
@@ -22,16 +22,6 @@
     </div>
 
     <div class="row">
-      <div class="panel panel-default" id="expSummary">
-        <div class="panel-heading">
-          <i class="fa fa-info" style="margin-left: 8px; padding-right:5px"></i> Description
-        </div>
-        
-        <div class="panel-body">
-          <div id="description" class="row" style="margin-left:5px"></div>
-        </div>
-      </div>
-
     	<div class="panel panel-default" id="expSummary">
         <div class="panel-heading">
           <i class="fa fa-comment-o fa-fw"></i> Summary
@@ -47,6 +37,15 @@
             <label>Transcripts:</label> {{ summary.trnNum }}<br/>
             <label>Peptides:</label> {{ summary.pepNum }}
         	</div>
+        </div>
+      </div>
+      <div class="panel panel-default" id="expSummary">
+        <div class="panel-heading">
+          <i class="fa fa-info" style="margin-left: 8px; padding-right:5px"></i> Description
+        </div>
+        
+        <div class="panel-body">
+          <div id="description" class="row" style="margin-left:5px"></div>
         </div>
       </div>
 
