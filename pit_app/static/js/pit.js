@@ -12,6 +12,25 @@ $(function() {
 
   path = get_path(url)
 
+  if (path[0] == 'experiment'){
+    switch (path[2]) {
+      case '1': // Bat
+        $("#description").html("<p>This experiment was carried out on Pteropus alecto cell line infected with Nelson Bay virus.</p><br/><p>Pteropus alecto cell line was infected with Nelson Bay virus.  The Pteropus alecto cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy Pteropus alecto), with 13C-labeled arginine and lysine (medium Pteropus alecto) or with normal isotopes (light Pteropus alecto). The medium and light HeLa cells were infected with nelson bay virus, and the heavy Pteropus alecto cells were mock infected. At 8 h post-infection, the light Pteropus alecto cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly collected. Triplicates of cytoplasmic mRNA were harvested from the same three samples at each time point. </p>");
+        break;
+      case '2': //Oliver
+        $("#description").html("<p>The data from this experiment consist of human ovarian cancer data. The whole transcriptome was sequenced for this experiment. Mass-spectrometry was carried out only on ECM. Tissues from different stage, grade have been used for this experiment to find underlying mechanism of drug response.</p>");
+        break;
+      case '3': // Mosquito?
+        $("#description").html("<p>An immortalised Ae. aegypti cell line commonly used for arbovirus research has been used in this experiment.</p><br/><p>Initially total RNA and protein was isolated from the same population of exponentially growing Aag2 cells.</p>");
+        break;
+      case '4': // Mouse
+        $("#description").html("<p>L929 mouse cell line infected with Bat virus Nelson Bay has been used for this experiment.</p><br/><p>The L929 cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy L929 ), with 13C-labeled arginine and lysine (medium L929 ) or with normal isotopes (light L929 ). The medium and light L929 cells were infected with nelson bay virus, and the heavy L929 cells were mock infected. At 8 h post-infection, the light Pteropus alecto cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly collected. Triplicates of cytoplasmic mRNA were harvested from the same three samples at each time point. </p>");
+        break;
+      // default:
+      //   placeholder = 'Enter a search term'
+    }
+  }
+
   $('a[href*=#]:not([href=#])').click(function() {
     if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
       var target = $(this.hash);
@@ -493,14 +512,14 @@ $(function() {
         return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
       });
 
-      $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
+      $("." + _parent).prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
 
       $('#' + _ele.id).offset({
-          top: pos.top,
-          left: 0
+        top: pos.top-2,
+        left: 0
       });
 
-      $('#' + _ele.id + ' span').css('marginLeft', pos.left + 'px');
+      $('#' + _ele.id + ' span').css('marginLeft', pos.left -1 + 'px');
 
     }
   }

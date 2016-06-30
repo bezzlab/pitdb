@@ -108,16 +108,12 @@ def download():
 				# For every selected class by the user filter the rows
 				for elem in nested:
 					if (elem in classes):
-						# print accession number
 						yield ">"
 						if ('tgeAcc' in selected):
 							yield tge.accession + ' ' # + ','
-						# print the tge class 
 						yield tge.tge_class + ' ' #+ ','
-						# print protName
 						if ('protName' in selected):
 							yield tge.uniprot_id +' ' #+ ',' 
-						# print amino acid seq
 						if ('aminoSeq' in selected):
 							yield '\n'+tge.amino_seq #+ ','
 						yield '\n'

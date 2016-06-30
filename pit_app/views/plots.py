@@ -15,7 +15,6 @@ def tgeJSON(accession):
 
   # Get the TGE id for this particular accession 
   tge  = TGE.query.with_entities(TGE.id).filter_by(accession=accession).one()
-  print tge
   
   # Get all the Observations for this accession ID
   obs  = Observation.query.with_entities(Observation.organism, func.count(Observation.organism).label('obsCount')).\
