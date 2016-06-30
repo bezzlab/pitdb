@@ -489,18 +489,27 @@ $(function() {
 
       var _content_string = $("." + _parent).html();
 
-      _content_string = _content_string.substring(0, _pos.begin) + '<span class="_tmp_' + _ele.name + ' _tmp_span"></span>' + _content_string.substring(_pos.begin);
+      _content_string = _content_string.substring(0, _pos.begin) + '<span style="background-color:yellow;" class="_tmp_' + _ele.name + ' _tmp_span">'+ _searchKey+'</span>' + _content_string.substring(_pos.begin+_searchKey.length);
+
+      // var ret  = _content_string.substring(0, _pos.begin) ; 
+
+      // $.each(_searchKey.split(''), function(k, v) {
+      //   ret += '<span class="_code_string _tmp_' + _ele.name + ' _tmp_span">' + v + "</span>";
+      // });
+
+      // // $('.test').html(ret);
+      // ret += _content_string.substring(_pos.begin+_searchKey.length);
 
       $("." + _parent).html(_content_string);
 
       pos = $('._tmp_' + _ele.name).offset();
       // console.log(pos);
       
-      $("." + _parent).html(function(index, html) {
-        return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
-      });
+      // $("." + _parent).html(function(index, html) {
+      //   return html.replace('<code><span class="_code_string _tmp_' + _ele.name + ' _tmp_span" style="background-color: yellow;"></span></code>', '');
+      // });
 
-      $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
+      // $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
 
       $('#' + _ele.id).offset({
         top: pos.top,
@@ -531,22 +540,22 @@ $(function() {
       var aData = tgeTable.cell(indx, 5).data()
       var arr   = aData.split('<li>');
       
-      jQuery.each( arr, function( i, val ) {
-        // if (i > 0) {
-        if (i < 5 && i >0) {
-          var searchKey = arr[i];
-          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
-          
-          searchKey.setEvidence({
-            parent : 'test',
-            element : {
-              name: 'container'+i,
-              id : 'trialId'+i,
-              class : '',
-            }
-          });
-        }
-      });
+      // jQuery.each( arr, function( i, val ) {
+      //   // if (i > 0) {
+      //   if (i <7 && i >0) {
+      //     var searchKey = arr[i];
+      //     var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
+      
+      //     searchKey.setEvidence({
+      //       parent : 'test',
+      //       element : {
+      //         name: 'container'+i,
+      //         id : 'trialId'+i,
+      //         class : '',
+      //       }
+      //     });
+      //   }
+      // });
     }, 2);
   } 
 
@@ -566,21 +575,21 @@ $(function() {
       var aData = tgeTable.cell(indx, 5).data()
       var arr   = aData.split('<li>');
       
-      jQuery.each( arr, function( i, val ) {
-        if (i > 0) {
-          var searchKey = arr[i];
-          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
+      // jQuery.each( arr, function( i, val ) {
+      //   if (i > 0) {
+      //     var searchKey = arr[i];
+      //     var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
 
-          searchKey.setEvidence({
-            parent : 'test',
-            element : {
-              name: 'container'+i,
-              id : 'trialId'+i,
-              class : '',
-            }
-          });
-        }
-      });
+      //     searchKey.setEvidence({
+      //       parent : 'test',
+      //       element : {
+      //         name: 'container'+i,
+      //         id : 'trialId'+i,
+      //         class : '',
+      //       }
+      //     });
+      //   }
+      // });
     }
   });
 
