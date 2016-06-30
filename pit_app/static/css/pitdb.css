@@ -314,7 +314,7 @@ padding: 2px 7px;
 }
 
 code {
-  position: absolute;
+  position: relative;
   left: 0;
   height: 100%;
   padding: 0px 0px;
@@ -426,4 +426,34 @@ span._code_string {
 
 #description p {
   padding-right: 15px;
+}
+
+#help .modal-dialog {
+  width: 1200px;
+}
+
+#help .modal-body {
+  margin-right: 20px;
+  margin-left: 20px;
+  height: 600px !important;
+  max-height: 600px !important;
+  overflow: auto;
+}
+
+#help .modal-body p, #help .modal-body li {
+  padding-right: 20px;
+}
+
+#help .modal-dialog h5{
+  padding-top: 15px;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 5px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0,0,0,.5);
+  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }

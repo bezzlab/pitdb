@@ -21,7 +21,7 @@ $(function() {
         $("#description").html("<p>The data from this experiment consist of human ovarian cancer data. The whole transcriptome was sequenced for this experiment. Mass-spectrometry was carried out only on ECM. Tissues from different stage, grade have been used for this experiment to find underlying mechanism of drug response.</p><br/><p style='font-size: 11px; font-style: italic;'>* Deconstructing a Metastatic Human Tumor Microenvironment. O.M.T. Pearce, R. Delaine-Smith, E. Maniati, S. Nichols, J. Wang, S. Böhm, V. Rajeeve, D. Ullah, P. Chakravarty, R.R. Jones, A. Monfort, T. Dowe, J. Connelly, J.D. Brenton, C. Chelala, P. R. Cutillas, M. Lockley, C. Bessant, M. Knight, F.R. Balkwill (submitted to Nature Medicine)</p>");
         break;
       case '3': // Mosquito?
-        $("#description").html("<p>An immortalised Ae. aegypti cell line commonly used for arbovirus research has been used in this experiment. Initially total RNA and protein was isolated from the same population of exponentially growing Aag2 cells.</p><br/><span style='font-size: 11px; font-style: italic;'>* Proteomics Informed by Transcriptomics for Characterising Active Transposable Elements and Genome Annotation in Aedes Aegypti . K. Maringer, A. Yousuf, K.J. Heesom, J. Fan, A. Fernandez-Sesma, C. Bessant, D.A. Matthews, A.D. Davidson (submitted to BMC Biology)</span>");
+        $("#description").html("<p>An immortalised Ae. aegypti cell line commonly used for arbovirus research has been used in this experiment. Initially total RNA and protein was isolated from the same population of exponentially growing Aag2 cells.</p><br/><p style='font-size: 11px; font-style: italic;'>* Proteomics Informed by Transcriptomics for Characterising Active Transposable Elements and Genome Annotation in Aedes Aegypti . K. Maringer, A. Yousuf, K.J. Heesom, J. Fan, A. Fernandez-Sesma, C. Bessant, D.A. Matthews, A.D. Davidson (submitted to BMC Biology)</p>");
         break;
       case '4': // Mouse
         $("#description").html("<p>L929 mouse cell line infected with Bat virus Nelson Bay has been used for this experiment.</p><br/><p style='padding-right: 15px'>The L929 cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy L929 ), with 13C-labeled arginine and lysine (medium L929 ) or with normal isotopes (light L929 ). The medium and light L929 cells were infected with nelson bay virus, and the heavy L929 cells were mock infected. At 8 h post-infection, the light Pteropus alecto cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly collected. Triplicates of cytoplasmic mRNA were harvested from the same three samples at each time point. </p>");
@@ -500,11 +500,11 @@ $(function() {
         return html.replace('<span class="_tmp_' + _ele.name + ' _tmp_span"></span>', '');
       });
 
-      $("." + _parent).prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
+      $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
 
       $('#' + _ele.id).offset({
-        top: pos.top-2,
-        left: 0
+        top: pos.top,
+        left: 1
       });
 
       $('#' + _ele.id + ' span').css('marginLeft', pos.left -1 + 'px');
@@ -517,9 +517,9 @@ $(function() {
   var tgeTable = $('#tges').DataTable({
     "order": [[ 0, "desc" ]],
     "columnDefs": [{
-        "targets": [ 0 ],
-        "visible": false,
-        "searchable": false
+      "targets": [ 0 ],
+      "visible": false,
+      "searchable": false
     }]
   });
 
@@ -533,10 +533,10 @@ $(function() {
       
       jQuery.each( arr, function( i, val ) {
         // if (i > 0) {
-        if (i < 4 && i >0) {
+        if (i < 5 && i >0) {
           var searchKey = arr[i];
-          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
-
+          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
+          
           searchKey.setEvidence({
             parent : 'test',
             element : {

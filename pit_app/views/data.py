@@ -50,7 +50,7 @@ def peptides(uniprot):
 	
 		# df = pd.read_table(file, sep="\t", index_col = None) 
 		file = os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified_peptide.gff3"
-		print file
+		
 		df = pd.read_table(file, sep="\t", index_col = None) 
 		
 		obs  = Observation.query.with_entities(Observation.long_description).\
@@ -61,42 +61,34 @@ def peptides(uniprot):
 			mRNA = arr[0]
 
 			subset = df[df['attributes'].str.contains(re.escape(mRNA)+"[;.]")]
-			subset[['start', 'end']] = subset[['start', 'end']].astype(int)
-
-			# if "chr" not in subset['seqid']:
-			# 	# "chr"+subset['seqid']
-			# 	print "ye"
-			# print subset['seqid']
+			
 			result = pd.concat([result, subset], axis=0)
-			# break
-		print result
-		# break
 			
 	result = result.to_csv(None, sep='\t', index = False)
 
 	return result
 
 
-# @data.route('/chromosome/<uniprot>')
-# def chrom(uniprot):
-# 	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
-# 						join(Sample).join(Observation).\
-# 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
+@data.route('/chromosome/<uniprot>')
+def chrom(uniprot):
+	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+						join(Sample).join(Observation).\
+						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
 	
-# 	file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
-# 	df   = pd.read_table(file, sep="\t", index_col = None) 
+	file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+	df   = pd.read_table(file, sep="\t", index_col = None) 
 		
-# 	obs  = Observation.query.with_entities(Observation.long_description).\
-# 						filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
+	obs  = Observation.query.with_entities(Observation.long_description).\
+						filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
 
-# 	arr  = obs.long_description.split(" ")
-# 	mRNA = arr[0]
-# 	gene = arr[1]
+	arr  = obs.long_description.split(" ")
+	mRNA = arr[0]
+	gene = arr[1]
 	
-# 	chromosome = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")].iloc[0,0]
-# 	chromosome = re.search(r'\d+', chromosome).group()
+	chromosome = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")].iloc[0,0]
+	chromosome = re.search(r'\d+', chromosome).group()
 
-# 	return chromosome
+	return chromosome
 
 
 @data.route('/download', methods=['POST'])
