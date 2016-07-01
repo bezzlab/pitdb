@@ -1,5 +1,6 @@
 $(function() {
-  var url = $(location).attr('href');
+  var url    = $(location).attr('href');
+  var tgeSeq = $(".test").html();
 
   function get_path(url) {
       // following regex extracts the path from URL
@@ -472,53 +473,10 @@ $(function() {
     }
   }
 
-
-  String.prototype.setEvidence = function(option) {
-    var _parent = option.parent; //Mandatory
-    var _ele = option.element || undefined; //optional
-    var _pos = option.position || undefined; //optional
-
-    if (typeof this === 'object') {
-      _searchKey = this;
-      pos = {}
-
-      if (typeof _pos == 'undefined') {
-        _pos = {};
-        _pos.begin = $("." + _parent).html().indexOf(_searchKey);
-      }
-
-      var _content_string = $("." + _parent).html();
-
-      _content_string = _content_string.substring(0, _pos.begin) + '<span style="background-color:yellow;" class="_tmp_' + _ele.name + ' _tmp_span">'+ _searchKey+'</span>' + _content_string.substring(_pos.begin+_searchKey.length);
-
-      // var ret  = _content_string.substring(0, _pos.begin) ; 
-
-      // $.each(_searchKey.split(''), function(k, v) {
-      //   ret += '<span class="_code_string _tmp_' + _ele.name + ' _tmp_span">' + v + "</span>";
-      // });
-
-      // // $('.test').html(ret);
-      // ret += _content_string.substring(_pos.begin+_searchKey.length);
-
-      $("." + _parent).html(_content_string);
-
-      pos = $('._tmp_' + _ele.name).offset();
-      // console.log(pos);
-      
-      // $("." + _parent).html(function(index, html) {
-      //   return html.replace('<code><span class="_code_string _tmp_' + _ele.name + ' _tmp_span" style="background-color: yellow;"></span></code>', '');
-      // });
-
-      // $("." + _parent).parent().prepend('<code id="' + _ele.id + '"><span class="_code_string ' + _ele.name + '" style="left:' + pos.left + '">' + _searchKey + '</span></code>');
-
-      $('#' + _ele.id).offset({
-        top: pos.top,
-        left: 1
-      });
-
-      $('#' + _ele.id + ' span').css('marginLeft', pos.left -1 + 'px');
-
-    }
+  function unique(array){
+    return array.filter(function(el, index, arr) {
+        return index === arr.indexOf(el);
+    });
   }
 
   var original = $('#tgeSeq').html()
@@ -539,57 +497,81 @@ $(function() {
       var indx  = tgeTable.row(this).index()
       var aData = tgeTable.cell(indx, 5).data()
       var arr   = aData.split('<li>');
+      var posMatch = [];
       
-      // jQuery.each( arr, function( i, val ) {
-      //   // if (i > 0) {
-      //   if (i <7 && i >0) {
-      //     var searchKey = arr[i];
-      //     var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
-      
-      //     searchKey.setEvidence({
-      //       parent : 'test',
-      //       element : {
-      //         name: 'container'+i,
-      //         id : 'trialId'+i,
-      //         class : '',
-      //       }
-      //     });
-      //   }
-      // });
+      jQuery.each( arr, function( i, val ) {
+        if (i > 0) {
+          var searchKey = arr[i];
+          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
+
+          start = tgeSeq.indexOf(searchKey);
+
+          $.each(searchKey.split(''), function(k, v) {
+            posMatch.push(start+k)
+          });
+
+        }
+
+        if (i == (arr.length-1)){
+          ind = unique(posMatch)
+
+          var ret  = "";
+
+          for (var i = 0, len = tgeSeq.length; i < len; i++) {
+            if ($.inArray(i, ind) !== -1 ){
+              ret += '<span class="_code_string _tmp_span" style="background-color:yellow;font-weight:bold;">' + tgeSeq.charAt(i) + "</span>";
+            } else {
+              ret += tgeSeq.charAt(i);
+            }
+          }
+          $(".test").html(ret)
+        }
+      });
     }, 2);
   } 
 
 
   $('#tges tbody').on('click', 'tr', function () {
-    // alert($('.test').html())
-    $('#tgeSeq').html(original);
     if ( $(this).hasClass('selected') ) {
       $(this).removeClass('selected');
     }
     else {
-
+      $(".test").html(tgeSeq)
       tgeTable.$('tr.selected').removeClass('selected');
       $(this).addClass('selected');
 
-      var indx = tgeTable.row(this).index()
+      var indx  = tgeTable.row(this).index()
       var aData = tgeTable.cell(indx, 5).data()
       var arr   = aData.split('<li>');
+      var posMatch = [];
       
-      // jQuery.each( arr, function( i, val ) {
-      //   if (i > 0) {
-      //     var searchKey = arr[i];
-      //     var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/, "").replace(/<\/ul>/, "")
+      jQuery.each( arr, function( i, val ) {
+        if (i > 0) {
+          var searchKey = arr[i];
+          var searchKey = searchKey.replace(/<\/li>/, "").replace(/\n/g, "").replace(/<\/ul>/, "")
+          
+          start = tgeSeq.indexOf(searchKey);
 
-      //     searchKey.setEvidence({
-      //       parent : 'test',
-      //       element : {
-      //         name: 'container'+i,
-      //         id : 'trialId'+i,
-      //         class : '',
-      //       }
-      //     });
-      //   }
-      // });
+          $.each(searchKey.split(''), function(k, v) {
+            posMatch.push(start+k)
+          });
+        }
+
+        if (i == (arr.length-1)){
+          ind = unique(posMatch)
+
+          var ret  = "";
+
+          for (var i = 0, len = tgeSeq.length; i < len; i++) {
+            if ($.inArray(i, ind) !== -1 ){
+              ret += '<span class="_code_string _tmp_span" style="background-color:yellow;font-weight:bold;">' + tgeSeq.charAt(i) + "</span>";
+            } else {
+              ret += tgeSeq.charAt(i);
+            }
+          }
+          $(".test").html(ret)
+        }
+      });
     }
   });
 
