@@ -249,322 +249,211 @@
           500000: { // more than 500k
             labels : true,
             model  : Genoverse.Track.Model.Gene.extend({
-            url : '/genoverse/'+"{{ genoverse.uniprot }}",
-            dataType : 'text',
-            typeMap : {
-              exon  : 'exon',
-              cds   : 'cds',
-              mrna  : 'mrna',
-              gene  : 'gene'
-            },
-            parseData: function (text) {
-              var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
-              var fColor = colors[Math.floor(Math.random() * colors.length)];
-              var sample=0;
-              var lines = text.split('\n');
-              var gene;
+              url : '/genoverse/'+"{{ genoverse.uniprot }}",
+              dataType : 'text',
+              typeMap : {
+                exon  : 'exon',
+                cds   : 'cds',
+                mrna  : 'mrna',
+                gene  : 'gene'
+              },
+              parseData: function (text) {
+                var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
+                var fColor = colors[Math.floor(Math.random() * colors.length)];
+                var sample=0;
+                var lines = text.split('\n');
+                var gene;
 
-              for (var i = 0; i < lines.length; i++) {
-                if (!lines[i].length || lines[i].indexOf('#') === 0) {
-                  //this is where I need to check for sample name and change color scheme
-                  if(lines[i].indexOf('gff3')<0){
-                    fColor = colors[sample%colors.length];
-                    sample=sample+1
-                  }
-                  continue;
-                }
-                
-                var fields = lines[i].split('\t'); 
-                if (fields.length < 5) {
-                  continue;
-                }
-              
-                if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
-                  var feature = {};
-    
-                  feature.id     = fields.slice(0, 5).join('|');
-                  feature.start  = parseInt(fields[3], 10);
-                  feature.end    = parseInt(fields[4], 10);
-                  feature.source = fields[1];
-                  feature.type   = fields[2];
-                  feature.score  = fields[5];
-                  feature.strand = fields[6] + '1';
-  
-                  if (fields[8]) {
-                    var frame = fields[8].split(';');
-                    
-                    for (var j = 0; j < frame.length; j++) {
-                      var keyValue = frame[j].split('=');
-                      
-                      if (keyValue.length === 2) {
-                        feature[keyValue[0].toLowerCase()] = keyValue[1];
-                      }
+                for (var i = 0; i < lines.length; i++) {
+                  if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                    //this is where I need to check for sample name and change color scheme
+                    if(lines[i].indexOf('gff3')<0){
+                      fColor = colors[sample%colors.length];
+                      sample=sample+1
                     }
+                    continue;
                   }
-                      
-                  if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase()){
-                    feature.color=fColor;
-                    feature.label=feature.id;
-                    this.insertFeature(feature) 
+                  
+                  var fields = lines[i].split('\t'); 
+                  if (fields.length < 5) {
+                    continue;
                   }
-                } //end of if
-              }//end of forloop
-            }//end of model
-          }),
-          view   : Genoverse.Track.View.Gene.extend({
-            setFeatureColor : function () {}
-          })
-        },//end of 100k
-        1: { // > 1 base-pair, but less then 100K
-          labels : true,
-          model : Genoverse.Track.Model.Transcript.extend({
-            url : '/genoverse/'+"{{ genoverse.uniprot }}",
-            dataType : 'text',
-            typeMap : {
-              exon  : 'exon',
-              cds   : 'cds',
-              mrna  : 'mrna',
-              gene  : 'gene'
-            },
-            parseData: function (text) {
-              var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
-              var fColor = colors[Math.floor(Math.random() * colors.length)];
-              var sample=0;
-              var lines = text.split('\n');
-              var gene;
-
-              for (var i = 0; i < lines.length; i++) {
-                if (!lines[i].length || lines[i].indexOf('#') === 0) {
-                  //this is where I need to check for sample name and change color scheme
-                  if(lines[i].indexOf('gff3')<0){
-                    fColor = colors[sample];
-                    sample=sample+1
-                  }
-                  continue;
-                }
-                //alert(lines[i])
-                var fields = lines[i].split('\t');
-                   
-                if (fields.length < 5) {
-                  continue;
-                }
               
-                if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
-                  var feature = {};
-    
-                  feature.id     = fields.slice(0, 5).join('|');
-                  feature.start  = parseInt(fields[3], 10);
-                  feature.end    = parseInt(fields[4], 10);
-                  feature.source = fields[1];
-                  feature.type   = fields[2];
-                  feature.score  = fields[5];
-                  feature.strand = fields[6] + '1';
+                  if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
+                    var feature = {};
       
-                  if (fields[8]) {
-                    var frame = fields[8].split(';');
-                    
-                    for (var j = 0; j < frame.length; j++) {
-                      var keyValue = frame[j].split('=');
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+    
+                    if (fields[8]) {
+                      var frame = fields[8].split(';');
                       
-                      if (keyValue.length === 2) {
+                      for (var j = 0; j < frame.length; j++) {
+                        var keyValue = frame[j].split('=');
+                        
+                        if (keyValue.length === 2) {
                           feature[keyValue[0].toLowerCase()] = keyValue[1];
+                        }
                       }
                     }
-                  }
-                          
-                  if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase()){
-                    //alert("gene");
-                    if(typeof gene !== "undefined" && gene)
-                    {
-                        //alert("gene features entering");
-                        for(var g=0; g<gene.mrna.length; g++)
-                        {
-                            this.insertFeature(gene.mrna[g]);
-                        }
+                        
+                    if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase()){
+                      feature.color=fColor;
+                      feature.label=feature.id;
+                      this.insertFeature(feature) 
                     }
-                    feature.mrna=[];
-                    gene=feature;
-                    //alert("gene id:"+gene.id);
-                    //alert("gene mRNA:"+gene.mrna.length);
+                  } //end of if
+                }//end of forloop
+              }//end of model
+            }),
+            view   : Genoverse.Track.View.Gene.extend({
+              setFeatureColor : function () {}
+            })
+          },//end of 100k
+          1: { // > 1 base-pair, but less then 100K
+            labels : true,
+            model : Genoverse.Track.Model.Transcript.extend({
+              url : '/genoverse/'+"{{ genoverse.uniprot }}",
+              dataType : 'text',
+              typeMap : {
+                exon  : 'exon',
+                cds   : 'cds',
+                mrna  : 'mrna',
+                gene  : 'gene'
+              },
+              parseData: function (text) {
+                var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
+                var fColor = colors[Math.floor(Math.random() * colors.length)];
+                var sample=0;
+                var lines = text.split('\n');
+                var gene;
+
+                for (var i = 0; i < lines.length; i++) {
+                  if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                    //this is where I need to check for sample name and change color scheme
+                    if(lines[i].indexOf('gff3')<0){
+                      fColor = colors[sample];
+                      sample=sample+1
+                    }
+                    continue;
                   }
-                  else if(feature.type.toLowerCase() === this.typeMap.mrna.toLowerCase())
-                  {
-                      //alert('mRNA');
+                  //alert(lines[i])
+                  var fields = lines[i].split('\t');
+                     
+                  if (fields.length < 5) {
+                    continue;
+                  }
+                
+                  if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
+                    var feature = {};
+      
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+        
+                    if (fields[8]) {
+                      var frame = fields[8].split(';');
+                      
+                      for (var j = 0; j < frame.length; j++) {
+                        var keyValue = frame[j].split('=');
+                        
+                        if (keyValue.length === 2) {
+                          feature[keyValue[0].toLowerCase()] = keyValue[1];
+                        }
+                      }
+                    }
+                            
+                    if(feature.type.toLowerCase() === this.typeMap.gene.toLowerCase()){
+                      if(typeof gene !== "undefined" && gene) {
+                        for(var g=0; g<gene.mrna.length; g++) {
+                          this.insertFeature(gene.mrna[g]);
+                        }
+                      }
+
+                      feature.mrna=[];
+                      gene=feature;
+                    } else if(feature.type.toLowerCase() === this.typeMap.mrna.toLowerCase()) {
                       feature.exons=[];
                       feature.cds=[];
-          feature.label=feature.id;
-                      if(gene!==undefined)
-                      {
-                          gene.mrna.push(feature);
-                          //alert("gene not undefined:"+gene.mrna.length);
+                      feature.label=feature.id;
+
+                      if(gene!==undefined) {
+                        gene.mrna.push(feature);
                       }
-                      //alert('mRNA2');
-                  }
-                  else if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
-                      //alert("exon");
+                    } else if (feature.parent && feature.type.toLowerCase() === this.typeMap.exon.toLowerCase()) {
                       var idx = gene.mrna.length - 1;
-                      
-                      //alert("idx="+idx)
                       gene.mrna[idx].exons.push(feature); //assuming last mRNA is the parent of this exon
-                      //alert("exon pushed");
-                  }
-                  else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
-                      //alert("cds");
+                    }
+                    else if (feature.parent && feature.type.toLowerCase() === this.typeMap.cds.toLowerCase()) {
                       var idx=gene.mrna.length-1;
                       feature.color =fColor;
                       gene.mrna[idx].cds.push(feature); //assuming last mRNA is the parent of this cds
-                      //alert("cds pushed");
+                    }
+                  } //end of if
+                }//end of forloop
+                if(typeof gene !== "undefined" && gene) {
+                  for(var g=0; g<gene.mrna.length; g++) {
+                    this.insertFeature(gene.mrna[g]);
                   }
-                      
-                    } //end of if
-      }//end of forloop
-                  if(typeof gene !== "undefined" && gene)
-                  {
-                      //alert("gene features entering");
-                      for(var g=0; g<gene.mrna.length; g++)
-                      {
-                          this.insertFeature(gene.mrna[g]);
-                      }
-                  }
-                  //alert()
+                }
               } //end of function
-        }),//end of model
-              view   : Genoverse.Track.View.Transcript.extend({
-                  setFeatureColor : function () {}
-              })
-              }//end of section for 1
-       }),//end of track
+            }),//end of model
+            view   : Genoverse.Track.View.Transcript.extend({
+              setFeatureColor : function () {}
+            })
+          }//end of section for 1
+        }),//end of track
         Genoverse.Track.extend({
           name   : 'Peptide',
           height : 200,
-          500000 : { // more than 500k
+          100000 : { // more than 500k
             labels : false,
             model  : Genoverse.Track.Model.Gene.extend({
-            url : '/genoverse/pep/'+"{{ genoverse.uniprot }}",
-            dataType : 'text',
-            typeMap : {
-              exon  : 'exon',
-              cds   : 'cds',
-              mrna  : 'mrna',
-              gene  : 'gene',
-              pep   : 'peptide'
-            },
-            parseData: function (text) {
+              url : '/genoverse/pep/'+"{{ genoverse.uniprot }}",
+              dataType : 'text',
+              typeMap : {
+                exon  : 'exon',
+                cds   : 'cds',
+                mrna  : 'mrna',
+                gene  : 'gene',
+                pep   : 'peptide'
+              },
+              parseData: function (text) {
+                var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
+                var fColor = 'blue';
+                var sample=0;  
+                var lines = text.split('\n');
+                var overPeptide;
+                var patternOverlap=/pep\d+_\d+\./i
+                var pattern=/pep\d+\./i
+
+                for (var i = 0; i < lines.length; i++) {
+                  if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                    if(lines[i].indexOf('gff3')<0) {
+                      sample=sample+1
+                    }
+                    else {
+                      fColor='blue'
+                    }
+                    continue;
+                  }
+                
+                  var fields = lines[i].split('\t');
+                     
+                  if (fields.length < 5) {
+                    continue;
+                  }
               
-              var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
-              var fColor = 'red'; //colors[Math.floor(Math.random() * colors.length)];  
-              var sample=0;                                                                           
-              var lines = text.split('\n');
-              var overPeptide;
-              var patternOverlap=/pep\d+_\d+\./i
-              var pattern=/pep\d+\./i
-
-              for (var i = 0; i < lines.length; i++) {
-                if (!lines[i].length || lines[i].indexOf('#') === 0) {
-                  //this is where I need to check for sample name and change color scheme
-                  if(lines[i].indexOf('gff3')<0){
-                    //fColor = colors[sample%colors.length];
-                    sample=sample+1
-                  }
-                  else{
-                    fColor='blue'
-                  }
-                  continue;
-                }
-                //alert(lines[i])
-                var fields = lines[i].split('\t');
-                   
-                if (fields.length < 5) {
-                  continue;
-                }
-                // alert(fields[0])
-                // break; 
-                if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
-                  var feature = {};
-      
-                  feature.id     = fields.slice(0, 5).join('|');
-                  feature.start  = parseInt(fields[3], 10);
-                  feature.end    = parseInt(fields[4], 10);
-                  feature.source = fields[1];
-                  feature.type   = fields[2];
-                  feature.score  = fields[5];
-                  feature.strand = fields[6] + '1';
-      
-                  if (fields[8]) {
-                    var frame = fields[8].split(';');
-                    
-                    for (var j = 0; j < frame.length; j++) {
-                      var keyValue = frame[j].split('=');
-                      
-                      if (  keyValue.length === 2) {
-                        feature['id'] = keyValue[1];
-                      }
-                    } // end of for
-                  }
-
-                  if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase()){
-                    feature.color=fColor;
-                    if(patternOverlap.test(feature.id)){
-                      //alert("1:"+feature.id)
-                      feature.id=feature.id.replace(/(pep\d+)_\d+/,"$1")
-                      
-                      //alert("2: "+feature.id)
-                    }
-                    feature.label=feature.id;
-
-                    if (this.featuresById[feature.id]){
-                      this.featuresById[feature.id].end=feature.end;
-
-                    } else {
-                      //alert(feature.id+" inserting")
-                      this.insertFeature(feature) 
-                    }
-                  }// end of if(feature.type.toLowerCase()
-                } //end of if
-              }//end of forloop
-            }//end of model
-          }),
-          view   : Genoverse.Track.View.Gene.extend({
-            setFeatureColor : function () {}
-          })
-        },//end of 100k
-        1: { // > 1 base-pair, but less then 100K
-          labels : true,
-          model : Genoverse.Track.Model.Transcript.extend({
-            url : '/genoverse/pep/'+"{{ genoverse.uniprot }}",
-            dataType : 'text',
-            typeMap : {
-              exon  : 'exon',
-              cds   : 'cds',
-              mrna  : 'mrna',
-              gene  : 'gene',
-              pep   : 'peptide'
-            },
-            parseData: function (text) {
-              var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
-              var fColor = 'red';//colors[Math.floor(Math.random() * colors.length)]; 
-              var sample=0;
-              var lines = text.split('\n');
-              var patternOverlap=/pep\d+_\d+\./i
-              var pattern=/pep\d+\./i
-
-              for (var i = 0; i < lines.length; i++) {
-                if (!lines[i].length || lines[i].indexOf('#') === 0) {
-                  //this is where I need to check for sample name and change color scheme
-                  if(lines[i].indexOf('gff3')<0){
-                    //fColor = colors[sample];
-                    sample=sample+1
-                  }
-                  continue;
-                }
-                //alert(lines[i])
-                var fields = lines[i].split('\t');
-                   
-                if (fields.length < 5) {
-                  continue;
-                }
-
-                if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')){
+                  if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
                     var feature = {};
 
                     feature.id     = fields.slice(0, 5).join('|');
@@ -582,59 +471,148 @@
                         var keyValue = frame[j].split('=');
                         
                         if (keyValue.length === 2) {
-                          
-                          // alert(keyValue[0].toLowerCase());
-                          // alert(keyValue[1]);
-                          // break;
-                          feature['id'] = keyValue[1];
+                          feature[keyValue[0].toLowerCase()] = keyValue[1];
                         }
                       }
                     }
-
-                    if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase()){
+                        
+                    if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase()) {
                       feature.color=fColor;
 
-                      if(patternOverlap.test(feature.id))
-                      {
-                        //alert("1:"+feature.id)
-                        copyFeature=feature
+                      if(patternOverlap.test(feature.id)) {
                         feature.id=feature.id.replace(/(pep\d+)_\d+/,"$1")
-                        //alert("2: "+feature.id)
-                        if (this.featuresById[feature.id]){
-                          this.featuresById[feature.id].exons.push(copyFeature)
-                          this.featuresById[feature.id].cds.push(copyFeature)
-                        }
-                        else{
-                          feature.exons=[]
-                          feature.cds=[]
-                          feature.exons.push(copyFeature)
-                          feature.cds.push(copyFeature)
-                        }
                       }
+
                       feature.label=feature.id;
 
-                      if (!this.featuresById[feature.id]){   
-                        if(pattern.test(feature.id))
-                            {
-                          feature.exons=[feature]
-                          feature.cds=[feature]     
-                        }
+                      if (this.featuresById[feature.id]) {
+                          this.featuresById[feature.id].end=feature.end;
+                      } else {
                         this.insertFeature(feature) 
                       }
                     }
                   } //end of if
                 }//end of forloop
-                if(typeof gene !== "undefined" && gene){
-                  //alert("gene features entering");
-                  for(var g=0; g<gene.mrna.length; g++)
-                  {
-                      this.insertFeature(gene.mrna[g]);
+              }//end of model
+            }),
+            view   : Genoverse.Track.View.Gene.extend({
+              setFeatureColor : function () {}
+            })
+          },//end of 100k
+          1: { // > 1 base-pair, but less then 100K
+            labels : true,
+            resizable  : 'auto',
+            intronStyle : 'line',
+            model : Genoverse.Track.Model.Transcript.extend({
+              url : '/genoverse/pep/'+"{{ genoverse.uniprot }}",
+              dataType : 'text',
+              typeMap : {
+                exon  : 'exon',
+                cds   : 'cds',
+                mrna  : 'mrna',
+                gene  : 'gene',
+                pep   : 'peptide'
+              },
+              parseData: function (text) {
+                var colors = ['grey','crimson', 'green', 'blue', 'orange', 'yellow','red'];
+                var fColor = 'blue';//colors[Math.floor(Math.random() * colors.length)];                                                    
+                var sample=0;                                                                           
+                var lines = text.split('\n');
+                var patternOverlap=/pep\d+_\d+\./i
+                var pattern=/pep\d+\./i
+
+                for (var i = 0; i < lines.length; i++) {
+                  if (!lines[i].length || lines[i].indexOf('#') === 0) {
+                    //this is where I need to check for sample name and change color scheme
+                    if(lines[i].indexOf('gff3')<0) {
+                      //fColor = colors[sample];
+                      sample=sample+1
+                    }
+                    continue;
                   }
-                }
+              
+                  var fields = lines[i].split('\t');
+                     
+                  if (fields.length < 5) {
+                    continue;
+                  }
+
+                  var mRNA;
+                  
+                  if (fields[0] === this.browser.chr || fields[0].toLowerCase() === 'chr' + this.browser.chr || fields[0].match('[^1-9]' + this.browser.chr + '$')) {
+                    var feature = {};
+            
+                    feature.id     = fields.slice(0, 5).join('|');
+                    feature.start  = parseInt(fields[3], 10);
+                    feature.end    = parseInt(fields[4], 10);
+                    feature.source = fields[1];
+                    feature.type   = fields[2];
+                    feature.score  = fields[5];
+                    feature.strand = fields[6] + '1';
+                    feature.featureMargin = { top: 3, right: 10, bottom: 1, left: 10}
+
+                    if (fields[8]) {
+                      var frame = fields[8].split(';');
+                      
+                      for (var j = 0; j < frame.length; j++) {
+                          var keyValue = frame[j].split('=');
+                          
+                          if (keyValue.length === 2) {
+                              feature[keyValue[0].toLowerCase()] = keyValue[1];
+                          }
+                      }
+                    }
+
+                    copyFeature={};
+                    copyFeature.id = feature.id
+                    copyFeature.start  = parseInt(fields[3], 10);
+                    copyFeature.end    = parseInt(fields[4], 10);
+                    copyFeature.source = fields[1];
+                    copyFeature.type   = fields[2];
+                    copyFeature.score  = fields[5];
+                    copyFeature.strand = fields[6] + '1';
+
+                    if(feature.type.toLowerCase() === this.typeMap.pep.toLowerCase()) {
+                      feature.color=fColor;
+                      
+                      if(patternOverlap.test(feature.id)) {
+                        feature.id=feature.id.replace(/(pep\d+)_\d+/,"$1");
+
+                        if (this.featuresById[feature.id]){
+                          this.featuresById[feature.id].exons.push(copyFeature);
+                          this.featuresById[feature.id].end = copyFeature.end;
+                          this.featuresById[feature.id].cds.push(copyFeature);
+                        }
+                        else{
+                          feature.exons=[];
+                          feature.cds=[];
+                          feature.exons.push(copyFeature);
+                          feature.cds.push(copyFeature);
+                        }
+                      }
+                      
+                      feature.label=feature.id.replace(/cds\./,"");
+                      feature.type='mRNA';
+                      feature.name = 'ORF';
+                      
+                      if (!this.featuresById[feature.id]) {   
+                        if(pattern.test(feature.id)) {
+                          //I have to do this to make sure that peptides without splice juntion is not shown as if there are sliced peptides.
+                          feature.exons=[copyFeature];
+                          feature.cds=[copyFeature];     
+                        }
+                        this.insertFeature(feature) 
+                      }
+                      else {
+
+                      }
+                    }                                           
+                  } //end of if
+                }//end of forloop
               } //end of function
             }),//end of model
             view   : Genoverse.Track.View.Transcript.extend({
-              setFeatureColor : function () {}
+                setFeatureColor : function () {}
             })
           }
         })

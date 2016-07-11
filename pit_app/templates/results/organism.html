@@ -48,7 +48,7 @@
           <div id="sequence"></div>
           <div id="chart">
             <div id="explanation">
-              <span id="percentage"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>
+              <span id="percentage"><i class="fa fa-spinner fa-4x fa-spin" aria-hidden="true"></i></span>
             </div>
           </div>
         </div>
@@ -64,7 +64,8 @@
           <div class="panel-body">
              <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#tgeModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
             <br/><br/>
-            <table class="table table-striped table-bordered dataTable no-footer" id = "orgTable">
+            <span id="spinnerTable"><i class="fa fa-spinner fa-4x fa-spin" aria-hidden="true"></i></span>
+            <table class="table table-striped table-bordered dataTable no-footer" id = "orgTable" style="display: none;">
             <thead>
               <tr>
                 <th>TGE Accession</th>
