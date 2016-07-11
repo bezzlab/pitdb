@@ -106,6 +106,11 @@ $(function() {
   var orgTable = $('#orgTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#orgTable").show();
+      // alert("hey")
+    },
   }); 
 
   var resTrs = $('#resTrs').dataTable({
@@ -519,7 +524,7 @@ $(function() {
 
           for (var i = 0, len = tgeSeq.length; i < len; i++) {
             if ($.inArray(i, ind) !== -1 ){
-              ret += '<span class="_code_string _tmp_span" style="background-color:yellow;font-weight:bold;">' + tgeSeq.charAt(i) + "</span>";
+              ret += '<span class="_code_string _tmp_span">' + tgeSeq.charAt(i) + "</span>";
             } else {
               ret += tgeSeq.charAt(i);
             }
@@ -564,7 +569,7 @@ $(function() {
 
           for (var i = 0, len = tgeSeq.length; i < len; i++) {
             if ($.inArray(i, ind) !== -1 ){
-              ret += '<span class="_code_string _tmp_span" style="background-color:yellow;font-weight:bold;">' + tgeSeq.charAt(i) + "</span>";
+              ret += '<span class="_code_string _tmp_span">' + tgeSeq.charAt(i) + "</span>";
             } else {
               ret += tgeSeq.charAt(i);
             }
