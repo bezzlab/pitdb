@@ -17,7 +17,7 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Experiment ID: {{ summary.id }}</h1>
+        <h1 class="page-header">Experiment: {{ summary.accession }}</h1>
       </div>
     </div>
 
@@ -29,7 +29,6 @@
         
         <div class="panel-body">
           <div class="row" style="margin-left:5px">
-            <label>Experiment Title:</label> {{ summary.title }}</br>
             <label>Data submitted by the user:</label> {{ summary.user }}</br></br>
             <h5>Number of instances for:</h5>
             <label>TGEs:</label> {{ summary.tgeNum }}</br>

@@ -130,7 +130,7 @@ def experiment():
               join(Sample).join(Experiment).\
               filter_by(id=exp.id).one()
 
-  summary = {'id': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
+  summary = {'accession': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
             'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
             'pepNum' : separators(pept.pepNum) };
    
