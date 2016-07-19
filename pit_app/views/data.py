@@ -94,6 +94,7 @@ def chrom(uniprot):
 @data.route('/download', methods=['POST'])
 def download():
 	organism = str(request.form['organism'])
+	fileType = str(request.form['fileType'])
 	selected = request.form.getlist('check')
 	nested   = request.form.getlist('check_nested')
 
@@ -101,6 +102,12 @@ def download():
 
 	def generate():
 		i = 0
+
+		if (fileType == 'fasta'):
+			sep = ' '
+		else: 
+			sep = ','
+
 		for tge in tges:
 			# Filter rows (based on tge_class)
 			if (len(nested) != 0): 
@@ -109,17 +116,21 @@ def download():
 				# For every selected class by the user filter the rows
 				for elem in nested:
 					if (elem in classes):
-						yield ">"
 						if ('tgeAcc' in selected):
-							yield tge.accession + ' ' # + ','
-						yield tge.tge_class + ' ' #+ ','
+							if (fileType == 'fasta'):
+								yield ">"
+							yield tge.accession + sep
+						yield tge.tge_class + sep
 						if ('protName' in selected):
-							yield tge.uniprot_id +' ' #+ ',' 
+							yield tge.uniprot_id + sep 
 						if ('aminoSeq' in selected):
-							yield '\n'+tge.amino_seq #+ ','
+							if (fileType == 'fasta'):
+								yield '\n'+tge.amino_seq
+							else: 
+								yield tge.amino_seq + ','
 						yield '\n'
 
-	return Response(generate(), mimetype='text/fasta', headers={"Content-disposition":"attachment; filename=tges.fasta"})
+	return Response(generate(), mimetype='text/'+fileType, headers={"Content-disposition":"attachment; filename=tges."+fileType})
 
 
 @data.route('/downloadTranscript', methods=['POST'])
