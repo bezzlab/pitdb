@@ -49,8 +49,9 @@ class User(Base):
 class Experiment(Base):
   __tablename__ = 'experiment'
   
-  title   = db.Column(db.String(255), nullable=False, unique=True) 
-  user_id = db.Column('user_id', db.Integer, db.ForeignKey("user.id"))
+  title     = db.Column(db.String(255), nullable=False, unique=True) 
+  user_id   = db.Column('user_id', db.Integer, db.ForeignKey("user.id"))
+  accession = db.Column(db.String(255))
   
   def __init__(self, title):
     self.title = title
@@ -230,17 +231,5 @@ class PSM(Base):
 
 #   def __repr__(self):
 #     return '<PeptideToPSM %r>' % (self.peptide_id)
-
-
-# class Organism(Base):
-#   __tablename__ = 'organism'
-  
-#   name = db.Column(db.String(255), nullable=False) # unique=True
-  
-#   def __init__(self, amino_seq):
-#     self.aa_seq  = aa_seq
-
-#   def __repr__(self):
-#     return '<Organism %r>' % (self.name)
 
 db.create_all()

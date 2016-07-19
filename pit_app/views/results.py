@@ -107,28 +107,28 @@ def organism():
 def experiment():
   experiment  = request.args['experiment']
 
-  exp  = Experiment.query.filter_by(id=experiment).first_or_404()
+  exp  = Experiment.query.filter_by(accession=experiment).first_or_404()
   user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
 
   samples = Sample.query.with_entities(Sample.id, Sample.name).\
-              filter_by(exp_id=experiment).\
+              filter_by(exp_id=exp.id).\
               group_by(Sample.id, Sample.name).all()
 
   # organisms  = [item for sublist in organisms for item in sublist]
   # sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
 
   obsNum = Observation.query.join(Sample).join(Experiment).\
-              filter_by(id=experiment).distinct().count()
+              filter_by(id=exp.id).distinct().count()
 
   tgeNum = TGE.query.join(Observation).join(Sample).join(Experiment).\
-              filter_by(id=experiment).distinct(Observation.tge_id).count()
+              filter_by(id=exp.id).distinct(Observation.tge_id).count()
 
   trnNum = Transcript.query.join(Observation).join(Sample).join(Experiment).\
-              filter_by(id=experiment).distinct().count()
+              filter_by(id=exp.id).distinct().count()
 
   pept = Observation.query.with_entities(func.sum(Observation.peptide_num).label("pepNum")).\
               join(Sample).join(Experiment).\
-              filter_by(id=experiment).one()
+              filter_by(id=exp.id).one()
 
   summary = {'id': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
             'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 

@@ -150,7 +150,8 @@ def aminoseqJSON(aminoSeq):
 def expJSON(experiment):
   sampleList = []
 
-  samples = Sample.query.filter_by(exp_id=experiment).all()
+  exp = Experiment.query.filter_by(accession=experiment).first_or_404()
+  samples = Sample.query.filter_by(exp_id=exp.id).all()
 
   for sample in samples:
     pepNumList = []
