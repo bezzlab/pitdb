@@ -11,26 +11,23 @@ data = Blueprint('data',  __name__)
 def download_data(uniprot):
 	result = pd.DataFrame()
 	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
-						join(Sample).join(Observation).\
-						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).all()
+						join(Sample).join(Observation).filter_by(uniprot_id=uniprot).\
+						group_by(Experiment.title, Sample.name, Sample.id).all()
 	
 	for sample in obj:
-		# result = pd.concat([result, "##"+sample.name], axis=0)
-		# file = url_for('static', filename="data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3")
-	
-		# df = pd.read_table(file, sep="\t", index_col = None) 
 		file = os.path.dirname(__file__)+"/../static/data/"+sample.title+"/"+sample.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
-		
-		df  = pd.read_table(file, sep="\t", index_col = None) 
-		obs = Observation.query.with_entities(Observation.long_description).\
-						filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
+		df   = pd.read_table(file, sep="\t", index_col = None) 
+		obs  = Observation.query.with_entities(Observation.long_description).\
+									filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
 
 		for ob in obs: 
 			arr  = ob.long_description.split(" ")
 			mRNA = arr[0]
 			gene = arr[1]
 			subset = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
-			result = pd.concat([result, subset], axis=0)
+			
+			if (len(subset['seqid'].iloc[0]) < 5):
+				result = pd.concat([result, subset], axis=0)
 	
 	result = result.to_csv(None, sep='\t', index = False)
 

@@ -50,6 +50,7 @@
                 <tr>
                   <th>TGE Accession</th>
                   <th>TGE Type</th>
+                  <th>#Observations</th>
                 </tr>
               </thead>
               <tbody>
@@ -57,6 +58,7 @@
                   <tr>
                     <td><a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a></td>
                     <td>{{ tge.tge_class }}</td>
+                    <td>{{ tge.obsCount }}</td>
                   </tr>
                 {% endfor %}
               </tbody>

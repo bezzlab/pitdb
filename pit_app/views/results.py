@@ -29,7 +29,8 @@ def tge():
                     join(TgeToPeptide).join(Observation).join(TGE).\
                     filter_by(id=tge.id).group_by(Peptide.aa_seq).all() 
 
-  avgPeptNum = Observation.query.with_entities(func.avg(Observation.peptide_num).label('average')).one()
+  avgPeptNum = Observation.query.with_entities(func.avg(Observation.peptide_num).label('average')).\
+                    filter_by(tge_id=tge.id).one()
 
   # Flatten out the list of lists to lists (to use in the for loops)
   organisms  = [item for sublist in organisms for item in sublist]
@@ -145,6 +146,7 @@ def experiment():
 
 @results.route('/protein')
 def protein():
+  genoverse = {}
   uniprot  = request.args['uniprot']
 
   obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all()
@@ -153,30 +155,40 @@ def protein():
     organism = [item for sublist in obs for item in sublist]
     organism = ''.join(organism)
 
-    tges = TGE.query.join(Observation).filter_by(uniprot_id=uniprot).\
-              distinct(Observation.tge_id)
+    tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.count(Observation.id).label('obsCount')).\
+              join(Observation).filter_by(uniprot_id=uniprot).\
+              group_by(TGE.accession, TGE.tge_class).all()
 
     obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
               join(Sample).join(Observation).filter_by(uniprot_id=uniprot).\
-              group_by(Experiment.title, Sample.name, Sample.id).first()
+              group_by(Experiment.title, Sample.name, Sample.id).all()
 
-    file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
-    df   = pd.read_table(file, sep="\t", index_col = None) 
+    for ob in obj: 
+      file = os.path.dirname(__file__)+"/../static/data/"+ob.title+"/"+ob.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+      df   = pd.read_table(file, sep="\t", index_col = None) 
 
-    obs  = Observation.query.with_entities(Observation.long_description).\
-              filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
+      obs  = Observation.query.with_entities(Observation.long_description).\
+              filter_by(uniprot_id=uniprot, sample_id=ob.id).first()
 
-    arr  = obs.long_description.split(" ")
-    mRNA = arr[0]
-    gene = arr[1]
+      arr  = obs.long_description.split(" ")
+      mRNA = arr[0]
+      gene = arr[1]
     
-    row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
-    chrom = re.search(r'\d+', row.iloc[0,0]).group()
-    start = row.iloc[0,3]
-    end   = row.iloc[0,4]
+      row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
 
-    genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
+      if (len(row['seqid'].iloc[0]) <= 5):
+        chrom = re.search(r'\d+', row.iloc[0,0]).group()
+        start = row.iloc[0,3]
+        end   = row.iloc[0,4]
+        print chrom
+        print start
+        print end
+        genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
 
+        break
+      
+      #chrom = re.search(r'\d+', row.iloc[0,0]).group()
+      
     return render_template('results/protein.html', tges = tges, genoverse = genoverse)
   return render_template('error/404.html')
 

@@ -169,12 +169,6 @@
     <script src="/static/js/pit.js"></script>
 
 <script>
-  var chrParam = getParam("seqid");
-  
-  if (chrParam == null || chrParam == '') {
-    chrParam = 2;
-  }
-  
   var organism = "{{ genoverse.organism }}";
   var genomeName, org; 
 
@@ -244,7 +238,7 @@
         }),
         Genoverse.Track.extend({
           name   : 'TGEs',
-          height : 200,
+          autoHeight : true,
           //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
           500000: { // more than 500k
             labels : true,
@@ -414,7 +408,7 @@
         }),//end of track
         Genoverse.Track.extend({
           name   : 'Peptide',
-          height : 200,
+          autoHeight : true,
           100000 : { // more than 500k
             labels : false,
             model  : Genoverse.Track.Model.Gene.extend({
