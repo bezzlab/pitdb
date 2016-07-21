@@ -50,7 +50,7 @@ def tge():
   results  = []
 
   for obs in tgeObs:
-    exp = Experiment.query.with_entities(Experiment.id, Experiment.title, Sample.name).\
+    exp = Experiment.query.with_entities(Experiment.id, Experiment.accession, Sample.name).\
                     join(Sample).join(Observation).filter_by(id=obs.id).one()
 
     # sample = Sample.query.filter_by(id=obs.sample_id).first()
@@ -64,7 +64,7 @@ def tge():
     peptides = Peptide.query.with_entities(Peptide.aa_seq).join(TgeToPeptide).filter_by(obs_id=obs.id).order_by(Peptide.aa_seq).all()
     peptides = [item for sublist in peptides for item in sublist]
 
-    results.append({'id': obs.id, 'observation': obs.name, 'sampleName': exp.name, 'expTitle': exp.title, 
+    results.append({'id': obs.id, 'observation': obs.name, 'sampleName': exp.name, 'expAccession': exp.accession, 
                     'expID': exp.id, 'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
                     'uniprotID': obs.uniprot_id, 'peptide_num': obs.peptide_num, 'peptides': peptides })
 

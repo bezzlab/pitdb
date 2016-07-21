@@ -94,7 +94,7 @@
                     <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
                     <td class="wordwrap" style="font-size: 12px; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul></td>
                     <td class="wordwrap" style="font-size: 12px; line-height: 18px;">{{ res.sampleName|wordwrap(10, True) }}</td>
-                    <td><a href="experiment?experiment={{ res.expID }}" target="_blank">{{ res.expTitle }}</a></td>
+                    <td><a href="experiment?experiment={{ res.expAccession }}" target="_blank">{{ res.expAccession }}</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
