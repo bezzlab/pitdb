@@ -189,7 +189,7 @@ def protein():
       
       #chrom = re.search(r'\d+', row.iloc[0,0]).group()
       
-    return render_template('results/protein.html', tges = tges, genoverse = genoverse)
+    return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot)
   return render_template('error/404.html')
 
 
