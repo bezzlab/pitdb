@@ -34,7 +34,7 @@ h6 {
     padding-top: 50px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
     /*padding-bottom: 50px;*/
     text-align: center;
-    height: 570px;
+    height: 500px;
     color: #f8f8f8;
     background: url(../../img/helix2.jpg) no-repeat center center;
     background-size: cover;
@@ -42,8 +42,8 @@ h6 {
 
 .intro-message {
     position: relative;
-    padding-top: 18%;
-    padding-bottom: 20%;
+    padding-top: 13%;
+    padding-bottom: 5%;
 }
 
 .intro-message > h1 {
