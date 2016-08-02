@@ -90,17 +90,19 @@ class TGE(Base):
 class Observation(Base):
   __tablename__ = 'observation'
   
-  tge_id      = db.Column('tge_id',    db.Integer, db.ForeignKey("tge.id"))
-  sample_id   = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
-  name        = db.Column(db.String(255)) # unique=True
-  description = db.Column(db.String(255))
-  organism    = db.Column(db.String(255))
-  peptide_num = db.Column(db.Integer)
-  uniprot_id  = db.Column(db.String(255))
-  tge_class   = db.Column(db.String(255))
-  variation   = db.Column(db.Integer)
+  tge_id        = db.Column('tge_id',    db.Integer, db.ForeignKey("tge.id"))
+  sample_id     = db.Column('sample_id', db.Integer, db.ForeignKey("sample.id"))
+  name          = db.Column(db.String(255)) # unique=True
+  description   = db.Column(db.String(255))
+  organism      = db.Column(db.String(255))
+  peptide_num   = db.Column(db.Integer)
+  uniprot_id    = db.Column(db.String(255))
+  protein_name  = db.Column(db.String(255))
+  protein_descr = db.Column(db.String(255))
+  gene_name     = db.Column(db.String(255))
+  tge_class     = db.Column(db.String(255))
+  variation     = db.Column(db.Integer)
   long_description = db.Column(db.String(255))
-  #membership  = db.Column(db.String(255))
   
   def __init__(self, name, description, organism, peptide_num, uniprot_id):
     self.name        = name
