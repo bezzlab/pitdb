@@ -9,7 +9,7 @@
         <li><a href="#expSummary"><i class="fa fa-comment-o fa-fw"></i> Summary</a></li>
         <li><a href="#expDescr"><i class="fa fa-info" aria-hidden="true" style="margin-left: 8px; padding-right:5px"></i> Description</a></li>
         <li><a href="#expGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
-        <li><a href="#expBreakdown"><i class="fa fa-bars fa-fw"></i> Experiment breakdown</a></li>
+        <li><a href="#expBreakdown"><i class="fa fa-table fa-fw"></i> Experiment breakdown</a></li>
       </ul>
     </div>
   </div>
@@ -29,9 +29,9 @@
         
         <div class="panel-body">
           <div class="row" style="margin-left:5px">
-            <label>Data submitted by the user:</label> {{ summary.user }}</br></br>
-            <h5>Number of instances for:</h5>
-            <label>TGEs:</label> {{ summary.tgeNum }}</br>
+            <!-- <label>Data submitted by the user:</label> {{ summary.user }}</br></br> -->
+            <strong>Number of instances for:</strong><br/>
+            <label style="margin-top: 18px">TGEs:</label> {{ summary.tgeNum }}</br>
             <label>Samples:</label> {{ summary.sampleNum }}</br>
             <label>Transcripts:</label> {{ summary.trnNum }}<br/>
             <label>Peptides:</label> {{ summary.pepNum }}
@@ -67,7 +67,7 @@
 
       <div class="panel panel-default" id="expBreakdown">
         <div class="panel-heading">
-            <i class="fa fa-bars fa-fw"></i> Experiment breakdown
+            <i class="fa fa-table fa-fw"></i> Experiment breakdown
         </div>
         
         <div class="panel-body">

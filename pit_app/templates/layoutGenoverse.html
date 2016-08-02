@@ -39,10 +39,10 @@
           <ul class="nav navbar-nav navbar-left">
             <li id="page-content"></li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right" style="font-weight: bold; font-size: 15.5px">
             <li><a href="/#about">About</a></li>
             <li><a data-toggle="modal" data-target="#help" style="cursor: pointer;">Help</a></li>
-            <li><a data-toggle="modal" data-target="#search" style="cursor: pointer;">Search</a></li>
+            <li><a data-toggle="modal" data-target="#search" style="cursor: pointer;">Search <i class="fa fa-search fa-fw"></i></a></li>
           </ul>
         </div>
       </div>
@@ -237,7 +237,7 @@
           }
         }),
         Genoverse.Track.extend({
-          name   : 'TGEs',
+          name   : 'TGE observations',
           autoHeight : true,
           //info   : 'Ensembl API genes & transcripts, see <a href="http://beta.rest.ensembl.org/" target="_blank">beta.rest.ensembl.org</a> for more details',
           500000: { // more than 500k
@@ -407,7 +407,7 @@
           }//end of section for 1
         }),//end of track
         Genoverse.Track.extend({
-          name   : 'Peptide',
+          name   : 'Peptides',
           autoHeight : true,
           100000 : { // more than 500k
             labels : false,
