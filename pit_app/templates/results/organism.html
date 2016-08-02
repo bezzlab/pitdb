@@ -76,13 +76,13 @@
               {% for tge in tgeList %}
                 <tr>
                   <td>
-                  <a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a>
+                  <a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a>
                   </td>
                   <td>{{ tge.tgeClasses }}</td>
                   <td>
                   {% set uniprotIDs = tge.uniprotIDs.split(',') %}
                   {% for uniprotID in uniprotIDs %}
-                    <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
+                    <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
                   {% endfor %}
                   </td>
                 </tr>

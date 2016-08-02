@@ -16,7 +16,7 @@
     <div id="page-wrapper">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="page-header">Uniprot ID: <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></h1>
+          <h1 class="page-header">Uniprot ID: <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}">{{ uniprot }}</a></h1>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
               <tbody>
                 {% for tge in tges %}
                   <tr>
-                    <td><a href="tge?accession={{ tge.accession }}" target="_blank">{{ tge.accession }}</a></td>
+                    <td><a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a></td>
                     <td>{{ tge.tge_class }}</td>
                     <td>{{ tge.obsCount }}</td>
                   </tr>

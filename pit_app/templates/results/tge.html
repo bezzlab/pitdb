@@ -35,11 +35,11 @@
                 <label>TGE Type(s):</label> {{ summary.tgeClasses|join(', ') }}</br>
                 <label>Uniprot ID(s):</label>
                 {% for uniprotID in summary.uniprotIDs %}
-                  <a href="protein?uniprot={{ uniprotID }}" target="_blank">{{ uniprotID }}</a>{% if not loop.last %},{% endif %}
+                  <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>{% if not loop.last %},{% endif %}
                 {% endfor %}</br>
                 <label>Organism(s):</label> 
                 {% for org in summary.organisms %}
-                  <a href="organism?organism={{ org }}" target="_blank">{{ org }}</a>{% if not loop.last %},{% endif %}
+                  <a href="organism?organism={{ org }}">{{ org }}</a>{% if not loop.last %},{% endif %}
                 {% endfor %}</br>
                 <label>Number of observations:</label> {{ summary.obsCount }}</br>
               </div>
@@ -88,13 +88,13 @@
                 {% for res in results %}
                   <tr>
                     <td>{{ res.peptide_num }}</td>
-                    <td><a href="transcript?obsID={{ res.id }}" target="_blank">{{ res.observation }}</a></td>
-                    <td><a href="protein?uniprot={{ res.uniprotID }}" target="_blank">{{ res.uniprotID }}</a></td>                  
-                    <td class="wordwrap"><a href="organism?organism={{ res.organism }}" target="_blank">{{ res.organism }}</a></td>
+                    <td><a href="transcript?obsID={{ res.id }}">{{ res.observation }}</a></td>
+                    <td><a href="protein?uniprot={{ res.uniprotID }}">{{ res.uniprotID }}</a></td>                  
+                    <td class="wordwrap"><a href="organism?organism={{ res.organism }}">{{ res.organism }}</a></td>
                     <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
                     <td class="wordwrap" style="font-size: 12px; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul></td>
                     <td class="wordwrap" style="font-size: 12px; line-height: 18px;">{{ res.sampleName|wordwrap(10, True) }}</td>
-                    <td><a href="experiment?experiment={{ res.expAccession }}" target="_blank">{{ res.expAccession }}</a></td>
+                    <td><a href="experiment?experiment={{ res.expAccession }}">{{ res.expAccession }}</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
