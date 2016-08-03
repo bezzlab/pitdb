@@ -20,7 +20,7 @@ def advance():
   elif searchOption == 'Peptide Sequence':
     return redirect(url_for('results.peptide',  searchData = searchData.upper(), searchType=searchType))
   elif searchOption == 'Experiment ID':
-    return redirect(url_for('results.experiment', experiment = searchData))
+    return redirect(url_for('results.experiment', experiment = searchData.upper()))
   elif searchOption == 'Uniprot ID':
     return redirect(url_for('results.protein', uniprot = searchData.upper()))
   else:
