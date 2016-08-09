@@ -13,7 +13,15 @@ $(function() {
 
   path = get_path(url)
 
-  document.title = path
+  if (path[0]=="transcript") {
+    document.title = "Transcript "+ path[2];
+  } else if (path[0]=="aminoseq") {
+    document.title = "Amino Sequence "+ path[2];
+  } else if (path[0] =="") {
+    document.title = "PITDB"
+  }else {
+    document.title = path[2];
+  }
 
   if (path[0] == 'experiment'){
     switch (path[2]) {
