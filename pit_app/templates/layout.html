@@ -62,11 +62,12 @@
           <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
             <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
               <div class="form-group">
-                <p>Four main types of search are available:
+                <p>Five main types of search are available:
                 <ul> 
                   <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number or amino acid sequence.</li>
                   <li><label>Experiment:</label> View summary information for a particular experiment ID.</li>
                   <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID.</li>
+                  <li><label>Gene:</label> ........</li>
                   <li><label>Species:</label> Find all TGEs observed for a particular species, selected from the drop down list.</li>
                 </ul>
                 </p>
@@ -75,24 +76,28 @@
                 
                 <select id="searchOptions" name="searchOptions" class="form-control">
                   <option disabled selected value="default">-- Select an option --</option>
-                  <option role="separator" class="divider"></li>
+                  <option disabled role="separator" class="divider"></li>
                   <optgroup label="TGE">
                     <option>Accession Number</option>
                     <option id="aminoSeq">Amino Acid Sequence</option>
                   </optgroup>
-                  <option role="separator" class="divider"></li>
+                  <option disabled role="separator" class="divider"></li>
                   <optgroup label="Experiment">
                     <option>Experiment ID</option>
                   </optgroup>
-                  <option role="separator" class="divider"></li>
+                  <option disabled role="separator" class="divider"></li>
                   <optgroup label="Protein">
                     <option>Uniprot ID</option>
+                  </optgroup>
+                  <option disabled role="separator" class="divider"></li>
+                  <optgroup label="Gene">
+                    <option>Gene Name</option>
                   </optgroup>
                   <!-- <option role="separator" class="divider"></li> -->
                   <!-- <optgroup label="Peptide">
                     <option>Peptide Sequence</option>
                   </optgroup> -->
-                  <option role="separator" class="divider"></li>
+                  <option disabled role="separator" class="divider"></li>
                   <optgroup label="Species">
                     <option>Homo sapiens</option>
                     <option>Aedes aegypti</option>
