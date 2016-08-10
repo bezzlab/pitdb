@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+  <div id="page-wrap">    
+    <div>
+      <p style="padding-bottom: 10px"><h4>Results for gene: {{ gene }}</h4></p><br/>
+
+      <table class="table table-striped table-bordered dataTable no-footer" id="geneRes">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Uniprot&nbsp;ID</th>
+            <th>Protein&nbsp;Name</th>
+            <th>Protein&nbsp;Description</th>
+            <th>Organism</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prot in protList %}
+            <tr>
+              <td>{{ prot.uniprot_id }}</td>
+              <td><a href="protein?uniprot={{ prot.uniprot_id }}" target="_blank">{{ prot.uniprot_id }}</a></td>
+              <td>{{ prot.protein_name }}</td>
+              <td>{{ prot.protein_descr }}</td>
+              <td>{{ prot.organism }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

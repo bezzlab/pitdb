@@ -1,7 +1,8 @@
 import os
 import re
+# import urllib
 import locale
-import pandas as pd
+import pandas  as pd
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from sqlalchemy.sql import func, distinct
@@ -146,12 +147,20 @@ def experiment():
 
 @results.route('/protein')
 def protein():
-  genoverse = {}
-  uniprot  = request.args['uniprot']
+  genoverse   = summary = {}
+  uniprot     = request.args['uniprot']
+  # uniprotData = urllib.urlopen("http://www.uniprot.org/uniprot/" + uniprot + ".txt").read()
+  # uniprotFileList = uniprotData.split("//\n")
+  # print uniprotFileList[]
 
   obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all()
 
   if (obs):
+    protDetails = Observation.query.with_entities(Observation.protein_name, Observation.protein_descr, Observation.gene_name).\
+              filter_by(uniprot_id=uniprot).group_by(Observation.protein_name, Observation.protein_descr, Observation.gene_name).one()
+
+    summary = {'protein_name': protDetails.protein_name, 'gene_name': protDetails.gene_name, 'protein_descr': protDetails.protein_descr }
+
     organism = [item for sublist in obs for item in sublist]
     organism = ''.join(organism)
 
@@ -189,7 +198,25 @@ def protein():
       
       #chrom = re.search(r'\d+', row.iloc[0,0]).group()
       
-    return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot)
+    return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot, summary=summary)
+  return render_template('error/404.html')
+
+
+@results.route('/gene')
+def gene():
+  genoverse = summary = {}
+  gene      = request.args['gene']
+  
+  protList  = Observation.query.with_entities(Observation.organism, Observation.uniprot_id, Observation.protein_name, Observation.protein_descr).\
+                  filter(Observation.gene_name.ilike(gene)).\
+                  group_by(Observation.organism, Observation.uniprot_id, Observation.protein_name, Observation.protein_descr).all()
+
+  if (len(protList) == 1):
+    return redirect(url_for('results.protein', uniprot = protList[0].uniprot_id))
+  elif (len(protList) > 1): 
+    return render_template('results/gene.html', gene = gene, protList = protList)
+  else:
+    return render_template('error/404.html')
   return render_template('error/404.html')
 
 
@@ -231,7 +258,8 @@ def aminoseq():
       return render_template('search/results.html', tgeList = tgeList)
     else: 
       return render_template('error/404.html')
-  
+
+
 @results.route('/peptide')
 def peptide():
   tgeList = []
@@ -273,7 +301,7 @@ def peptide():
 
   return render_template('results/peptide.html')
 
-@results.route('/transcript/')
+@results.route('/transcript')
 def transcript():
   trns = Transcript.query.with_entities(Transcript.dna_seq, Observation.name).join(Observation).\
               filter(Transcript.obs_id == request.args['obsID']).first_or_404()
