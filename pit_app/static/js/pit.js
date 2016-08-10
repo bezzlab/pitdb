@@ -2,6 +2,7 @@ $(function() {
   var url    = $(location).attr('href');
   var tgeSeq = $(".test").html();
 
+  // Get the path of the URL and split in sections
   function get_path(url) {
       // following regex extracts the path from URL
     url = url.replace(/^https?:\/\/[^\/]+\//i, "").replace(/\/$/, "");
@@ -13,16 +14,20 @@ $(function() {
 
   path = get_path(url)
 
+  // Fix relevant page titles based on the URL path
   if (path[0]=="transcript") {
-    document.title = "Transcript "+ path[2];
+    document.title = "PITDB: Transcript "+ path[2];
   } else if (path[0]=="aminoseq") {
-    document.title = "Amino Sequence "+ path[2];
+    document.title = "PITDB: AminoSeq "+ path[2];
   } else if (path[0] =="") {
     document.title = "PITDB"
   }else {
-    document.title = path[2];
+    document.title = "PITDB: "+path[2];
   }
 
+  // $("a[rel='tooltip']").tooltip({'placement': 'right', 'z-index': '3000'});
+
+  // Add relevant experiment description based on experiment accession 
   if (path[0] == 'experiment'){
     switch (path[2]) {
       case 'PIT000001': //Oliver
@@ -60,9 +65,9 @@ $(function() {
     indx = resTrs.$('tr.selected').index()
   };
 
+  // Add relevant placeholders in the search area for each selection in the dropdown list
   $('#searchOptions').change(function(){
     $('#searchFilter').html("Enter "+$(this).val()+":");
-
     var placeholder;
 
     switch ($(this).val()) {
@@ -89,7 +94,6 @@ $(function() {
   });
 
   // Submit form on keydown (enter) 
-
   $('#submitSearch').keypress(function (e) {
     if (e.which == 13) {
       $('#searchform').submit();
@@ -104,8 +108,7 @@ $(function() {
     }
   });
 
-  // Create all DataTables 
-
+  // Create all the DataTables 
   var tgeTable = $('.tgeTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
@@ -130,6 +133,18 @@ $(function() {
     "bProcessing": true,
   }); 
 
+  var geneRes = $('#geneRes').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": false },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "40%" },
+      { "bVisible": true, "width": "20%" }
+    ],
+  });
+
   var orgTable = $('#orgTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
@@ -149,6 +164,11 @@ $(function() {
       { "bVisible": true, "width": "25%" }
     ],
   });
+
+  $('#geneRes tbody tr').click( function () {
+    var aData = geneRes.fnGetData( this );
+    window.open("/protein?uniprot="+aData[0])
+  } );
 
   $('#orgTable tbody tr').click( function () {
     if ( $(this).hasClass('selected') ) {

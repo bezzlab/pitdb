@@ -451,3 +451,15 @@ span._code_string {
   background-color: rgba(0,0,0,.5);
   -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
+
+.helpTip {
+  padding-right: 15px;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 2px;
+  font-size: 17px;
+}
+
+#geneRes tbody tr {
+  cursor: pointer;
+}
