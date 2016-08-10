@@ -23,7 +23,10 @@
 
       <div class="row">
         <div class="panel panel-default" id="protSummary">
-          <div class="panel-heading"><i class="fa fa-bar-chart-o fa-fw"></i> Summary</div>
+          <div class="panel-heading">
+            <i class="fa fa-bar-chart-o fa-fw"></i> Summary
+            <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database knows about this particular protein." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          </div>
             
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
@@ -38,6 +41,7 @@
         <div id="protGraph" class="panel panel-default sunburst" style="position: relative !important;">
           <div class="panel-heading">
             <i class="fa fa-pie-chart fa-fw"></i> Graph
+            <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed TGEs and peptides associated with this protein. Move the mouse cursor over the plot for more detail." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
 
           <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of TGE breakdown</h5></p></span>
@@ -55,6 +59,7 @@
       	<div class="panel panel-default" id="protTGEs">
           <div class="panel-heading">
             <i class="fa fa-table fa-fw"></i> Translated Genomic Elements (TGEs)
+            <a class="btn pull-right popoverData" href="#" data-content="List of experimentally observed TGEs that map to this protein." rel="popover" data-placement="left" data-original-title="Translated Genomic Elements (TGEs)" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
           
           <div class="panel-body">
@@ -85,6 +90,7 @@
         <div class="panel panel-default" id="genoGraph">
           <div class="panel-heading">
             <i class="fa fa fa-picture-o fa-fw"></i> Genomic context
+            <a class="btn pull-right popoverData" href="#" data-content="Genome browser representation of everything the database knows about this protein, specifically all observed TGEs and their associated peptide evidence. Genes from Ensembl are show for reference." rel="popover" data-placement="left" data-original-title="Genomic Context Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
           
           <div class="panel-body">

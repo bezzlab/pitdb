@@ -57,7 +57,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close btn" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Search PIT-DB</h4>
+            <h4 class="modal-title">Search PITDB</h4>
           </div>
           <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
             <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
@@ -67,7 +67,7 @@
                   <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number or amino acid sequence.</li>
                   <li><label>Experiment:</label> View summary information for a particular experiment ID.</li>
                   <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID.</li>
-                  <li><label>Gene:</label> ........</li>
+                  <li><label>Gene:</label> Search by gene name to find TGEs that are products of that gene.</li>
                   <li><label>Species:</label> Find all TGEs observed for a particular species, selected from the drop down list.</li>
                 </ul>
                 </p>
@@ -134,24 +134,24 @@
             <h4 class="modal-title">Help</h4>
           </div>
           <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
-          <h5>What is PIT-DB?</h5>
-          <p>PIT-DB is a publicly available database for sharing results from published PIT (proteomics informed by transcriptomics) experiments. The PIT approach [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by sequence-level integration of the acquired data to provide an unprecedented insight into which genomic elements are being transcribed and translated within a given sample. The benefit of this approach is that any expressed polypeptide can be detected, unlike traditional proteomics which is constrained to searching spectra against a list of known protein sequences.</p>
+          <h5>What is PITDB?</h5>
+          <p>PITDB is a publicly available database for sharing results from published PIT (proteomics informed by transcriptomics) experiments. The PIT approach [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by sequence-level integration of the acquired data to provide an unprecedented insight into which genomic elements are being transcribed and translated within a given sample. The benefit of this approach is that any expressed polypeptide can be detected, unlike traditional proteomics which is constrained to searching spectra against a list of known protein sequences.</p>
           <h5>What is a translated genomic element (TGE)?</h5>
           <p>We define a TGE as an amino acid chain produced from a genomic locus through the processes of transcription and translation. The typical example of a TGE is a protein, encoded by a gene. However, other types of TGE has been reported in the literature, such as short open reading frames (sORF) and products of so-call non coding RNA (ncRNA).</p>
-          <h5>How do I browse PIT-DB?</h5>
-          <p>The web interface allows you to browse information in PIT-DB via four simple searches:</p>
+          <h5>How do I browse PITDB?</h5>
+          <p>The web interface allows you to browse information in PITDB via four simple searches:</p>
           <ul>
             <li>Search by <strong>TGE</strong> to find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence. Each TGE is supported by one or more TGE observations, comprising a transcript from RNA-seq and peptide evidence of translation of the transcript from mass spectrometry. Each TGE is also assigned a type (e.g. novel isoform) through comparison with reference databases. A single TGE (as defined by its unique sequence) may have been observed across multiple species.</li>
-            <li>Search by <strong>experiment</strong> (e.g. PIT000001) to view summary information for a particular experiment that has been submitted to PIT-DB. An experiment may contain one or more samples. The summary information includes information about the number of TGEs identified, the distribution of these among the samples, and a brief description of the experiment.</li>
+            <li>Search by <strong>experiment</strong> (e.g. PIT000001) to view summary information for a particular experiment that has been submitted to PITDB. An experiment may contain one or more samples. The summary information includes information about the number of TGEs identified, the distribution of these among the samples, and a brief description of the experiment.</li>
             <li>Search by <strong>protein</strong> to find TGEs corresponding to a specific protein, identified by its Uniprot ID (e.g. P12111). This shows any TGEs corresponding to the protein and is useful in seeking experimental evidence for a theoretical protein, or investigating isoforms of known proteins. For species with a genome assembly, TGEs are shown in their genomic context alongside their corresponding genes.</li>
             <li>Search by <strong>species</strong> to find all TGEs observed for a particular species. For non-model organisms this essentially provides a draft proteome for further analysis. However, it is important to note that the completeness of the proteome will depend on the diversity of sample analysed, e.g. whether they came from multiple tissues.</li>
           </ul>In all the database views, specific TGEs can be located using the search box just above the TGE table.
 
-          <h5>Downloading data from PIT-DB</h5>
+          <h5>Downloading data from PITDB</h5>
           <p>Detailed information about all the TGEs in a particular database view can be downloaded for further analysis by clicking the “Download TGEs” button and selecting the TGE types and data fields that you want to download.</p>
 
-          <h5>Submitting data to PIT-DB</h5>
-          <p>We welcome submission of data of to PIT-DB, in support of published work. If you are interested in submitting your data, please contact Conrad Bessant (<strong>c.bessant at qmul.ac.uk</strong>) in the first instance. </p>
+          <h5>Submitting data to PITDB</h5>
+          <p>We welcome submission of data of to PITDB, in support of published work. If you are interested in submitting your data, please contact Conrad Bessant (<strong>c.bessant at qmul.ac.uk</strong>) in the first instance. </p>
           <br/>
           <ol style="line-height: 1.7em; padding-left:15px">
             <li id="ref1">Evans, V.C., et al., De novo derivation of proteomes from transcriptomes for transcript and protein identification. Nature Methods, 2012. 9(12): p. 1207-U111.</li>

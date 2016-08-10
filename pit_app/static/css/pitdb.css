@@ -61,6 +61,14 @@ body {
   cursor: pointer;
 }
 
+#tges th {
+  font-size: 14.5px;
+}
+
+#tges tr {
+  font-size: 13.5px;
+}
+
 .tgeTable tr {
   cursor: pointer;
 }
@@ -453,13 +461,27 @@ span._code_string {
 }
 
 .helpTip {
-  padding-right: 15px;
+  padding-right: 10px;
   cursor: pointer;
-  text-decoration: underline;
-  margin-top: 2px;
-  font-size: 17px;
+  margin-top: -5px;
+  font-size: 18px !important;
+  color: #484848;
+}
+
+.helpTipInner {
+  font-size: 15px !important;
+  padding-right: 3px;
+  padding-top: 5px;
+}
+
+.popover {
+  min-width: 276px !important;
 }
 
 #geneRes tbody tr {
   cursor: pointer;
+}
+
+.row label {
+  padding-right: 7px;
 }

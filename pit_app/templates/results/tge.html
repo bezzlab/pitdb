@@ -27,22 +27,29 @@
       <div class="row">
         <div>
           <div class="panel panel-default" id="tgeSummary">
-            <div class="panel-heading"><i class="fa fa-bar-chart-o fa-fw"></i> Summary 
-            <a rel='tooltip'><i class="fa fa-info pull-right helpTip" aria-hidden="true"></i></a></div>
+            <div class="panel-heading">
+              <i class="fa fa-bar-chart-o fa-fw"></i> Summary 
+              <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database knows about this particular translated genomic element." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+            </div>
             
             <div class="panel-body">
               <div class="row" style="margin-left:5px">
-                <label>TGE ID:</label> {{ summary.tge.id }}</br>
-                <label>TGE Type(s):</label> {{ summary.tgeClasses|join(', ') }}</br>
-                <label>Uniprot ID(s):</label>
+                <label>TGE ID 
+                <a class="popoverData" href="#" data-content="Unique identifier of the TGE in this database." rel="popover" data-placement="bottom" data-original-title="TGE ID" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.tge.id }}</br>
+                <label>TGE Type(s)
+                <a class="popoverData" href="#" data-content="The type of TGE, inferred from searching against reference databases (e.g. Uniprot)." rel="popover" data-placement="bottom" data-original-title="TGE Type(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.tgeClasses|join(', ') }}</br>
+                <label>Uniprot ID(s)
+                <a class="popoverData" href="#" data-content="The accession number of any proteins to which the TGE has sequence homology." rel="popover" data-placement="bottom" data-original-title="Uniprot ID(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label>
                 {% for uniprotID in summary.uniprotIDs %}
                   <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>{% if not loop.last %},{% endif %}
                 {% endfor %}</br>
-                <label>Organism(s):</label> 
+                <label>Organism(s)
+                <a class="popoverData" href="#" data-content="The organism(s) in which the TGE has been observed." rel="popover" data-placement="bottom" data-original-title="Organism(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> 
                 {% for org in summary.organisms %}
                   <a href="organism?organism={{ org }}">{{ org }}</a>{% if not loop.last %},{% endif %}
                 {% endfor %}</br>
-                <label>Number of observations:</label> {{ summary.obsCount }}</br>
+                <label>Number of observations 
+                <a class="popoverData" href="#" data-content="The number of instances in which the TGE has been observed." rel="popover" data-placement="bottom" data-original-title="Number of observations" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.obsCount }}</br>
               </div>
           </div>
         </div>
@@ -50,7 +57,7 @@
         <div id="tgeGraph" class="panel panel-default sunburst" style="position: relative !important;">
           <div class="panel-heading">
             <i class="fa fa-pie-chart fa-fw"></i> Graph 
-            <i class="fa fa-info pull-right helpTip" aria-hidden="true"></i>
+            <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the distribution of this particular TGE by species and sample, combined with a summary of peptide evidence. Move the mouse cursor over the plot for more detailed information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
           
           <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of TGE breakdown</h5></p></span>
@@ -68,7 +75,7 @@
         <div class="panel panel-default" id="tgeBreakdown">
           <div class="panel-heading">
             <i class="fa fa-table fa-fw"></i> Translated Genomic Elements (TGEs)
-            <i class="fa fa-info pull-right helpTip" aria-hidden="true"></i>
+            <a class="btn pull-right popoverData" href="#" data-content="Experimentally derived unique sequence of the TGE, together with a table listing all the observations of this TGE." rel="popover" data-placement="left" data-original-title="Translated Genomic Elements (TGEs)" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
           
           <div class="panel-body">
@@ -78,13 +85,13 @@
               <thead>
                 <tr>
                   <th></th>
-                  <th>Observation</th>
-                  <th>Uniprot&nbsp;ID</th>
-                  <th>Organism</th>
-                  <th>Type&nbsp;/&nbsp;Strand</th>
-                  <th>Identified Peptides</th>
-                  <th>Sample</th>
-                  <th>Experiment</th>
+                  <th>Observation&nbsp;<a class="popoverData" href="#" data-content="A TGE observation comprises an experimentally derived RNA-seq transcript together with experimentally derived peptide evidence from mass spectrometry performed on the same sample. Click the observation name to view the transcript." rel="popover" data-placement="bottom" data-original-title="Observation" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>Uniprot&nbsp;<a class="popoverData" href="#" data-content="Accession number of homologous Uniprot protein (if there is one). Click the accession number to see what else the knows about this protein." rel="popover" data-placement="bottom" data-original-title="Uniprot" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th>Organism&nbsp;<a class="popoverData" href="#" data-content="Organism in which this particular observation occurred." rel="popover" data-placement="bottom" data-original-title="Organism" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>Type/ Strand&nbsp;<a class="popoverData" href="#" data-content="The 'type' attribute indicates whether the protein is 'complete', containing a start and a stop codon; '5prime_partial', meaning it's missing a start codon and presumably part of the N-terminus; '3prime_partial', meaning it's missing the stop codon and presumably part of the C-terminus; or 'internal', meaning it's both 5prime-partial and 3prime-partial. <br/> <br/>Strand indicates which strand the coding region is found on" rel="popover" data-placement="bottom" data-original-title="Type&nbsp;/&nbsp;Strand&nbsp;" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>Identified<br/>Peptides&nbsp;<a class="popoverData" href="#" data-content="Experimentally identified peptides mapping to this TGE for this specific observation." rel="popover" data-placement="bottom" data-original-title="Identified Peptides" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>Sample&nbsp;<a class="popoverData" href="#" data-content="ID of sample in which observation occurred." rel="popover" data-placement="bottom" data-original-title="Sample" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th>Experiment&nbsp;<a class="popoverData" href="#" data-content="The experiment in which this TGE observation was obtained. Click the experiment accession number for more information." rel="popover" data-placement="bottom" data-original-title="Experiment" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                 </tr>
               </thead>
               <tbody>
@@ -95,7 +102,7 @@
                     <td><a href="protein?uniprot={{ res.uniprotID }}">{{ res.uniprotID }}</a></td>                  
                     <td class="wordwrap"><a href="organism?organism={{ res.organism }}">{{ res.organism }}</a></td>
                     <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
-                    <td class="wordwrap" style="font-size: 12px; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul></td>
+                    <td class="wordwrap" style="font-size: 12px !important; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul></td>
                     <td class="wordwrap" style="font-size: 12px; line-height: 18px;">{{ res.sampleName|wordwrap(10, True) }}</td>
                     <td><a href="experiment?experiment={{ res.expAccession }}">{{ res.expAccession }}</a></td>
                   </tr>
@@ -108,7 +115,7 @@
         <div class="panel panel-default" id="massspec_stats">
           <div class="panel-heading ">
             <i class="fa fa-bar-chart-o fa-fw"></i> Mass-Spectrometry Data Statistics
-            <i class="fa fa-info pull-right helpTip" aria-hidden="true"></i>
+            <a class="btn pull-right popoverData" href="#" data-content="Summary of evidence underpinning the TGE across the whole database." rel="popover" data-placement="left" data-original-title="Summary of evidence" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
             
           <div class="panel-body collapse in">
@@ -125,6 +132,4 @@
     </div>
   </div>
 </div> 
-
-
 {% endblock %}

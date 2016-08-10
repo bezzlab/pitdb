@@ -192,16 +192,8 @@ $(function() {
     
   });
 
-  // $("#tgeSeq").html(function(_, html){
-  //   var val  = $('.peptide_seq').val();
-
-  //   // var val  = $('#searchData').val();
-  //   // var type = $('#searchType').val();
-  //   // if (type != "exact"){
-  //   //   var regex = new RegExp("(" + val + "+)", "g");
-  //   //   return html.replace(regex, '<span class="red">$1</span>'); 
-  //   // }  
-  // });
+  // Trigger the bootstrap tooltip functionality
+  $('.popoverData').popover();
 
   // Add on-click events
   $('#tgeSummary tbody').on( 'click', 'tr', function () {
@@ -398,7 +390,7 @@ $(function() {
 
     // d3.select("#explanation")
     //   .style("visibility", "hidden");
-    d3.select("#percentage").html('<span class="sunburstInfo"><p>Rollover the map to see the magic happen</p></span>')
+    d3.select("#percentage").html('<span class="sunburstInfo"><p>Rollover the map to see details</p></span>')
   }
 
   // Given a node in a partition layout, return an array of all of its ancestor
@@ -539,7 +531,19 @@ $(function() {
       "targets": [ 0 ],
       "visible": false,
       "searchable": false
-    }]
+    }], 
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": false },
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "30%" },
+      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "10%" },
+    ],
   });
 
   $('.dataTable tbody tr:eq(0)').addClass('selected');
@@ -661,7 +665,7 @@ $(function() {
   }
 
   $('#chart').ready(function() { 
-    $('#percentage').html('<span class="sunburstInfo"><p>Rollover the map to see the magic happen</p></span>') 
+    $('#percentage').html('<span class="sunburstInfo"><p>Rollover the map to see details</p></span>') 
   });
 
 });
