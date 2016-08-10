@@ -4,16 +4,20 @@
 <div class="container">
   <div id="page-wrap">    
     <div>
-      <p style="padding-bottom: 10px"><h4>Results for gene: {{ gene }}</h4></p><br/>
+      <p style="padding-bottom: 10px"><h4>Results for gene: "{{ gene }}"</h4></p><br/>
 
       <table class="table table-striped table-bordered dataTable no-footer" id="geneRes">
         <thead>
           <tr>
             <th></th>
-            <th>Uniprot&nbsp;ID</th>
-            <th>Protein&nbsp;Name</th>
-            <th>Protein&nbsp;Description</th>
-            <th>Organism</th>
+            <th>Uniprot&nbsp;ID 
+            <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Uniprot ID" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+            <th>Protein&nbsp;Name 
+            <a class="popoverData" href="#" data-content="Detailed protein name" rel="popover" data-placement="bottom" data-original-title="Protein Name" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+            <th>Protein&nbsp;Description 
+            <a class="popoverData" href="#" data-content="Detailed protein description" rel="popover" data-placement="bottom" data-original-title="Protein Description" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+            <th>Organism 
+            <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Organism" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
           </tr>
         </thead>
         <tbody>

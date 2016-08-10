@@ -32,10 +32,10 @@
           <div class="row" style="margin-left:5px">
             <!-- <label>Data submitted by the user:</label> {{ summary.user }}</br></br> -->
             <strong>Number of instances for:</strong><br/>
-            <label style="margin-top: 18px">TGEs:</label> {{ summary.tgeNum }}</br>
-            <label>Samples:</label> {{ summary.sampleNum }}</br>
-            <label>Transcripts:</label> {{ summary.trnNum }}<br/>
-            <label>Peptides:</label> {{ summary.pepNum }}
+            <label style="margin-top: 18px">TGEs <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Translated Genomic Element (TGE)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.tgeNum }}</br>
+            <label>Samples <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Samples" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.sampleNum }}</br>
+            <label>Transcripts <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.trnNum }}<br/>
+            <label>Peptides <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Peptides" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.pepNum }}
         	</div>
         </div>
       </div>
@@ -53,7 +53,7 @@
       <div id="expGraph" class="panel panel-default sunburst" style="position: relative !important;">
         <div class="panel-heading">
           <i class="fa fa-pie-chart fa-fw"></i> Graph
-          <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the TGEs identified, together with their type and information about their supporting peptides. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the Translated Genomic Elements (TGEs) identified, together with their type and information about their supporting peptides. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
         
         <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of experiment breakdown</h5></p></span>
@@ -78,9 +78,9 @@
             <table id = "smplTable" class="table table-striped table-bordered dataTable no-footer" >
             <thead>
               <tr>
-                <th>Sample ID</th>
-                <th>Sample Name</th>
-                <th>Instances of TGEs</th>
+                <th>Sample ID&nbsp;<a class="popoverData" href="#" data-content="The accession number of a sample in the PITDB database." rel="popover" data-placement="bottom" data-original-title="Sample ID" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                <th>Sample Name&nbsp;<a class="popoverData" href="#" data-content="Detailed sample name" rel="popover" data-placement="bottom" data-original-title="Sample Name" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                <th>Instances of TGEs&nbsp;<a class="popoverData" href="#" data-content="Number of TGEs observed in each sample." rel="popover" data-placement="bottom" data-original-title="Instances of TGEs" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
               </tr>
             </thead>
             <tbody>

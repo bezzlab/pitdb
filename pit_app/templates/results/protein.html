@@ -25,15 +25,19 @@
         <div class="panel panel-default" id="protSummary">
           <div class="panel-heading">
             <i class="fa fa-bar-chart-o fa-fw"></i> Summary
-            <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database knows about this particular protein." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+            <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database contains about this particular protein." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
             
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
-              <label>Uniprot Reference:</label> <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></br>
-              <label>Protein Name:</label> {{ summary.protein_name }}</br>
-              <label>Gene Name:</label> {{ summary.gene_name }}</br>
-              <label>Protein Description:</label> {{ summary.protein_descr }}</br>
+              <label>Uniprot Reference  
+              <a class="popoverData" href="#" data-content="Accession number of homologous Uniprot protein. Click the accession number to see further information about this protein from UniProt." rel="popover" data-placement="bottom" data-original-title="Uniprot Reference" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></br>
+              <label>Protein Name 
+              <a class="popoverData" href="#" data-content="Detailed protein name" rel="popover" data-placement="bottom" data-original-title="Protein Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_name }}</br>
+              <label>Gene Name 
+              <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Gene Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.gene_name }}</br>
+              <label>Protein Description 
+              <a class="popoverData" href="#" data-content="Detailed protein description" rel="popover" data-placement="bottom" data-original-title="Protein Description" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_descr }}</br>
             </div>
           </div>
         </div>
@@ -41,7 +45,7 @@
         <div id="protGraph" class="panel panel-default sunburst" style="position: relative !important;">
           <div class="panel-heading">
             <i class="fa fa-pie-chart fa-fw"></i> Graph
-            <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed TGEs and peptides associated with this protein. Move the mouse cursor over the plot for more detail." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+            <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides associated with this protein. Move the mouse cursor over the plot for more detail." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
 
           <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of TGE breakdown</h5></p></span>
@@ -67,9 +71,9 @@
               <table id="proteinRes" class="table table-striped table-bordered dataTable no-footer" class="searchRes">
               <thead>
                 <tr>
-                  <th>TGE Accession</th>
-                  <th>TGE Type</th>
-                  <th>#Observations</th>
+                  <th>TGE Accession&nbsp;<a class="popoverData" href="#" data-content="Accession number of each TGE associated with this protein. Click the accession number for more information about the TGE." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>TGE Type&nbsp;<a class="popoverData" href="#" data-content="Type of TGE inferred from homology search against known protein isoforms." rel="popover" data-placement="bottom" data-original-title="TGE Type" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th>#Observations&nbsp;<a class="popoverData" href="#" data-content="Number of distinct observations of this sample (i.e. in separate samples)." rel="popover" data-placement="bottom" data-original-title="Number of Observations" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                 </tr>
               </thead>
               <tbody>

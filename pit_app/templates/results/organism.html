@@ -24,17 +24,17 @@
     	<div id="orgSummary" class="panel panel-default" style="position: relative !important;">
         <div class="panel-heading">
           <i class="fa fa-bar-chart-o fa-fw"></i> Summary
-          <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database knows about this particular species." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database contains about this particular species." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
         
         <div class="panel-body">
           <div class="row" style="margin-left:5px">
           <h5>Number of instances for:</h5>
-            <label>TGEs:</label> {{ summary.tgeNum }}  </br>
-            <label>Samples:</label> {{ summary.sampleNum }} </br>
-            <label>Experiments:</label> {{ summary.expNum }}</br>
-            <label>Transcripts:</label> {{ summary.trnNum }} <br/>
-            <label>Peptides: </label> {{ summary.pepNum }}
+            <label style="margin-top: 18px">TGEs <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Translated Genomic Element (TGE)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label>  {{ summary.tgeNum }}  </br>
+            <label>Samples <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Samples" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.sampleNum }} </br>
+            <label>Experiments <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Experiments" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.expNum }}</br>
+            <label>Transcripts <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.trnNum }} <br/>
+            <label>Peptides <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Peptides" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.pepNum }}
         	</div>
         </div>
       </div>
@@ -42,7 +42,7 @@
       <div id="orgGraph" class="panel panel-default sunburst" style="position: relative !important;">
         <div class="panel-heading">
           <i class="fa fa-pie-chart fa-fw"></i> Graph
-          <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed TGEs and peptides for this species. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides for this species. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
 
         <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of organism breakdown</h5></p></span>
@@ -70,9 +70,9 @@
             <table class="table table-striped table-bordered dataTable no-footer" id = "orgTable" style="display: none;">
             <thead>
               <tr>
-                <th>TGE Accession</th>
-                <th>TGE Type(s)</th>
-                <th>Uniprot ID(s)</th>
+                <th>TGE Accession&nbsp;<a class="popoverData" href="#" data-content="Unique identifier of a TGE in the PITDB database." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                <th>TGE Type(s)&nbsp;<a class="popoverData" href="#" data-content="One TGE may have multiple types, as it may have a different status in different species. Use the table’s search and sort capabilities to look for specific TGEs or TGE types." rel="popover" data-placement="bottom" data-original-title="TGE Type(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                <th>Uniprot ID(s)&nbsp;<a class="popoverData" href="#" data-content="Accession number of homologous Uniprot protein (if there is one). Click the accession number to see what else the database knows about this protein." rel="popover" data-placement="bottom" data-original-title="Uniprot ID(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
               </tr>
             </thead>
             <tbody>
