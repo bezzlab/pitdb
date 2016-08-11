@@ -17,7 +17,7 @@
     <div id="page-wrapper">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="page-header">Uniprot ID: {{ uniprot }}</a></h1>
+          <h1 class="page-header">UniProt ID: {{ uniprot }}</a></h1>
         </div>
       </div>
 
@@ -30,14 +30,14 @@
             
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
-              <label>Uniprot Reference  
-              <a class="popoverData" href="#" data-content="Accession number of homologous Uniprot protein. Click the accession number to see further information about this protein from UniProt." rel="popover" data-placement="bottom" data-original-title="Uniprot Reference" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></br>
+              <label>UniProt Reference  
+              <a class="popoverData" href="#" data-content="UniProt accession number – click to see full record for this protein in UniProt." rel="popover" data-placement="bottom" data-original-title="UniProt Reference" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></br>
               <label>Protein Name 
-              <a class="popoverData" href="#" data-content="Detailed protein name" rel="popover" data-placement="bottom" data-original-title="Protein Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_name }}</br>
+              <a class="popoverData" href="#" data-content="Short protein name associated with this UniProt accession number." rel="popover" data-placement="bottom" data-original-title="Protein Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_name }}</br>
               <label>Gene Name 
-              <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Gene Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.gene_name }}</br>
+              <a class="popoverData" href="#" data-content="Name of parent gene." rel="popover" data-placement="bottom" data-original-title="Gene Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.gene_name }}</br>
               <label>Protein Description 
-              <a class="popoverData" href="#" data-content="Detailed protein description" rel="popover" data-placement="bottom" data-original-title="Protein Description" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_descr }}</br>
+              <a class="popoverData" href="#" data-content="Description of this protein, as it appears in UniProt." rel="popover" data-placement="bottom" data-original-title="Protein Description" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_descr }}</br>
             </div>
           </div>
         </div>
@@ -48,7 +48,6 @@
             <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides associated with this protein. Move the mouse cursor over the plot for more detail." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
 
-          <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of TGE breakdown</h5></p></span>
           <div class="col-md-8 col-md-offset-2">
             <div id="sequence"></div>
             <div id="chart">

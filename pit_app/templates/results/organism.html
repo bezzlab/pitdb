@@ -29,12 +29,11 @@
         
         <div class="panel-body">
           <div class="row" style="margin-left:5px">
-          <h5>Number of instances for:</h5>
-            <label style="margin-top: 18px">TGEs <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Translated Genomic Element (TGE)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label>  {{ summary.tgeNum }}  </br>
-            <label>Samples <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Samples" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.sampleNum }} </br>
-            <label>Experiments <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Experiments" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.expNum }}</br>
-            <label>Transcripts <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.trnNum }} <br/>
-            <label>Peptides <a class="popoverData" href="#" data-content="" rel="popover" data-placement="bottom" data-original-title="Peptides" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.pepNum }}
+            <label style="margin-top: 5px">TGEs <a class="popoverData" href="#" data-content="Total number of unique translated genomic elements observed for this species (some may have been identified more than once)." rel="popover" data-placement="bottom" data-original-title="Translated Genomic Element (TGE)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label>  {{ summary.tgeNum }}  </br>
+            <label>Samples <a class="popoverData" href="#" data-content="Number of individual samples analysed from this species." rel="popover" data-placement="bottom" data-original-title="Samples" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.sampleNum }} </br>
+            <label>Experiments <a class="popoverData" href="#" data-content="Number of experiments" rel="popover" data-placement="bottom" data-original-title="Experiments" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.expNum }}</br>
+            <label>Transcripts <a class="popoverData" href="#" data-content="Number of unique transcripts assembled for RNA-seq data collected in this experiment." rel="popover" data-placement="bottom" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.trnNum }} <br/>
+            <label>Peptides <a class="popoverData" href="#" data-content="Number of peptides identified in this sample using mass spectrometry." rel="popover" data-placement="bottom" data-original-title="Peptides" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.pepNum }}
         	</div>
         </div>
       </div>
@@ -45,7 +44,6 @@
           <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides for this species. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
 
-        <span><p><h5 style="margin-left: 15px; padding-top: 10px">Graph of organism breakdown</h5></p></span>
         <div class="col-md-8 col-md-offset-2">
           <div id="sequence"></div>
           <div id="chart">

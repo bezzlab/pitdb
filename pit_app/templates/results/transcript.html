@@ -7,8 +7,6 @@
       <ul class="nav" id="side-menu">
         <li><h5>Navigation Panel</h5></li>
         <li><a href="#trnscSeq"><i class="fa fa-comment-o fa-fw"></i> Sequence</a></li>
-       <!--  <li><a href="#trnscGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
-        <li><a href="#trnscBreakdown"><i class="fa fa-bars fa-fw"></i> Transcript breakdown</a></li> -->
       </ul>
     </div>
   </div>
@@ -16,14 +14,15 @@
   <div id="page-wrapper">
     <div class="row">
       <div class="col-lg-12">
-        <h1 class="page-header">Transcript </h1>
+        <h1 class="page-header">Transcript {{ trns.name }}</h1>
       </div>
     </div>
 
     <div class="row">
       <div id="trnscSeq" class="panel panel-default" style="position: relative !important;">
         <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> Sequence
+          <i class="fa fa-bar-chart-o fa-fw"></i> Sequence 
+          <a class="btn pull-right popoverData" href="#" data-content="RNA-seq derived transcript sequence from the specified TGE observation" rel="popover" data-placement="left" data-original-title="Transcript Sequence" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
         
         <div class="panel-body">
@@ -33,7 +32,7 @@
               <input type="hidden" id="dna_seq" name="dna_seq" value='{{ trns.dna_seq }}'>
               <button type="submit" class="btn btn-info btn-lg" style="margin-bottom: 20px"><i class="fa fa-download"></i>&nbsp;Download Sequence</button>
             </form>
-            <h5 style="padding-bottom: 10px">Transcript Sequence for "{{ trns.name }}": </h5> <div class= "wordwrap" style="font-size: 14px; font-style: italic; font-family: Serif, Times New Roman, Georgia; color: gray; padding-right: 18px">{{ trns.dna_seq }} </div><br/> <br/>
+            <h5 style="padding-bottom: 10px">Transcript Sequence for observation <strong>{{ trns.name }}</strong> of <a href="tge?accession={{ tge }}">{{ tge  }}</a>: </h5> <div class= "wordwrap" style="font-size: 14px; font-style: italic; font-family: Serif, Times New Roman, Georgia; color: gray; padding-right: 18px">{{ trns.dna_seq }} </div><br/> <br/>
           </div>
         </div>
       </div>
