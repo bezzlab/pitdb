@@ -74,20 +74,24 @@ def orgJSON(organism):
     pepList = []
 
     # Find the number of peptides for this TGE observation and category of organism
-    pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
-                  filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).\
-                  group_by(Observation.tge_class).all() 
+    # pepNum = Observation.query.with_entities(Observation.tge_class, func.sum(Observation.peptide_num).label('pepSum')).\
+    #               filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).\
+    #               group_by(Observation.tge_class).all() 
+
+    # **unique** peptide count per sample
+    pepNum = TgeToPeptide.query.with_entities(func.count(distinct(TgeToPeptide.peptide_id)).label('pepSum')).\
+                join(Observation).filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).all()
     
     for num in pepNum:
       sampleList = []
 
-      samples = Sample.query.with_entities(Sample.name, func.count(Sample.name).label('smplCount')).join(Observation).\
+      samples = Sample.query.with_entities(Sample.name, func.count(distinct(Observation.tge_id)).label('tgeCount')).join(Observation).\
                   filter(Observation.organism.like("%"+organism+"%"), Observation.tge_class == ob.tge_class).\
                   group_by(Sample.name).all()
 
       for smpl in samples:
-        sampleList.append({ "name": "TGEs belong to sample " + smpl.name, "size": smpl.smplCount, "type":"samples" })  
-      pepList.append({ "name": 'Peptide count for "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
+        sampleList.append({ "name": 'TGEs "'+ob.tge_class+'" of sample "' + smpl.name+'"', "size": smpl.tgeCount, "type":"samples" })  
+      pepList.append({ "name": 'Unique peptides identified for type "'+ob.tge_class+'"', "size": num.pepSum, "type":"peptides", "children": sampleList }) 
     orgList.append({ "name": 'TGEs of type "'+ob.tge_class+'"', "size": ob.obsCount, "children": pepList, "type":"TGE type" })
 
   data = {
@@ -158,15 +162,20 @@ def expJSON(experiment):
 
     obsNum = Observation.query.filter(Observation.sample_id==sample.id).distinct(Observation.tge_id).count()
 
-    pepNum = Observation.query.with_entities(Observation.sample_id, func.sum(Observation.peptide_num).label('pepSum')).\
-                    filter(Observation.sample_id==sample.id).\
-                    group_by(Observation.sample_id).all() 
+    # non-unique cases
+    # pepNum = Observation.query.with_entities(Observation.sample_id, func.sum(Observation.peptide_num).label('pepSum')).\
+    #                 filter(Observation.sample_id==sample.id).\
+    #                 group_by(Observation.sample_id).all() 
     
+    # **unique** peptide count per sample
+    pepNum = TgeToPeptide.query.with_entities(func.count(distinct(TgeToPeptide.peptide_id)).label('pepSum')).\
+                join(Observation).join(Sample).filter(Sample.id==sample.id).all()
+
     for num in pepNum:
       tranNumList = []
 
-      tranNum = Observation.query.with_entities(func.count(Observation.id).label('tranCount')).\
-                    join(Transcript).filter(Observation.sample_id==sample.id).all() 
+      tranNum = Transcript.query.with_entities(func.count(distinct(Transcript.dna_seq)).label('tranCount')).\
+                    join(Observation).filter(Observation.sample_id==sample.id).all() 
 
       for tran in tranNum: 
         orgList = []
@@ -177,9 +186,9 @@ def expJSON(experiment):
         for ob in obs:
           orgList.append({ "name": "TGEs in organism "+ob.organism, "size": ob.orgCount, "type":"organisms" })
 
-        tranNumList.append({ "name": "Transcripts from sample "+sample.name, "size": tran.tranCount, "type":"transcripts",  "children":orgList }) 
+        tranNumList.append({ "name": "Unique transcripts from sample "+sample.name, "size": tran.tranCount, "type":"transcripts",  "children":orgList }) 
 
-      pepNumList.append({ "name": "Identified peptides from sample "+sample.name, "size": num.pepSum, "type":"peptides",  "children":tranNumList }) 
+      pepNumList.append({ "name": "Unique peptides identified in sample "+sample.name, "size": num.pepSum, "type":"peptides",  "children":tranNumList }) 
 
     sampleList.append({ "name": "TGEs from Sample "+ sample.name, "size": obsNum, "type":"samples" , "children":pepNumList })
 
