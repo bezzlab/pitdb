@@ -22,10 +22,7 @@ def tge():
   tge        = TGE.query.filter_by(accession=accession).first_or_404()
   tgeObs     = Observation.query.filter_by(tge_id=tge.id).order_by(desc(Observation.peptide_num))
   obsCount   = tgeObs.count()
-  organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
-  tgeClasses = Observation.query.with_entities(Observation.tge_class).filter_by(tge_id=tge.id).distinct(Observation.tge_class).all()
-  uniprotIDs = Observation.query.with_entities(Observation.uniprot_id).filter_by(tge_id=tge.id).distinct(Observation.uniprot_id).all()
-  
+
   pepLengths = Peptide.query.with_entities(func.length(Peptide.aa_seq).label('pepLength')).\
                     join(TgeToPeptide).join(Observation).join(TGE).\
                     filter_by(id=tge.id).group_by(Peptide.aa_seq).all() 
@@ -34,9 +31,6 @@ def tge():
                     filter_by(tge_id=tge.id).one()
 
   # Flatten out the list of lists to lists (to use in the for loops)
-  organisms  = [item for sublist in organisms for item in sublist]
-  tgeClasses = [item for sublist in tgeClasses for item in sublist]
-  uniprotIDs = [item for sublist in uniprotIDs for item in sublist]
   pepLengths = [item for sublist in pepLengths for item in sublist]
 
   avgPeptCov = '-'
@@ -44,19 +38,15 @@ def tge():
   if (sum(pepLengths)):
     avgPeptCov = float(len(tge.amino_seq))/sum(pepLengths)
 
-  summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : organisms, 'avgPeptNum' : avgPeptNum.average, 
-                  'tgeClasses' : tgeClasses, 'obsCount' : obsCount, 'uniprotIDs': uniprotIDs, 
-                  'avgPeptCov': avgPeptCov };
+  summary    = { 'tge' : tge, 'tgeObs' : tgeObs, 'organisms' : tge.organisms, 'avgPeptNum' : avgPeptNum.average, 
+                  'tgeClasses' : tge.tge_class, 'obsCount' : obsCount, 'uniprotIDs': tge.uniprot_id, 
+                  'genes': tge.gene_names, 'avgPeptCov': avgPeptCov };
 
   results  = []
 
   for obs in tgeObs:
     exp = Experiment.query.with_entities(Experiment.id, Experiment.accession, Sample.name).\
                     join(Sample).join(Observation).filter_by(id=obs.id).one()
-
-    # sample = Sample.query.filter_by(id=obs.sample_id).first()
-    # exp    = Experiment.query.filter_by(id=sample.exp_id).first()
-    #transc = Transcript.query.filter_by(obs_id=obs.id).first()
     
     tgeType    = re.search("(?<=type:).*?(?=\s)", obs.long_description).group(0)
     tgeLength  = re.search("(?<=len:).*?(?=\s)",  obs.long_description).group(0)
@@ -91,8 +81,8 @@ def organism():
   sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
   expNum     = separators(obs.join(Sample).join(Experiment).distinct(Experiment.id).count())
 
-  trnNum    = separators(Transcript.query.join(Observation, Transcript.obs_id == Observation.id).\
-                    filter(Observation.organism.like("%"+organism+"%")).distinct().count())
+  trnNum    = separators(Transcript.query.with_entities(distinct(Transcript.dna_seq)).\
+                join(Observation).filter(Observation.organism.like("%"+organism+"%")).count())
 
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
                     filter(Observation.organism.like("%"+organism+"%")).scalar())
@@ -125,22 +115,30 @@ def experiment():
   tgeNum = TGE.query.join(Observation).join(Sample).join(Experiment).\
               filter_by(id=exp.id).distinct(Observation.tge_id).count()
 
-  trnNum = Transcript.query.join(Observation).join(Sample).join(Experiment).\
-              filter_by(id=exp.id).distinct().count()
+  trnNum = Transcript.query.with_entities(distinct(Transcript.dna_seq)).\
+              join(Observation).join(Sample).join(Experiment).\
+              filter_by(id=exp.id).count()
 
-  pept = Observation.query.with_entities(func.sum(Observation.peptide_num).label("pepNum")).\
+  peptAll  = Observation.query.with_entities(func.sum(Observation.peptide_num).label("pepNum")).\
               join(Sample).join(Experiment).\
               filter_by(id=exp.id).one()
 
+  peptUniq = TgeToPeptide.query.with_entities(distinct(TgeToPeptide.peptide_id)).\
+              join(Observation).join(Sample).\
+              filter(Sample.exp_id==exp.id).count()
+
   summary = {'accession': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
             'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
-            'pepNum' : separators(pept.pepNum) };
+            'peptAll' : separators(peptAll), 'peptUniq' : separators(peptUniq) };
    
   sampleList = []
 
   for sample in samples:
     tgePerSample = Observation.query.filter(Observation.sample_id==sample.id).distinct(Observation.tge_id).count()
-    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum': separators(tgePerSample) })
+    pepPerSample = TgeToPeptide.query.with_entities(distinct(TgeToPeptide.peptide_id)).\
+                      join(Observation).join(Sample).filter(Observation.sample_id==sample.id).count()
+
+    sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum': separators(tgePerSample), 'pepNum': separators(pepPerSample)})
 
   return render_template('results/experiment.html', summary = summary, sampleList = sampleList)
 
@@ -281,24 +279,6 @@ def peptide():
   else:
     pep = Peptide.query.filter(Peptide.aa_seq.like("%"+searchData+"%")).all()
 
-    # for tge in tges: 
-    #   # For each TGE get the obs num, organisms, uniprotID and tgeClass
-    #   obsNum     = Observation.query.filter_by(tge_id=tge.id).count()
-    #   organisms  = Observation.query.with_entities(Observation.organism).filter_by(tge_id=tge.id).distinct(Observation.organism).all()
-    #   tgeClasses = tge.tge_class
-    #   uniprotIDs = tge.uniprot_id
-      
-    #   # Flatten out the list of lists to lists (to use in the for loops)
-    #   organisms  = [item for sublist in organisms for item in sublist]
-      
-    #   sampleNum = Sample.query.with_entities(Sample.name).\
-    #                   join(Observation, Observation.sample_id == Sample.id).\
-    #                   filter_by(tge_id=tge.id).\
-    #                   distinct(Sample.name).count()
-
-    #   tgeList.append({ 'accession': tge.accession, 'length': len(tge.amino_seq), 'obsNum': obsNum, 
-    #     'organisms': organisms, 'tgeClasses': tgeClasses,  'uniprotIDs': uniprotIDs, 'sampleNum': sampleNum })
-
   return render_template('results/peptide.html')
 
 @results.route('/transcript')
@@ -306,8 +286,7 @@ def transcript():
   trns = Transcript.query.with_entities(Transcript.dna_seq, Observation.name).join(Observation).\
               filter(Transcript.obs_id == request.args['obsID']).first_or_404()
 
-
-  return render_template('results/transcript.html', trns = trns)
+  return render_template('results/transcript.html', trns = trns, tge = request.args['accession'])
 
 def separators( inputText ):
   locale.setlocale(locale.LC_ALL, 'en_US')
