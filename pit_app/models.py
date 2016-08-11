@@ -78,6 +78,8 @@ class TGE(Base):
   amino_seq  = db.Column(db.Text, nullable=False) # unique=True
   tge_class  = db.Column(db.String(255))
   uniprot_id = db.Column(db.String(255))
+  gene_names = db.Column(db.String(255))
+  organisms  = db.Column(db.String(255))
 
   def __init__(self, amino_seq, type):
     self.amino_seq = amino_seq
