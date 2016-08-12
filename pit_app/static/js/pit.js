@@ -42,7 +42,8 @@ $(function() {
         break;
       case 'PIT000003': // Human adeno
         $("#description").html("<p>This experiment was carried out on Human HeLa cell line infected with adenovirus.</p><br/>"+
-            "<p style='padding-right: 15px'>HeLa cells were metabolically labeled by SILAC, either with 15N- and 13C-labeled arginine and lysine (heavy HeLa), with 13C-labeled arginine and lysine (medium HeLa) or with normal isotopes (light HeLa). The medium and light HeLa cells were infected with adenovirus, and the heavy HeLa cells were mock infected. At 8 h post-infection, the light HeLa cells were harvested for protein and RNA. At 24 h post-infection, the medium and heavy cells were similarly harvested. This enabled protein quantitation over time. Cytoplasmic mRNA was harvested from the same three samples of HeLa cells because adenovirus inhibits nuclear export of cellular mRNA during infection without inhibiting its production. Viral mRNA export is thus heavily favored. Each sample was sequenced on an Illumina GAIIx for a total of ~82 million paired-end reads 56 bp in length</p>");
+            "<p>Funded by: Wellcome Trust (083604), BBSRC (BB/I00095X/1).</p><br/>"+
+            "<p style='padding-right: 15px'>De novo derivation of proteomes from transcriptomes for transcript and protein identification. V.C. Evans, G. Barker, K.J. Heesom, J. Fan, C. Bessant, D.A. Matthews. Nature Methods, 2012. 9(12): p. 1207-11.</p>");
         break;
       case 'PIT000004': // Bat
         $("#description").html("<p>Data from <span style='font-style:italic'>Pteropus alecto</span> kidney cell line (PaKiT03) exposed to Nelson Bay orthoreovirus (NBV). <span style='font-style:italic'>Pteropus alecto</span> is an Australian bat, also known a the black flying fox.</p><br/>"+
