@@ -21,7 +21,7 @@ def advance():
     return redirect(url_for('results.peptide',  searchData = searchData.upper(), searchType=searchType))
   elif searchOption == 'Experiment ID':
     return redirect(url_for('results.experiment', experiment = searchData.upper()))
-  elif searchOption == 'Gene Name':
+  elif searchOption == 'Gene Symbol':
     return redirect(url_for('results.gene', gene = searchData))
   elif searchOption == 'Uniprot ID':
     return redirect(url_for('results.protein', uniprot = searchData.upper()))
