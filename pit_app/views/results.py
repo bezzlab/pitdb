@@ -123,13 +123,21 @@ def experiment():
               join(Sample).join(Experiment).\
               filter_by(id=exp.id).one()
 
-  peptUniq = TgeToPeptide.query.with_entities(distinct(TgeToPeptide.peptide_id)).\
-              join(Observation).join(Sample).\
-              filter(Sample.exp_id==exp.id).count()
+  # unique peptide count
+  # peptUniq = TgeToPeptide.query.with_entities(distinct(TgeToPeptide.peptide_id)).\
+  #             join(Observation).join(Sample).\
+  #             filter(Sample.exp_id==exp.id).count()
+
+  # sum of unique peptide counts
+  peptUniq = TgeToPeptide.query.with_entities(func.count(distinct(TgeToPeptide.peptide_id))).\
+              join(Observation).join(Sample).group_by(Observation.sample_id).\
+              filter(Sample.exp_id==exp.id).all()
+
+  peptUniq = [item for sublist in peptUniq for item in sublist]
 
   summary = {'accession': experiment,'title': exp.title, 'user': user.fullname, 'sampleNum': len(samples), 
             'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
-            'peptAll' : separators(peptAll), 'peptUniq' : separators(peptUniq) };
+            'peptAll' : separators(peptAll), 'peptUniq' : separators(sum(peptUniq)) };
    
   sampleList = []
 
