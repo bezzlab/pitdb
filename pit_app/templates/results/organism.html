@@ -24,7 +24,7 @@
     	<div id="orgSummary" class="panel panel-default" style="position: relative !important;">
         <div class="panel-heading">
           <i class="fa fa-bar-chart-o fa-fw"></i> Summary
-          <a class="btn pull-right popoverData" href="#" data-content="Summary of everything the database contains about this particular species." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          <a class="btn pull-right popoverData"  data-content="Summary of everything the database contains about this particular species." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
         
         <div class="panel-body">
@@ -41,7 +41,7 @@
       <div id="orgGraph" class="panel panel-default sunburst" style="position: relative !important;">
         <div class="panel-heading">
           <i class="fa fa-pie-chart fa-fw"></i> Graph
-          <a class="btn pull-right popoverData" href="#" data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides for this species. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          <a class="btn pull-right popoverData"  data-content="Visual summary of the experimentally observed Translated Genomic Elements (TGEs) and peptides for this species. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
         </div>
 
         <div class="col-md-8 col-md-offset-2">
@@ -59,7 +59,7 @@
       	<div class="panel panel-default" id="orgBreakdown">
           <div class="panel-heading">
             <i class="fa fa-table fa-fw"></i> Translated Genomic Elements (TGEs)
-            <a class="btn pull-right popoverData" href="#" data-content="List of experimentally TGEs that have been observed in this species." rel="popover" data-placement="left" data-original-title="Translated Genomic Elements (TGEs)" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+            <a class="btn pull-right popoverData"  data-content="List of experimentally TGEs that have been observed in this species." rel="popover" data-placement="left" data-original-title="Translated genomic elements (TGEs)" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
           
           <div class="panel-body">
@@ -81,10 +81,13 @@
                   </td>
                   <td>{{ tge.tgeClasses }}</td>
                   <td>
-                  {% set uniprotIDs = tge.uniprotIDs.split(',') %}
-                  {% for uniprotID in uniprotIDs %}
-                    <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>{% if not loop.last %}, {% endif %}
-                  {% endfor %}
+                    {% for uniprotID in tge.uniprotIDs.split(',') %}
+                      {% if uniprotID != '-' %}
+                        <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>
+                      {% else %}
+                        <span style="font-size:18px">{{ uniprotID }}</span>
+                      {% endif %}{% if not loop.last %},{% endif %}
+                    {% endfor %}</br>
                   </td>
                 </tr>
               {% endfor %}

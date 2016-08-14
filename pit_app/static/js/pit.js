@@ -155,13 +155,27 @@ $(function() {
     ],
   });
 
+  var exptgeTable = $('#exptgeTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "40%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#exptgeTable").show();
+    },
+  });
+
   var orgTable = $('#orgTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
     "initComplete": function(settings, json) {
       // $("#spinnerTable").hide();
       $("#orgTable").show();
-      // alert("hey")
     },
   }); 
 

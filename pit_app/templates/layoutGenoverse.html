@@ -175,7 +175,7 @@
     <script src="/static/js/pit.js"></script>
 
 <script>
-  var organism = "{{ genoverse.organism }}";
+  var organism = "{{ organism }}";
   var genomeName, org; 
 
   switch (organism) {
@@ -195,13 +195,13 @@
       break;
   }
 
-  if ((organism != 'Pteropus alecto') && ( organism != 'Aedes aegypti')) {
+  if ((organism == 'Homo sapiens') || ( organism == 'Mus musculus')) {
     $("#genoGraph").show();
     $("#genoContext").show();
 
     var genoverseConfig = {
       container : '#genoverse',
-      width     : 900,
+      width     : 890,
       genome    : genomeName,
       chr       : "{{ genoverse.chr }}",
       start     : "{{ genoverse.start }}",

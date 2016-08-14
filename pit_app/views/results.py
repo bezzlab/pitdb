@@ -106,6 +106,8 @@ def experiment():
               filter_by(exp_id=exp.id).\
               group_by(Sample.id, Sample.name).all()
 
+  tges = TGE.query.join(Observation).join(Sample).filter_by(exp_id=exp.id).all()
+
   # organisms  = [item for sublist in organisms for item in sublist]
   # sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
 
@@ -148,36 +150,30 @@ def experiment():
 
     sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum': separators(tgePerSample), 'pepNum': separators(pepPerSample)})
 
-  return render_template('results/experiment.html', summary = summary, sampleList = sampleList)
+  return render_template('results/experiment.html', summary = summary, sampleList = sampleList, tges = tges)
 
 
 @results.route('/protein')
 def protein():
-  genoverse   = summary = {}
-  uniprot     = request.args['uniprot']
-  # uniprotData = urllib.urlopen("http://www.uniprot.org/uniprot/" + uniprot + ".txt").read()
-  # uniprotFileList = uniprotData.split("//\n")
-  # print uniprotFileList[]
+  genoverse = summary = {}
+  uniprot   = request.args['uniprot']
+  organism  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).first_or_404()
 
-  obs  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).all()
+  protein = Observation.query.with_entities(Observation.protein_name, Observation.protein_descr, Observation.gene_name).\
+                filter_by(uniprot_id=uniprot).group_by(Observation.protein_name, Observation.protein_descr, Observation.gene_name).one()
 
-  if (obs):
-    protDetails = Observation.query.with_entities(Observation.protein_name, Observation.protein_descr, Observation.gene_name).\
-              filter_by(uniprot_id=uniprot).group_by(Observation.protein_name, Observation.protein_descr, Observation.gene_name).one()
+  summary = {'protein_name': protein.protein_name, 'gene_name': protein.gene_name, 'protein_descr': protein.protein_descr }
 
-    summary = {'protein_name': protDetails.protein_name, 'gene_name': protDetails.gene_name, 'protein_descr': protDetails.protein_descr }
-
-    organism = [item for sublist in obs for item in sublist]
-    organism = ''.join(organism)
-
-    tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.count(Observation.id).label('obsCount')).\
+  tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.count(Observation.id).label('obsCount')).\
               join(Observation).filter_by(uniprot_id=uniprot).\
               group_by(TGE.accession, TGE.tge_class).all()
 
-    obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+  obj  = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
               join(Sample).join(Observation).filter_by(uniprot_id=uniprot).\
               group_by(Experiment.title, Sample.name, Sample.id).all()
 
+  if (organism[0] == "Homo sapiens" or organism[0] == "Mus musculus"):
+    print "hey"
     for ob in obj: 
       file = os.path.dirname(__file__)+"/../static/data/"+ob.title+"/"+ob.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
       df   = pd.read_table(file, sep="\t", index_col = None) 
@@ -195,17 +191,11 @@ def protein():
         chrom = re.search(r'\d+', row.iloc[0,0]).group()
         start = row.iloc[0,3]
         end   = row.iloc[0,4]
-        print chrom
-        print start
-        print end
-        genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end, 'organism': organism }
-
-        break
+        genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end }
       
       #chrom = re.search(r'\d+', row.iloc[0,0]).group()
       
-    return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot, summary=summary)
-  return render_template('error/404.html')
+  return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot, summary=summary, organism = organism[0])
 
 
 @results.route('/gene')
