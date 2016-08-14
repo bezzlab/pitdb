@@ -46,7 +46,29 @@
         </div>
         
         <div class="panel-body">
-          <div id="description" class="row" style="margin-left:5px"></div>
+          <div class="row" style="margin-left:5px">
+            {% if summary.accession == 'PIT000001' %}
+              <p>Data from a human ovarian cancer experiment. The whole transcriptome was sequenced for this experiment. Mass-spectrometry was carried out only on the extra cellular matrix. Tissues from different stage, grade have been used for this experiment to find underlying mechanism of drug response.</p><br/>
+              <p>Funded by: European Research Council (ERC322566); the Cancer Research UK (A16354)</p><br/>
+              <p style='font-size: 11px; font-style: italic;'>* Deconstructing a Metastatic Human Tumor Microenvironment. O.M.T. Pearce, R. Delaine-Smith, E. Maniati, S. Nichols, J. Wang, S. Böhm, V. Rajeeve, D. Ullah, P. Chakravarty, R.R. Jones, A. Monfort, T. Dowe, J. Connelly, J.D. Brenton, C. Chelala, P. R. Cutillas, M. Lockley, C. Bessant, M. Knight, F.R. Balkwill (submitted to Nature)</p>
+            {% elif summary.accession == 'PIT000002' %}
+              <p>Data from the immortalised <span style='font-style:italic'>Aedes Aegypti </span>(mosquito) cell line Aag2, commonly used for arbovirus research.</p><br/>
+              <p>Funded by: Medical Research Council (G0801973); Sir Henry Wellcome Fellowship (096062)</p><br/>
+              <p style='font-size: 11px; font-style: italic;'>* Proteomics Informed by Transcriptomics for Characterising Active Transposable Elements and Genome Annotation in Aedes Aegypti . K. Maringer, A. Yousuf, K.J. Heesom, J. Fan, A. Fernandez-Sesma, C. Bessant, D.A. Matthews, A.D. Davidson (submitted to BMC Biology)</p>
+            {% elif summary.accession == 'PIT000003' %}
+              <p>This experiment was carried out on Human HeLa cell line infected with adenovirus.</p><br/>
+              <p>Funded by: Wellcome Trust (083604), BBSRC (BB/I00095X/1).</p><br/>
+              <p style='padding-right: 15px'>De novo derivation of proteomes from transcriptomes for transcript and protein identification. V.C. Evans, G. Barker, K.J. Heesom, J. Fan, C. Bessant, D.A. Matthews. Nature Methods, 2012. 9(12): p. 1207-11.</p>
+            {% elif summary.accession == 'PIT000004' %}
+              <p>Data from <span style='font-style:italic'>Pteropus alecto</span> kidney cell line (PaKiT03) exposed to Nelson Bay orthoreovirus (NBV). <span style='font-style:italic'>Pteropus alecto</span> is an Australian bat, also known a the black flying fox.</p><br/>
+              <p>Funded by: BBSRC (BB/M02542X/1); Australian Research Council (CE11001007); PhD fellowship from the University of Melbourne</p><br/>
+              <p style='font-size: 11px; font-style: italic;'>* Cell tropism of Nelson Bay Orthoreovirus is Influenced by the Type 1 I IFN Signalling Pathway.  L. Mok, J.W. Wynne, M. Tachedjian, B. Shiell, K. Ford , D.A. Matthews, A. Bacic, W.P. Michalskia (submitted to Journal of Virology)</p>
+            {% elif summary.accession == 'PIT000005' %}
+              <p>Data from mouse fibroblast (L929) cells exposed to Nelson Bay orthoreovirus (NBV).</p><br/>
+              <p>Funded by: BBSRC (BB/M02542X/1); Australian Research Council (CE11001007); University of Melbourne; CSIRO.</p><br/>
+              <p style='font-size: 11px; font-style: italic;'>* Cell tropism of Nelson Bay Orthoreovirus is Influenced by the Type 1 I IFN Signalling Pathway.  L. Mok, J.W. Wynne, M. Tachedjian, B. Shiell, K. Ford , D.A. Matthews, A. Bacic, W.P. Michalskia (submitted to Journal of Virology)</p>
+            {% endif %}
+          </div>
         </div>
       </div>
 
