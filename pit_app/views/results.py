@@ -67,18 +67,15 @@ def organism():
   tgeList = []
 
   organism   = request.args['organism']
-  obs        = Observation.query.filter_by(organism=organism)
+  obs        = Observation.query.filter(Observation.organism.like("%"+organism+"%"))
   tgeClasses = Observation.query.with_entities(Observation.tge_class).\
                   filter(Observation.organism.like("%"+organism+"%")).group_by(Observation.tge_class).all()
 
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
-  # tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
-  #                     " FROM observation, tge where organism = '"+ organism +"' AND tge.id = observation.tge_id "+
-  #                     " GROUP BY tge.accession").fetchall(); 
-
-  tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, TGE.uniprot_id).\
-            filter(TGE.organisms.like("%"+organism+"%")).all()
+  tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tge_class, string_agg(distinct(observation.uniprot_id), ', ') AS uniprot_id "+ 
+                      " FROM tge JOIN observation ON tge.id = observation.tge_id WHERE observation.organism LIKE '%%"+organism+"%%' "+
+                      " GROUP BY tge.accession ORDER BY tge.accession").fetchall(); 
 
   tgeNum     = separators(obs.distinct(Observation.tge_id).count())
   sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
@@ -90,7 +87,7 @@ def organism():
   pepNum    = separators(Observation.query.with_entities(func.sum(Observation.peptide_num)).\
                     filter(Observation.organism.like("%"+organism+"%")).scalar())
 
-  summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
+  summary  = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
   
   # for tge in tges: 
   #   tgeList.append({'accession': tge[0], 'tgeClasses': tge[1], 'uniprotIDs': tge[2] }) #  })

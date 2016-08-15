@@ -97,7 +97,10 @@ def download():
 	selected = request.form.getlist('check')
 	nested   = request.form.getlist('check_nested')
 
-	tges = TGE.query.filter(TGE.organisms.like("%"+organism+"%")).distinct(TGE.id).all()
+	# tges = TGE.query.filter(TGE.organisms.like("%"+organism+"%")).distinct(TGE.id).all()
+	tges = db.engine.execute("SELECT tge.accession, tge.amino_seq, string_agg(distinct(observation.tge_class), ', ') AS tge_class, string_agg(distinct(observation.uniprot_id), ', ') AS uniprot_id "+ 
+                      " FROM tge JOIN observation ON tge.id = observation.tge_id WHERE observation.organism LIKE '%%"+organism+"%%' "+
+                      " GROUP BY tge.accession, tge.amino_seq ORDER BY tge.accession").fetchall(); 
 
 	def generate():
 		i = 0
