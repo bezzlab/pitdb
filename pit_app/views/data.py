@@ -20,6 +20,8 @@ def download_data(uniprot):
 		obs  = Observation.query.with_entities(Observation.long_description).\
 									filter_by(uniprot_id=uniprot, sample_id=sample.id).all()
 
+		print sample.name 
+
 		for ob in obs: 
 			arr  = ob.long_description.split(" ")
 			mRNA = arr[0]
@@ -95,7 +97,7 @@ def download():
 	selected = request.form.getlist('check')
 	nested   = request.form.getlist('check_nested')
 
-	tges = TGE.query.join(Observation).filter_by(organism=organism).distinct(Observation.tge_id).all()
+	tges = TGE.query.filter(TGE.organisms.like("%"+organism+"%")).distinct(TGE.id).all()
 
 	def generate():
 		i = 0

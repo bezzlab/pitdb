@@ -73,9 +73,12 @@ def organism():
 
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
-  tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
-                      " FROM observation, tge where organism = '"+ organism +"' AND tge.id = observation.tge_id "+
-                      " GROUP BY tge.accession").fetchall(); 
+  # tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tgeClasses, string_agg(distinct(observation.uniprot_id), ', ') AS uniprotIDs "+ 
+  #                     " FROM observation, tge where organism = '"+ organism +"' AND tge.id = observation.tge_id "+
+  #                     " GROUP BY tge.accession").fetchall(); 
+
+  tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, TGE.uniprot_id).\
+            filter(TGE.organisms.like("%"+organism+"%")).all()
 
   tgeNum     = separators(obs.distinct(Observation.tge_id).count())
   sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
@@ -89,10 +92,10 @@ def organism():
 
   summary = {'organism': organism,'tgeNum': tgeNum, 'sampleNum': sampleNum, 'expNum': expNum, 'trnNum': trnNum, 'pepNum' : pepNum };
   
-  for tge in tges: 
-    tgeList.append({'accession': tge[0], 'tgeClasses': tge[1], 'uniprotIDs': tge[2] }) #  })
+  # for tge in tges: 
+  #   tgeList.append({'accession': tge[0], 'tgeClasses': tge[1], 'uniprotIDs': tge[2] }) #  })
   
-  return render_template('results/organism.html', summary = summary, tgeList= tgeList, tgeClasses = tgeClasses)
+  return render_template('results/organism.html', summary = summary, tges = tges, tgeClasses = tgeClasses)
 
 
 @results.route('/experiment')
@@ -185,7 +188,7 @@ def protein():
       gene = arr[1]
     
       row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
-      # print row
+      
       if (len(row['seqid'].iloc[0]) <= 5):
         chrom = re.search(r'(\d|[X]|[Y])+', row.iloc[0,0]).group()
         start = row.iloc[0,3]

@@ -74,14 +74,14 @@
               </tr>
             </thead>
             <tbody>
-              {% for tge in tgeList %}
+              {% for tge in tges %}
                 <tr>
                   <td>
                   <a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a>
                   </td>
-                  <td>{{ tge.tgeClasses }}</td>
+                  <td>{{ tge.tge_class }}</td>
                   <td>
-                    {% for uniprotID in tge.uniprotIDs.split(',') %}
+                    {% for uniprotID in tge.uniprot_id.split(',') %}
                       {% if uniprotID != '-' %}
                         <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>
                       {% else %}
