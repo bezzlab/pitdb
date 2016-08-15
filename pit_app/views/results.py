@@ -159,10 +159,10 @@ def protein():
   uniprot   = request.args['uniprot']
   organism  = Observation.query.with_entities(distinct(Observation.organism)).filter_by(uniprot_id=uniprot).first_or_404()
 
-  protein = Observation.query.with_entities(Observation.protein_name, Observation.protein_descr, Observation.gene_name).\
-                filter_by(uniprot_id=uniprot).group_by(Observation.protein_name, Observation.protein_descr, Observation.gene_name).one()
+  protein = Observation.query.with_entities(Observation.organism, Observation.protein_name, Observation.protein_descr, Observation.gene_name).\
+                filter_by(uniprot_id=uniprot).group_by(Observation.organism, Observation.protein_name, Observation.protein_descr, Observation.gene_name).one()
 
-  summary = {'protein_name': protein.protein_name, 'gene_name': protein.gene_name, 'protein_descr': protein.protein_descr }
+  summary = {'protein_name': protein.protein_name, 'gene_name': protein.gene_name, 'protein_descr': protein.protein_descr, 'organism': protein.organism }
 
   tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.count(Observation.id).label('obsCount')).\
               join(Observation).filter_by(uniprot_id=uniprot).\
@@ -173,7 +173,6 @@ def protein():
               group_by(Experiment.title, Sample.name, Sample.id).all()
 
   if (organism[0] == "Homo sapiens" or organism[0] == "Mus musculus"):
-    print "hey"
     for ob in obj: 
       file = os.path.dirname(__file__)+"/../static/data/"+ob.title+"/"+ob.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
       df   = pd.read_table(file, sep="\t", index_col = None) 
@@ -186,13 +185,19 @@ def protein():
       gene = arr[1]
     
       row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
-
+      # print row
       if (len(row['seqid'].iloc[0]) <= 5):
-        chrom = re.search(r'\d+', row.iloc[0,0]).group()
+        chrom = re.search(r'(\d|[X]|[Y])+', row.iloc[0,0]).group()
         start = row.iloc[0,3]
         end   = row.iloc[0,4]
-        genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end }
-      
+      else:
+        chrom = row.iloc[0,0]
+        start = row.iloc[0,3]
+        end   = row.iloc[0,4]
+
+      genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end }
+      break
+        
       #chrom = re.search(r'\d+', row.iloc[0,0]).group()
       
   return render_template('results/protein.html', tges = tges, genoverse = genoverse, uniprot = uniprot, summary=summary, organism = organism[0])

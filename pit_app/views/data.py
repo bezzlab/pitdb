@@ -26,8 +26,8 @@ def download_data(uniprot):
 			gene = arr[1]
 			subset = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
 			
-			if (len(subset['seqid'].iloc[0]) < 5):
-				result = pd.concat([result, subset], axis=0)
+			# if (len(subset['seqid'].iloc[0]) <= 5):
+			result = pd.concat([result, subset], axis=0)
 	
 	result = result.to_csv(None, sep='\t', index = False)
 
@@ -66,26 +66,26 @@ def peptides(uniprot):
 	return result
 
 
-@data.route('/chromosome/<uniprot>')
-def chrom(uniprot):
-	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
-						join(Sample).join(Observation).\
-						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
+# @data.route('/chromosome/<uniprot>')
+# def chrom(uniprot):
+# 	obj    = Experiment.query.with_entities(Experiment.title, Sample.name, Sample.id).\
+# 						join(Sample).join(Observation).\
+# 						filter_by(uniprot_id=uniprot).group_by(Experiment.title, Sample.name, Sample.id).first()
 	
-	file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
-	df   = pd.read_table(file, sep="\t", index_col = None) 
+# 	file = os.path.dirname(__file__)+"/../static/data/"+obj.title+"/"+obj.name+".assemblies.fasta.transdecoder.genome.gff3_identified.gff3"
+# 	df   = pd.read_table(file, sep="\t", index_col = None) 
 		
-	obs  = Observation.query.with_entities(Observation.long_description).\
-						filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
+# 	obs  = Observation.query.with_entities(Observation.long_description).\
+# 						filter_by(uniprot_id=uniprot, sample_id=obj.id).first()
 
-	arr  = obs.long_description.split(" ")
-	mRNA = arr[0]
-	gene = arr[1]
+# 	arr  = obs.long_description.split(" ")
+# 	mRNA = arr[0]
+# 	gene = arr[1]
 	
-	chromosome = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")].iloc[0,0]
-	chromosome = re.search(r'\d+', chromosome).group()
+# 	chromosome = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")].iloc[0,0]
+# 	chromosome = re.search(r'\d+', chromosome).group()
 
-	return chromosome
+# 	return chromosome
 
 
 @data.route('/download', methods=['POST'])
@@ -108,7 +108,8 @@ def download():
 		for tge in tges:
 			# Filter rows (based on tge_class)
 			if (len(nested) != 0): 
-				classes = (tge.tge_class).split(",")
+				classes  = (tge.tge_class).split(",")
+				classStr = ' & '.join(classes)
 
 				# For every selected class by the user filter the rows
 				for elem in nested:
@@ -117,7 +118,7 @@ def download():
 							if (fileType == 'fasta'):
 								yield ">"
 							yield tge.accession + sep
-						yield tge.tge_class + sep
+						yield classStr + sep
 						if ('protName' in selected):
 							yield tge.uniprot_id + sep 
 						if ('aminoSeq' in selected):
