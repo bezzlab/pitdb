@@ -1,0 +1,32 @@
+ALTER TABLE tge ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE tge ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE observation ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE observation ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE sample ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE sample ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE transcript ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE transcript ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE psm ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE psm ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE peptide ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE peptide ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE tge_peptide ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE tge_peptide ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE experiment ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE experiment ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE "user" ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE "user" ALTER COLUMN updated SET DEFAULT now();
+
+ALTER TABLE "variation" ALTER COLUMN created SET DEFAULT now();
+ALTER TABLE "variation" ALTER COLUMN updated SET DEFAULT now();
+
+
+
