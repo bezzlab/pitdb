@@ -1,0 +1,318 @@
+{% extends "layout.html" %}
+{% block content %}
+  
+<div class="container">
+  <div class="navbar-default sidebar" role="navigation">
+    <div class="sidebar-nav navbar-collapse">
+      <ul class="nav" id="side-menu">
+        <li><h5>Navigation Panel</h5></li>
+        <li><a href="#sampleSummary"><i class="fa fa-comment-o fa-fw"></i> Summary</a></li>
+        <li><a href="#sampleDescr"><i class="fa fa-info" aria-hidden="true" style="margin-left: 8px; padding-right:5px"></i> Description</a></li>
+        <!--<li><a href="#expGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>-->
+        <li><a href="#tgeBreakdown"><i class="fa fa-table fa-fw"></i> TGE breakdown</a></li>
+        {% if variations!=None %}
+        <li><a href="#variationBreakdown"><i class="fa fa-table fa-fw"></i> Variations</a></li>
+        {% endif %}
+        <li><a href="#transcriptBreakdown"><i class="fa fa-table fa-fw"></i> Transcript breakdown</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Sample: {{ summary.accession }}</h1>
+      </div>
+    </div>
+
+    <div class="row">
+    	<div class="panel panel-default" id="sampleSummary">
+        <div class="panel-heading">
+          <i class="fa fa-comment-o fa-fw"></i> Summary
+          <a class="btn pull-right popoverData" data-content="Summary of information derived from this sample." rel="popover" data-placement="left" data-original-title="Summary Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+        </div>
+        
+        <div class="panel-body">
+          <div class="row" style="margin-left:5px">
+            <!-- <label>Data submitted by the user:</label> {{ summary.user }}</br></br> -->
+            <label style="margin-top: 5px">TGEs <a class="popoverData" data-content="Total number of unique translated genomic elements observed in this Sample (some may have been identified more than once)" rel="popover" data-placement="bottom" data-original-title="Translated genomic element (TGE)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.tgeNum }}</br>
+            <label>Transcripts <a class="popoverData" data-content="Number of unique transcripts assembled for RNA-seq data collected in this experiment." rel="popover" data-placement="bottom" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.trnNum }}<br/>
+            <label>Peptides <a class="popoverData" data-content="Number of peptides identified in this experiment using mass spectrometry." rel="popover" data-placement="bottom" data-original-title="Peptides" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.peptUniq }} 
+        	</div>
+        </div>
+      </div>
+      <div class="panel panel-default" id="sampleDescr">
+        <div class="panel-heading">
+          <i class="fa fa-info" style="margin-left: 8px; padding-right:5px"></i> Description
+          <a class="btn pull-right popoverData" data-content="A brief summary of the sample. For more detailed information, see the associated publication." rel="popover" data-placement="left" data-original-title="Sample Description" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+        </div>
+        <div class="panel-body">
+          <div class="row" style="margin-left:5px">
+          <p>Sample name: {{ summary.name }} </p><p>{{ summary.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div id="expGraph" class="panel panel-default sunburst" style="position: relative !important;">
+        <div class="panel-heading">
+          <i class="fa fa-pie-chart fa-fw"></i> Graph
+          <a class="btn pull-right popoverData" data-content="Visual summary of the Translated Genomic Elements (TGEs) identified, together with their type and information about their supporting peptides. Move the mouse cursor over the plot for quantitative information." rel="popover" data-placement="left" data-original-title="Graph Info" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+        </div>
+        
+        <div class="col-md-8 col-md-offset-2">
+          <div id="sequence"></div>
+          <div id="chart">
+            <div id="explanation">
+              <span id="percentage"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>
+            </div>
+          </div>
+        </div>
+        <div style="clear: both;"></div>
+      </div> -->
+
+      <div class="panel panel-default" id="tgeBreakdown">
+        <div class="panel-heading">
+          <i class="fa fa-table fa-fw"></i> Translated Genomic Elements (TGEs)
+          <a class="btn pull-right popoverData" data-content="List of experimentally TGEs that have been observed in this Sample." rel="popover" data-placement="left" data-original-title="Translated genomic elements (TGEs)" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+        </div>
+        
+        <div class="panel-body">
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#tgeModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
+          <br/><br/>
+          <table class="table table-striped table-bordered dataTable no-footer" id="exptgeTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>TGE Accession&nbsp;<a class="popoverData" data-content="Unique identifier of a TGE in the PITDB database." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>TGE Type(s)&nbsp;<a class="popoverData" data-content="One TGE may have multiple types, as it may have a different status in different species. Use the table’s search and sort capabilities to look for specific TGEs or TGE types." rel="popover" data-placement="bottom" data-original-title="TGE Type(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>Uniprot ID(s)&nbsp;<a class="popoverData" data-content="Accession number of homologous Uniprot protein (if there is one). Click the accession number to see what else the database knows about this protein." rel="popover" data-placement="bottom" data-original-title="Uniprot ID(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>Organism(s)&nbsp;<a class="popoverData" data-content="The organism(s) in which the TGE has been observed." rel="popover" data-placement="bottom" data-original-title="Organism(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tge in tges %}
+              <tr>
+                <td>
+                <a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a>
+                </td>
+                <td>{{ tge.tge_class }}</td>
+                <td>
+                  {% for uniprotID in tge.uniprot_id.split(',') %}
+                    {% if uniprotID != '-' %}
+                      <a href="protein?uniprot={{ uniprotID }}">{{ uniprotID }}</a>
+                    {% else %}
+                      <span style="font-size:18px">{{ uniprotID }}</span>
+                    {% endif %}{% if not loop.last %},{% endif %}
+                  {% endfor %}</br>
+                </td>
+                <td>
+                  {% for organism in tge.organisms.split(',') %}
+                  {% if organism != '-' %}
+                    <a href="organism?organism={{ organism }}">{{ organism }}</a>
+                  {% else %}
+                    <span style="font-size:18px">{{ organism }}</span>
+                  {% endif %}{% if not loop.last %},{% endif %}
+                {% endfor %}</br>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% if variations!=None %}
+    <div class="panel panel-default" id="variationBreakdown">
+      <div class="panel-heading">
+        <i class="fa fa-table fa-fw"></i> Variations
+        <a class="btn pull-right popoverData"  data-content="Amino acid changes found in this TGE" rel="popover" data-placement="left" data-original-title="Variations" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+      </div>
+      
+      <div class="panel-body">
+        
+        <div style="overflow-y: auto">
+          <table class="table table-striped table-bordered dataTable no-footer clickable table-responsive" id="tgevarTable">
+          <thead>
+            <tr>
+              <!-- <th></th> -->
+              <th class="compact">Reference ID<a class="popoverData" href="#" data-content="Variation inrespect to this protein sequence" rel="popover" data-placement="bottom" data-original-title="Reference ID" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th class="compact">Position<a class="popoverData" href="#" data-content="Variation position within the reference" rel="popover" data-placement="bottom" data-original-title="Position" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+              <th class="compact">Ref AA(s) To Alt AA(s) <a class="popoverData" href="#" data-content="Reference Amino Acid -> Alternative Amino Acid" rel="popover" data-placement="bottom" data-original-title="Variation" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th class="compact">Variation Type<a class="popoverData" href="#" data-content="Variation Type. (S)SAP=(Similar) Single Amino acid Polymorphism, (S)ALT = (Similar) Alternative sequence, INS = Insertion, DEL= Deletion." rel="popover" data-placement="bottom" data-original-title="Variation Type" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th class="compact">Observation<br>Count<a class="popoverData" href="#" data-content="Number of times the variation was observed." rel="popover" data-placement="bottom" data-original-title="Observation Count" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+              <th class="compact">Peptide<br>Count<a class="popoverData" href="#" data-content="Number of peptide support the variation(if any)." rel="popover" data-placement="bottom" data-original-title="Peptide Count" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+              <th class="compact">Unique<br>Peptides<a class="popoverData" href="#" data-content="Unique peptide(s) supporting the variation(if any)." rel="popover" data-placement="bottom" data-original-title="Unique Peptide(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in variations %}
+              <tr>
+                
+                <td class="compact">{% if v.ref_id != '-' %}
+                    <a href="protein?uniprot={{ uniprotID }}">{{ v.ref_id }}</a>
+                  {% else %}
+                    <span style="font-size:18px">N/A</span>
+                  {% endif %}</td>
+                <td class="compact">{{ v.pos }}</a></td> 
+                <td class="compact">{{ v.ref_aa}} -> {{ v.alt_aa }}</td>
+                <td class="compact">{{ v.var_type }}</td>
+                <td class="compact">{{ v.obs_count }}</td> 
+                <td class="compact">{{ v.pep_evd }}</td> 
+                <td class="compact">{% if v.unq_peptides !='-' %} {{ v.unq_peptides.split(',') }} {% else %} - {% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+      
+    </div>
+    {% endif %}
+
+    <div class="panel panel-default" id="transcriptBreakdown">
+        <div class="panel-heading">
+          <i class="fa fa-table fa-fw"></i> Transcripts
+          <a class="btn pull-right popoverData" data-content="List of Transcripts that have produced at least one TGE observed in MS data of this Sample." rel="popover" data-placement="left" data-original-title="Transcripts" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+        </div>
+        
+        <div class="panel-body">
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#transModal"><i class="fa fa-download"></i>&nbsp;Download Transcripts</button>
+          <br/><br/>
+          <!--<table class="table table-striped table-bordered dataTable no-footer" id="Table" style="display: none;">-->
+          <table class="table table-striped table-bordered dataTable no-footer" id="samptransTable">
+          <!--<table class="table table-striped table-bordered dataTable no-footer" id="exptgeTable" style="display: none;>-->
+          <thead>
+            <tr>
+              <th>Transcript Accession&nbsp;<a class="popoverData" data-content="Unique identifier of a transcrit in the PITDB database." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>TGE Accession&nbsp;<a class="popoverData" data-content="Length of the transcript" rel="popover" data-placement="bottom" data-original-title="Transcript Length" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>Gene Name&nbsp;<a class="popoverData" data-content="Accession number of homologous Uniprot protein (if there is one). Click the accession number to see what else the database knows about this protein." rel="popover" data-placement="bottom" data-original-title="Uniprot ID(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th>Experiment(s)&nbsp;<a class="popoverData" data-content="The experiment(s) in which the Transcript has been observed." rel="popover" data-placement="bottom" data-original-title="Experiment(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% for trn in transcripts %}
+                  <tr>
+                    <td><a href="transcript?obsID={{ trn.obsid }}&accession={{ trn.tge_id }}">{{ trn.id }}</a></td>
+                    <td><a href="tge?accession={{ trn.tge_id }}">{{ trn.tge_id }}</a></td>
+                    <td><a href="gene?gene={{ trn.gene }}">{{ trn.gene }}</a></td>
+                    <td><a href="experiment?experiment={{ trn.expAccession }}">{{ trn.expAccession }}</a></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="tgeModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content" style="padding-left: 10px">
+      <div class="modal-header">
+        <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Download TGEs</h4>
+      </div>
+      <form role="form" id="downloadForm" name="downloadForm" action="/download" method="POST">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="hidden" id="sample" name="sample" value='{{ summary.accession }}'>
+              <fieldset>
+                <h5>Select the fields to include in the download file:</h5><br/>
+                <div class="checkbox checkbox-primary">
+                  <input id="tgeAcc" type="checkbox" name="check" value="tgeAcc" checked="">
+                  <label for="tgeAcc">TGE Accession</label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="tgeType" type="checkbox" name="check" value="tgeType" checked="">
+                  <label for="tgeType">TGE Type</label>
+                  {% for class in tgeClasses %}
+                  <div class="checkbox checkbox-primary nested">
+                    <input id='{{ class }}' type="checkbox" class="check_nested" name="check_nested" value='{{ class }}' checked="">
+                    <label for='{{ class }}'>{{ class }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="protName" type="checkbox" name="check" value="protName" checked="">
+                  <label for="protName">Protein Name</label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="aminoSeq" type="checkbox" name="check" value="aminoSeq" checked="">
+                  <label for="aminoSeq">Amino Acid Sequence</label>
+                </div>
+                <br/>
+                <h5>Select the file type:</h5>
+                <label class="radio-inline"><input type="radio" name="fileType" value="fasta" checked>Fasta</label>
+                <label class="radio-inline"><input type="radio" name="fileType" value="csv">CSV</label>
+                <br/>
+                <span class="modalWarning" style="color: #c12e2a; font-weight: bold"></span>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="submitSearch" type="submit" class="btn btn-info btn-lg">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<div id="transModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content" style="padding-left: 10px">
+      <div class="modal-header">
+        <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Download Transcript</h4>
+      </div>
+      <form role="form" id="downloadForm" action="/downloadTranscript" method="POST">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="hidden" id="sampleT" name="sampleT" value='{{ summary.accession }}'>
+              <fieldset>
+                <h5>Select the fields to include in the download file:</h5><br/>
+                <div class="checkbox checkbox-primary">
+                  <input id="transId" type="checkbox" name="check" value="transId" checked="">
+                  <label for="tranId">Transcript ID</label>
+                </div>
+                <!-- <div class="checkbox checkbox-primary">
+                  <input id="tgeType" type="checkbox" name="check" value="tgeType" checked="">
+                  <label for="tgeType">TGE Type</label>
+                  {% for class in tgeClasses %}
+                  <div class="checkbox checkbox-primary nested">
+                    <input id='{{ class }}' type="checkbox" class="check_nested" name="check_nested" value='{{ class }}' checked="">
+                    <label for='{{ class }}'>{{ class }}</label>
+                  </div>
+                  {% endfor %}
+                </div> -->
+                <div class="checkbox checkbox-primary">
+                  <input id="geneName" type="checkbox" name="check" value="geneName" checked="">
+                  <label for="geneName">Gene Name</label>
+                </div>
+                <div class="checkbox checkbox-primary">
+                  <input id="transSeq" type="checkbox" name="check" value="transSeq" checked="">
+                  <label for="transSeq">Transcript Sequence</label>
+                </div>
+                <br/>
+                <h5>Select the file type:</h5>
+                <label class="radio-inline"><input type="radio" name="fileType" value="fasta" checked>Fasta</label>
+                <label class="radio-inline"><input type="radio" name="fileType" value="csv">CSV</label>
+                <br/>
+                <span class="modalWarning" style="color: #c12e2a; font-weight: bold"></span>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="submitSearch" type="submit" class="btn btn-info btn-lg">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
