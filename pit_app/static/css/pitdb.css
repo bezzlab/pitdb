@@ -184,6 +184,20 @@ rect.disabled {
   z-index: 1030;
 }
 
+#transModal {
+  /*position: relative;*/
+  z-index: 1050;
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+#transModal .close.btn {
+  font-size: 23px;
+}
+
+.modal-backdrop {
+  z-index: 1030;
+}
+
 /* Checkbox CSS from http://bootsnipp.com/snippets/0ln1R */
 .checkbox {
   padding-left: 20px; }

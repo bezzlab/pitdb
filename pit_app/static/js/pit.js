@@ -51,13 +51,19 @@ $(function() {
 
     switch ($(this).val()) {
       case 'Accession Number':
-        placeholder = 'e.g. TGE001234'
+        placeholder = 'e.g. TGE0001234'
         break;
       case 'Amino Acid Sequence':
         placeholder = 'e.g. MSCVNLPTVLPGSPSKT (partial sequence)';
         break;
       case 'Experiment ID':
-        placeholder = 'e.g. PIT000001';
+        placeholder = 'e.g. EXP000001';
+        break;
+      case 'Sample ID':
+        placeholder = 'e.g. SAMP000001';
+        break;
+      case 'Sample Name':
+        placeholder = 'e.g. human_adeno';
         break;
       case 'Uniprot ID':
         placeholder = 'e.g. P12111';
@@ -136,6 +142,87 @@ $(function() {
     "initComplete": function(settings, json) {
       // $("#spinnerTable").hide();
       $("#exptgeTable").show();
+    },
+  });
+  var vartgeTable = $('#vartgeTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#vartgeTable").show();
+    },
+  });
+
+  var tgevarTable = $('#tgevarTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#tgevarTable").show();
+    },
+  });
+
+  var peptgeTable = $('#peptgeTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#peptgeTable").show();
+    },
+  });
+  var samptransTable = $('#samptransTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "18%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "42%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#samptransTable").show();
+    },
+  });
+
+  var exptrnTable = $('#exptrnTable').dataTable({
+    "bAutoWidth": false,
+    "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "18%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "20%" },
+      { "bVisible": true, "width": "42%" }
+    ],
+    "initComplete": function(settings, json) {
+      // $("#spinnerTable").hide();
+      $("#exptrnTable").show();
     },
   });
 
@@ -528,14 +615,16 @@ $(function() {
     "bAutoWidth": false,
     "bProcessing": true,
     "aoColumns": [
-      { "bVisible": false },
-      { "bVisible": true, "width": "10%" },
-      { "bVisible": true, "width": "10%" },
-      { "bVisible": true, "width": "10%" },
-      { "bVisible": true, "width": "20%" },
-      { "bVisible": true, "width": "30%" },
-      { "bVisible": true, "width": "10%" },
-      { "bVisible": true, "width": "10%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "12%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "8%" },
+      { "bVisible": true, "width": "8%" },
     ],
   });
 
