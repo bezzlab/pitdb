@@ -9,8 +9,10 @@
         <li><a href="#tgeSummary"><i class="fa fa-comment-o fa-fw"></i> Summary</a></li>
         <li><a href="#tgeGraph"><i class="fa fa-pie-chart fa-fw"></i> Graph</a></li>
         <li><a href="#tgeBreakdown"><i class="fa fa-table fa-fw"></i> TGE breakdown</a></li>
-
-        <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Statistics</span></a></li>
+        {% if variations!=None %}
+        <li><a href="#variationBreakdown"><i class="fa fa-table fa-fw"></i> Variations</a></li>
+        {% endif %}
+        <li><a href="#massspec_stats"><i class="fa fa-bar-chart-o fa-fw"></i> Mass-spectrometry Evidence</span></a></li>
         <!-- <li><a href="#"><i class="fa fa-edit fa-fw"></i> PSM</a></li>
         <li><a href="tables.html"><i class="fa fa-table fa-fw"></i>Expression Data Statistics </a></li> -->
       </ul>
@@ -93,40 +95,108 @@
           <div class="panel-body">
             <label style="padding-bottom: 8px;">TGE Sequence (experimental peptide coverage highlighted):</label>
             <div id="tgeSeq" class="wordwrap"><span class="test" style="line-height: 1.7em">{{ summary.tge.amino_seq }}</span></div><br/><br/>
-              <table class="table table-striped table-bordered dataTable no-footer clickable" id="tges" >
+            <div style="overflow-y: auto">
+              <table class="table table-striped table-bordered dataTable no-footer clickable table-responsive" id="tges">
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Observation&nbsp;<a class="popoverData" href="#" data-content="A TGE observation comprises an experimentally derived RNA-seq transcript together with experimentally derived peptide evidence from mass spectrometry performed on the same sample. Click the observation name to view the transcript." rel="popover" data-placement="bottom" data-original-title="Observation" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
-                  <th>UniProt&nbsp;<a class="popoverData" href="#" data-content="Accession number of homologous UniProt protein (if there is one). Click the accession number to see further information about this protein." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
-                  <th>Organism&nbsp;<a class="popoverData" href="#" data-content="Organism in which this particular observation occurred." rel="popover" data-placement="bottom" data-original-title="Organism" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
-                  <th>Type & Strand&nbsp;<a class="popoverData" href="#" data-content="<ul><li>The 'type' attribute indicates whether the protein is 'complete', containing a start and a stop codon; '5prime_partial', meaning it's missing a start codon and presumably part of the N-terminus; '3prime_partial', meaning it's missing the stop codon and presumably part of the C-terminus; or 'internal', meaning it's both 5prime-partial and 3prime-partial.</li><br/> <li>Strand (shown in parentheses) indicates which strand the coding region was found on..</li>" rel="popover" data-placement="bottom" data-original-title="Type&nbsp;&&nbsp;Strand&nbsp;" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
-                  <th>Identified<br/>Peptides&nbsp;<a class="popoverData" href="#" data-content="Experimentally identified peptides mapping to this TGE for this specific observation." rel="popover" data-placement="bottom" data-original-title="Identified Peptides" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
-                  <th>Sample&nbsp;<a class="popoverData" href="#" data-content="The ID of the sample in which the observation occurred." rel="popover" data-placement="bottom" data-original-title="Sample" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
-                  <th>Experiment&nbsp;<a class="popoverData" href="#" data-content="The experiment in which this TGE observation was obtained. Click the experiment accession number for more information." rel="popover" data-placement="bottom" data-original-title="Experiment" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <!-- <th></th> -->
+                  <th class="compact">Observation<a class="popoverData" href="#" data-content="A TGE observation comprises an experimentally derived RNA-seq transcript together with experimentally derived peptide evidence from mass spectrometry performed on the same sample. Click the observation name to view the transcript." rel="popover" data-placement="bottom" data-original-title="Observation" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">TGE<br>Class<a class="popoverData" href="#" data-content="TGE Class based on sequence similarity to refernce protein." rel="popover" data-placement="bottom" data-original-title="TGEClass" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Rating<a class="popoverData" href="#" data-content="<ul><li>The 'Rating' attribute indicates identification rating of the TGE. If the TGE is a known protein, its rating is 5 star. A TGE from other TGE classes gets 5 star if it has unique variation specific peptide evidence, its a complete ORF, and our scoring method predicts it as novel variant.</li><br/> <li>Start ratiis based on Variation specific Unique Peptide (U), Scoring method prediction (S), Completeness of the the ORF (C), Variation specific shared Peptide (V) and Anchor Protein (A) (Only applies to novel TGEs)</li>" rel="popover" data-placement="bottom" data-original-title="Rating&nbsp;&&nbsp;Evidence&nbsp;" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Peptide Count&nbsp;<a class="popoverData" href="#" data-content="Experimentally identified peptides mapping to this TGE for this specific observation." rel="popover" data-placement="bottom" data-original-title="Identified Peptides Count" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Uniprot ID&nbsp;<a class="popoverData" href="#" data-content="Uniprot ID of homologous UniProt protein (if there is one). Click the ID to see further information about this protein." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Protein&nbsp;<a class="popoverData" href="#" data-content="Protein name of homologous UniProt protein (if there is one). Click the name to see further information about this protein." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Protein<br/>Description<a class="popoverData" href="#" data-content="Protein description of homologous UniProt protein (if there is one)." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  
+                  <th class="compact">Organism<a class="popoverData" href="#" data-content="Organism in which this particular observation occurred." rel="popover" data-placement="bottom" data-original-title="Organism" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Sample&nbsp;<a class="popoverData" href="#" data-content="The ID of the sample in which the observation occurred." rel="popover" data-placement="bottom" data-original-title="Sample" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <!-- <th>Type & Strand&nbsp;<a class="popoverData" href="#" data-content="<ul><li>The 'type' attribute indicates whether the protein is 'complete', containing a start and a stop codon; '5prime_partial', meaning it's missing a start codon and presumably part of the N-terminus; '3prime_partial', meaning it's missing the stop codon and presumably part of the C-terminus; or 'internal', meaning it's both 5prime-partial and 3prime-partial.</li><br/> <li>Strand (shown in parentheses) indicates which strand the coding region was found on..</li>" rel="popover" data-placement="bottom" data-original-title="Type&nbsp;&&nbsp;Strand&nbsp;" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th> -->
+                  <th class="compact">Experiment&nbsp;<a class="popoverData" href="#" data-content="The experiment in which this TGE observation was obtained. Click the experiment accession number for more information." rel="popover" data-placement="bottom" data-original-title="Experiment" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                 </tr>
               </thead>
               <tbody>
                 {% for res in results %}
                   <tr>
-                    <td>{{ res.peptide_num }}</td>
-                    <td><a href="transcript?obsID={{ res.id }}&accession={{ summary.tge.accession }}">{{ res.observation }}</a></td>
-                    <td><a href="protein?uniprot={{ res.uniprotID }}">{{ res.uniprotID }}</a></td>                  
-                    <td class="wordwrap"><a href="organism?organism={{ res.organism }}">{{ res.organism }}</a></td>
-                    <td >{{ res.type }}&nbsp;({{ res.strand }})</td>
-                    <td class="wordwrap" style="font-size: 12px !important; line-height: 18px;"><strong style="font-size: 14px;">Total: {{ res.peptide_num }}</strong><br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul></td>
-                    <td class="wordwrap" style="font-size: 12px; line-height: 18px;">{{ res.sampleName|wordwrap(10, True) }}</td>
-                    <td><a href="experiment?experiment={{ res.expAccession }}">{{ res.expAccession }}</a></td>
+                    <td class="compact"><a href="transcript?obsID={{ res.id }}&accession={{ summary.tge.accession }}">{{ res.observation }}</a></td>
+                    <td class="compact">{{ res.tgeClass }}</a></td> 
+                    <td class="compact">
+                    {% if res.star==5%}<img src="/static/img/5star.png" style="width:90px;height:20px;">
+                    {%elif res.star==4%}<img src="/static/img/4star.png" style="width:90px;height:20px;">
+                    {%elif res.star==3%}<img src="/static/img/3star.png" style="width:90px;height:20px;">
+                    {%elif res.star==2%}<img src="/static/img/2star.png" style="width:90px;height:20px;">
+                    {%elif res.star==1%}<img src="/static/img/1star.png" style="width:90px;height:20px;">
+                    {%elif res.star==0%}<img src="/static/img/0star.png" style="width:90px;height:20px;">
+                    {%endif%}<br>
+                    <!-- {% if res.evidence!=''%}({{ res.evidence }}){%else%}(-){%endif%} --></td>
+                    <td class="wordwrap" style="font-size: 12px !important; line-height: 18px;"><strong style="font-size: 14px;">Total : {{ res.peptide_num }}</strong> <br/><ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul> </td>
+                    <td class="compact"><a href="protein?uniprot={{ res.uniprotID }}">{{ res.uniprotID }}</a></td> 
+                    <td class="compact"><a href="protein?uniprot={{ res.uniprotID }}">{{ res.protein_name }}</a></td> 
+                    <td class="compact">{{ res.protein_desc }}</td>                
+                    <td class="compact"><a href="organism?organism={{ res.organism }}">{{ res.organism }}</a></td>
+                    
+                    
+                    <td class="compact"><a href="sample?accession={{ res.sampleName }}&experiment={{ res.expAccession }}">{{ res.sampleName|wordwrap(10, True) }}</a></td>
+                    <td class="compact"><a href="experiment?experiment={{ res.expAccession }}">{{ res.expAccession }}</a></td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
+            </div>
           </div>
+
         </div>
+
+        {% if variations!=None %}
+        <div class="panel panel-default" id="variationBreakdown">
+          <div class="panel-heading">
+            <i class="fa fa-table fa-fw"></i> Variations
+            <a class="btn pull-right popoverData"  data-content="Amino acid changes found in this TGE" rel="popover" data-placement="left" data-original-title="Variations" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
+          </div>
+          
+          <div class="panel-body">
+            
+            <div style="overflow-y: auto">
+              <table class="table table-striped table-bordered dataTable no-footer clickable table-responsive" id="vartgeTable">
+              <thead>
+                <tr>
+                  <!-- <th></th> -->
+                  <th class="compact">Reference ID<a class="popoverData" href="#" data-content="Reference ID" rel="popover" data-placement="bottom" data-original-title="Reference ID" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Position<a class="popoverData" href="#" data-content="Variation position" rel="popover" data-placement="bottom" data-original-title="Variation Position" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Ref AA(s) To Alt AA(s) <a class="popoverData" href="#" data-content="Reference Amino Acid -> Alternative Amino Acid" rel="popover" data-placement="bottom" data-original-title="Variation" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Variation Type<a class="popoverData" href="#" data-content="Variation Type" rel="popover" data-placement="bottom" data-original-title="Variation Type" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Observation<br>Count<a class="popoverData" href="#" data-content="Number of times the variation was observed." rel="popover" data-placement="bottom" data-original-title="Observation Count" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Peptide<br>Count<a class="popoverData" href="#" data-content="Number of peptide support the variation(if any)." rel="popover" data-placement="bottom" data-original-title="Peptide Count" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Unique<br>Peptides<a class="popoverData" href="#" data-content="Unique peptide(s) supporting the variation(if any)." rel="popover" data-placement="bottom" data-original-title="Unique Peptide(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for v in variations %}
+                  <tr>
+                    
+                    <td class="compact">{% if v.ref_id != '-' %}
+                        <a href="protein?uniprot={{ v.ref_id }}">{{ v.ref_id }}</a>
+                      {% else %}
+                        <span style="font-size:18px">N/A</span>
+                      {% endif %}</td>
+                    <td class="compact">{{ v.pos }}</a></td> 
+                    <td class="compact">{{ v.ref_aa}} -> {{ v.alt_aa }}</td>
+                    <td class="compact">{{ v.var_type }}</td>
+                    <td class="compact">{{ v.obs_count }}</td> 
+                    <td class="compact">{{ v.pep_evd }}</td> 
+                    <td class="compact">{% if v.unq_peptides !='-' %} {{ v.unq_peptides }} {% else %} - {% endif %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+          </div>
+          
+        </div>
+        {% endif %}
 
         <div class="panel panel-default" id="massspec_stats">
           <div class="panel-heading ">
-            <i class="fa fa-bar-chart-o fa-fw"></i> Mass-Spectrometry Data Statistics
+            <i class="fa fa-bar-chart-o fa-fw"></i> Mass-Spectrometry Evidence
             <a class="btn pull-right popoverData"  data-content="Summary of evidence underpinning the TGE across the whole database." rel="popover" data-placement="left" data-original-title="Summary of evidence" data-trigger="hover"><i class="fa fa-info-circle pull-right helpTip"></i></a>
           </div>
             
@@ -138,6 +208,36 @@
               <!-- <label>Score:</label>  </br> -->
               <label>Software:</label> MSGF+</br>
             </div>
+            <div class="panel-body">
+            <div style="overflow-y: auto">
+              <table class="table table-striped table-bordered dataTable no-footer clickable table-responsive" id="peptgeTable">
+              <thead>
+                <tr>
+                  <!-- <th></th> -->
+                  <th class="compact">Peptide<a class="popoverData" href="#" data-content="Identified peptide sequence" rel="popover" data-placement="bottom" data-original-title="aa_seq" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">PSM Count<a class="popoverData" href="#" data-content="PSMs identified from all the samples for this peptide" rel="popover" data-placement="bottom" data-original-title="psmcount" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Charge States<a class="popoverData" href="#" data-content="Charges" rel="popover" data-placement="bottom" data-original-title="charge" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Modifications<a class="popoverData" href="#" data-content="Modifications" rel="popover" data-placement="bottom" data-original-title="Modifications" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Pep Qvalue<a class="popoverData" href="#" data-content="Lowest MSGF+ pep-qval" rel="popover" data-placement="bottom" data-original-title="pepqvalue" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  <th class="compact">Local FDR<a class="popoverData" href="#" data-content="Lowest Local FDR" rel="popover" data-placement="bottom" data-original-title="local_fdr" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {% for pep in pepInfo %}
+                  <tr>
+                    <td class="compact">{{ pep.aa_seq }}</a></td>
+                    <td class="compact">{{ pep.psm_count }}</a></td> 
+                    <td class="compact">{{ pep.charge}}</td>
+                    <td class="compact"> {% if pep.modifications==None %} - {% else %}{%for m in pep.modifications.split(',')%}{{ m }} {% endfor %} {% endif %} </td>
+                    <td class="compact">{{ pep.pep_qvalue }}</a></td> 
+                    <td class="compact">{{ pep.local_fdr }}</a></td> 
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+          </div>
           </div>
         </div>    
       </div>

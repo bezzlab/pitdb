@@ -175,7 +175,7 @@ def expJSON(experiment):
       tranNumList = []
 
       tranNum = Transcript.query.with_entities(func.count(distinct(Transcript.dna_seq)).label('tranCount')).\
-                    join(Observation).filter(Observation.sample_id==sample.id).all() 
+                    join(TranscriptToObservation).join(Observation).filter(Observation.sample_id==sample.id).all() 
 
       for tran in tranNum: 
         orgList = []
