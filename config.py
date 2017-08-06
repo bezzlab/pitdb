@@ -13,13 +13,11 @@ BCRYPT_LEVEL = 12
 driver = 'postgresql+psycopg2://'
 
 if 'RDS_HOSTNAME' in os.environ:
-	print "OS.environ:"+str(os.environ['RDS_DB_NAME'])
 	SQLALCHEMY_DATABASE_URI = driver + os.environ['RDS_USERNAME'] + ':' + os.environ['RDS_PASSWORD'] \
 													+'@' + os.environ['RDS_HOSTNAME']  +  ':' + os.environ['RDS_PORT'] \
 													+ '/' + os.environ['RDS_DB_NAME']
 else:
-	print "DB Error"
-	#print "OS.environ:"+str(os.environ)
+	print "Error"
 # 	BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
 # 	stream   = open(os.path.join(BASE_DIR, 'db.yml'), "r")
 # 	db       = yaml.load(stream)
