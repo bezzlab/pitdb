@@ -51,7 +51,7 @@ $(function() {
 
     switch ($(this).val()) {
       case 'Accession Number':
-        placeholder = 'e.g. TGE0001234'
+        placeholder = 'e.g. TGE0000273'
         break;
       case 'Amino Acid Sequence':
         placeholder = 'e.g. MSCVNLPTVLPGSPSKT (partial sequence)';
@@ -66,7 +66,7 @@ $(function() {
         placeholder = 'e.g. human_adeno';
         break;
       case 'Uniprot ID':
-        placeholder = 'e.g. P12111';
+        placeholder = 'e.g. Q52L50';
         break;
       case 'Peptide':
         placeholder = 'e.g. EMEENFAVEAANYQDTIGR (exact sequence)';
@@ -134,10 +134,13 @@ $(function() {
     "bAutoWidth": false,
     "bProcessing": true,
     "aoColumns": [
-      { "bVisible": true, "width": "18%" },
-      { "bVisible": true, "width": "20%" },
-      { "bVisible": true, "width": "20%" },
-      { "bVisible": true, "width": "42%" }
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" },
+      { "bVisible": true, "width": "14%" }
     ],
     "initComplete": function(settings, json) {
       // $("#spinnerTable").hide();
@@ -229,6 +232,14 @@ $(function() {
   var orgTable = $('#orgTable').dataTable({
     "bAutoWidth": false,
     "bProcessing": true,
+    "aoColumns": [
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" },
+      { "bVisible": true, "width": "16%" }
+    ],
     "initComplete": function(settings, json) {
       // $("#spinnerTable").hide();
       $("#orgTable").show();

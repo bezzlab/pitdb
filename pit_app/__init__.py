@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 application = Flask(__name__, instance_relative_config=True)
 application.config.from_object('config')
-
+#application..secret_key = 'myverylongsecretkey'
 # bcrypt = Bcrypt(application)
 db = SQLAlchemy(application)
 
@@ -20,6 +20,7 @@ def errorNew(error):
 
 from pit_app.views.home      import home
 from pit_app.views.search    import search
+from pit_app.views.submission    import submission
 from pit_app.views.results   import results
 from pit_app.views.data      import data
 from pit_app.views.plots     import plots
@@ -29,6 +30,7 @@ from pit_app.views.plots     import plots
 # # Register blueprint(s)
 application.register_blueprint(home)
 application.register_blueprint(search)
+application.register_blueprint(submission)
 application.register_blueprint(results)
 application.register_blueprint(data)
 application.register_blueprint(plots)

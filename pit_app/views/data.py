@@ -172,29 +172,66 @@ def downloadTrn():
 		#nested   = request.form.getlist('check_nested')
 		print "Sample" + sample 
 		print "\n\n\n\nsample:"+sample
-		transcripts = db.engine.execute("SELECT transcript.id,transcript.dna_seq, observation.gene_name"+ 
-                      " FROM observation JOIN transcript ON observation.id = transcript.obs_id WHERE observation.sample_id="+sample+" "+
-                      " GROUP BY transcript.id, transcript.dna_seq, observation.gene_name ORDER BY transcript.id").fetchall();
+		transcripts = db.engine.execute("SELECT transcript.id,transcript.dna_seq, observation.gene_name FROM transcript JOIN transcript_observation ON transcript.id = transcript_observation.transcript_id JOIN observation ON observation.id=transcript_observation.obs_id JOIN sample ON observation.sample_id=sample.id WHERE sample.accession=\'"+sample+"\' GROUP BY transcript.id, transcript.dna_seq, observation.gene_name ORDER BY transcript.id;").fetchall();
+	elif 'experimentTrans' in request.form:
+		expAcc = str(request.form['experimentTrans'])
+		exp= Experiment.query.filter_by(accession=expAcc).first_or_404()
+		fileType = str(request.form['fileType'])
+		selected = request.form.getlist('check')
+		print "Exp" + expAcc
+		#print()
+		#print "Exp id" +str(exp_id)
+		#print "\n\n\n\nsample:"+sample
+		transcripts = db.engine.execute("SELECT transcript.id,transcript.dna_seq, observation.gene_name FROM transcript JOIN transcript_observation ON transcript.id = transcript_observation.transcript_id JOIN observation ON observation.id=transcript_observation.obs_id JOIN sample ON observation.sample_id=sample.id WHERE sample.exp_id="+str(exp.id)+" GROUP BY transcript.id, transcript.dna_seq, observation.gene_name ORDER BY transcript.id;").fetchall();
+	def generate():
+		i = 0
+		if (fileType == 'fasta'):
+			sep = ' '
+		else: 
+			sep = ','
+		for t in transcripts:
+			# For every selected class by the user filter the rows
+			if ('transId' in selected):
+				if (fileType == 'fasta'):
+					yield ">"
+				yield "TID=" + str(t.id) + sep
+			if ('geneName' in selected):
+				yield "gene=" + t.gene_name + sep 
+			if ('transSeq' in selected):
+				if (fileType == 'fasta'):
+					yield '\n'+t.dna_seq
+				else: 
+					yield t.dna_seq + ','
+			yield '\n'
+	return Response(generate(), mimetype='text/'+fileType, headers={"Content-disposition":"attachment; filename=transcripts."+fileType})
+
+@data.route('/downloadVariations', methods=['POST'])
+def downloadVariations():
+	print "request: downloadVariations"
+	if 'sampleV' in request.form:
+		sample = str(request.form['sampleV'])
+		fileType = str(request.form['fileType'])
+		selected = request.form.getlist('check')
+		#nested   = request.form.getlist('check_nested')
+		print "Sample" + sample 
+		print "\n\n\n\nsample:"+sample
+		variations = db.engine.execute("SELECT variation.id,variation.ref_id, variation.pos, variation.ref_aa, variation.alt_aa, variation.chrom, variation.var_type"+ 
+                      " FROM variation JOIN variation_observation ON variation_observation.var_id = variation.id JOIN observation ON observation.id=variation_observation.obs_id WHERE observation.sample_id="+sample+"; ").fetchall();
+		print(variations)
 		def generate():
 			i = 0
-			if (fileType == 'fasta'):
-				sep = ' '
+			if (fileType == 'provcf'):
+				sep = '\t'
 			else: 
 				sep = ','
-			for t in transcripts:
+			yield "#CHROM"+sep+"POS"+sep+"ID"+sep+"REF"+sep+"ALT"+sep+"Info\n"
+			for v in variations:
+				yield str(v.ref_id) + sep + str(v.pos) + sep + str(v.id) + sep + v.ref_aa + sep + v.alt_aa + sep
 				# For every selected class by the user filter the rows
-				if ('transId' in selected):
-					if (fileType == 'fasta'):
-						yield ">"
-					yield "TID=" + str(t.id) + sep
-				if ('geneName' in selected):
-					yield "gene=" + t.gene_name + sep 
-				if ('transSeq' in selected):
-					if (fileType == 'fasta'):
-						yield '\n'+t.dna_seq
-					else: 
-						yield t.dna_seq + ','
+				
+				if ('varType' in selected):
+					yield 'Type='+v.var_type+";"
+				yield 'chrom='+v.chrom
 				yield '\n'
-		return Response(generate(), mimetype='text/'+fileType, headers={"Content-disposition":"attachment; filename=transcripts."+fileType})
-
+		return Response(generate(), mimetype='text/'+fileType, headers={"Content-disposition":"attachment; filename="+sample+"_variations."+fileType})
 	

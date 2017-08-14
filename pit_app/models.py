@@ -63,6 +63,26 @@ class Experiment(Base):
   def __repr__(self):
     return '<Experiment title %r>' % (self.title)
 
+class ExperimentWiseStat(Base):
+  __tablename__ = 'exp_wise_stat'
+  exp_id = db.Column('exp_id', db.Integer, db.ForeignKey("experiment.id"))
+  sample_num = db.Column(db.Integer)
+  tge_num = db.Column(db.Integer)
+  trn_num = db.Column(db.Integer)
+  pep_num = db.Column(db.Integer)
+  psms_num = db.Column(db.Integer)
+  var_num = db.Column(db.Integer)
+
+  def __init__(self, exp_id, sample_id, tge_num, trn_num, pep_num, psms_num, var_num):
+    self.exp_id   = exp_id
+    self.sample_id = sample_id
+    self.tge_num = tge_num
+    self.trn_num = trn_num
+    self.pep_num = pep_num
+    self.psms_num = psms_num
+    self.var_num = var_num
+
+
 class ExperimentStat(Base):
   __tablename__ = 'exp_stat'
   exp_id = db.Column('exp_id', db.Integer, db.ForeignKey("experiment.id"))
@@ -161,6 +181,7 @@ class Transcript(Base):
   chrom       = db.Column(db.String(255)) 
   start     = db.Column(db.Integer)
   end       = db.Column(db.Integer)
+  #accession = db.Column(db.String(10)) 
   
   def __init__(self, dna_seq, ensemble, assembly, chr, start, end):
     self.dna_seq  = dna_seq

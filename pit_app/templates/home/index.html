@@ -28,7 +28,7 @@
         <h2 class="section-heading" style="padding-top: 30px">Database Statistics</h2>
         <hr class="section-heading-spacer" style="width: 280px">
         <div class="clearfix"></div>
-        As of June 2016, the PITDB data consist of:<br/><br/>
+        As of {{ accessTime }}, the PITDB data consist of:<br/><br/>
         <!-- <div class="giant-number-block col-xs-3">
           <span class="giant-number">{{ expNum }} </span>
           <span class="text-muted">experiments</span>
@@ -40,13 +40,33 @@
         </div>
 
         <div class="giant-number-block col-xs-4">
-          <span class="giant-number">{{ smlNum }}</span>
-          <span class="text-muted">samples</span>
+          <span class="giant-number">{{ trns }}</span>
+          <span class="text-muted">Transcripts</span>
         </div>
 
         <div class="giant-number-block col-xs-4">
+          <span class="giant-number">{{ peps }}</span>
+          <span class="text-muted">Peptides</span>
+        </div>
+
+        <div class="giant-number-block col-xs-4">
+          <span class="giant-number">{{ psms }}</span>
+          <span class="text-muted">PSMs</span>
+        </div>
+
+        <div class="giant-number-block col-xs-4">
+          <span class="giant-number">{{ variations }}</span>
+          <span class="text-muted">Polymorphisms</span>
+        </div>
+
+        <!-- <div class="giant-number-block col-xs-4">
+          <span class="giant-number">{{ smlNum }}</span>
+          <span class="text-muted">samples</span>
+        </div> -->
+
+        <div class="giant-number-block col-xs-4">
           <span class="giant-number">{{ species }}</span>
-          <span class="text-muted">Organisms</span>
+          <span class="text-muted">Species</span>
         </div>
 
         
@@ -57,10 +77,10 @@
         <h2 class="section-heading" style="padding-top: 30px">Acknowledgements</h2>
         <hr class="section-heading-spacer" style="width: 280px">
         <div class="clearfix"></div>
-        <p class="lead">Developed by Elena Chatzimichali and Shyamasree Saha under the supervision of Conrad Bessant (Queen Mary University of London) and David Matthews (University of Bristol). Funded by BBSRC (grants BB/M020118/1 and BB/K016075/1) and Queen Mary University of London.
+        <p class="lead">Developed by Shyamasree Saha and Elena Chatzimichali under the supervision of Conrad Bessant (Queen Mary University of London) and David Matthews (University of Bristol). Funded by BBSRC (grants BB/M020118/1 and BB/K016075/1) and Queen Mary University of London.
         <ol style="line-height: 1.7em">
-        <li id="ref1">Evans, V.C., et al., De novo derivation of proteomes from transcriptomes for transcript and protein identification. Nature Methods, 2012. 9(12): p. 1207-U111.</li>
-        <li id="ref2" style="padding-bottom: 20px">Fan, J., et al., Galaxy Integrated Omics: Web-based Standards-Compliant Workflows for Proteomics Informed by Transcriptomics. Mol Cell Proteomics, 2015. 14(11): p. 3087-93.</li>
+        <li id="ref1">Evans, V.C., <i>et al.</i>, De novo derivation of proteomes from transcriptomes for transcript and protein identification</i>. <a href="http://www.nature.com/nmeth/journal/v9/n12/full/nmeth.2227.html" target=_blank><strong>Nature Methods</strong>, 2012. 9(12): p.1207-1211</a>.</li>
+        <li id="ref2" style="padding-bottom: 20px">Fan, J., e<i>et al.</i>, Galaxy Integrated Omics: Web-based Standards-Compliant Workflows for Proteomics Informed by Transcriptomics. <a href="http://www.mcponline.org/content/14/11/3087.long" target=_blank><strong>Mol Cell Proteomics</strong>, 2015. 14(11): p.3087-93.</a></li>
         </ol>
         </p>
         <hr class="section-heading-spacer" style="padding-top: 20px">

@@ -29,3 +29,6 @@ else:
 # 													+"@"+db["test"]["host"]+"/"+db["test"]["database"]
 
 SQLALCHEMY_TRACK_MODIFICATIONS = True
+UPLOAD_FOLDER = './submit_folder'
+ALLOWED_EXTENSIONS = set(['zip','tar.gz','gz', 'bz2'])
+SECRET_KEY = '12ab34cd56ef78gh90ij'

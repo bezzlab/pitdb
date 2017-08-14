@@ -4,16 +4,24 @@ from flask import Blueprint, render_template
 from pit_app.models import *
 from pit_app import db
 from sqlalchemy.sql import func, distinct
+import time
+
 
 home = Blueprint('home',  __name__)
 
 @home.route('/')
 def index():
-	expNum  = Experiment.query.with_entities(func.count(distinct(Experiment.id))).scalar()
-	smlNum  = Sample.query.with_entities(func.count(distinct(Sample.id))).scalar()
-	tges    = TGE.query.with_entities(func.count(distinct(TGE.id))).scalar()
-
-	return render_template('home/index.html', expNum = expNum, smlNum = smlNum, species = 4, tges = separators(tges))
+  expNum  = Experiment.query.with_entities(func.count(distinct(Experiment.id))).scalar()
+  smlNum  = Sample.query.with_entities(func.count(distinct(Sample.id))).scalar()
+  tges    = TGE.query.with_entities(func.count(distinct(TGE.id))).scalar()
+  transcripts = Transcript.query.with_entities(func.count(distinct(Transcript.id))).scalar()
+  psms = PSM.query.with_entities(func.count(distinct(PSM.id))).scalar()
+  variations = Variation.query.with_entities(func.count(distinct(Variation.id))).scalar()
+  peptides = Peptide.query.with_entities(func.count(distinct(Peptide.id))).scalar()
+  #now = datetime.datetime.now()
+  #print("Today")
+  accessTime=time.strftime("%B")+" "+time.strftime("%Y")
+  return render_template('home/index.html', expNum = expNum, smlNum = smlNum, species = 4, tges = separators(tges), trns = separators(transcripts), psms = separators(psms), variations = separators(variations), peps = separators(peptides), accessTime = accessTime)
 
 @home.route('/sunburst')
 def sunburst():
@@ -21,7 +29,7 @@ def sunburst():
 
 @home.route('/browse')
 def browse():
-  expStats = db.session.query(ExperimentStat.exp_id, func.count(ExperimentStat.sample_id), func.sum(ExperimentStat.tge_num), func.sum(ExperimentStat.trn_num), func.sum(ExperimentStat.pep_num), func.sum(ExperimentStat.psms_num), func.sum(ExperimentStat.var_num)).group_by(ExperimentStat.exp_id).all()
+  expStats = db.session.query(ExperimentWiseStat.exp_id, ExperimentWiseStat.sample_num, ExperimentWiseStat.tge_num, ExperimentWiseStat.trn_num, ExperimentWiseStat.pep_num, ExperimentWiseStat.psms_num, ExperimentWiseStat.var_num).all()
   experimentList= []
   sampleStats = ExperimentStat.query.all()
   sampleList= []
@@ -36,13 +44,12 @@ def browse():
 
   return render_template('home/browse.html', experiments = experimentList, samples = sampleList)
 
-
 def separators( inputText ):
   locale.setlocale(locale.LC_ALL, 'en_US')
   newText = locale.format("%d", inputText, grouping=True)
   return newText
 
-def separators( inputText ):
-  locale.setlocale(locale.LC_ALL, 'en_US')
-  newText = locale.format("%d", inputText, grouping=True)
-  return newText
+# def separators( inputText ):
+#   locale.setlocale(locale.LC_ALL, 'en_US')
+#   newText = locale.format("%d", inputText, grouping=True)
+#   return newText

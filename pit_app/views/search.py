@@ -12,7 +12,7 @@ def advance():
   searchOption = request.form['searchOptions']
   searchType   = request.form['searchType']
   searchData   = form.searchArea.data
-
+  print("in search")
   if searchOption == 'Accession Number':
     return redirect(url_for('results.tge', accession = searchData.upper()))
   elif searchOption == 'Amino Acid Sequence':

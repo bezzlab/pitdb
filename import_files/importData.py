@@ -63,19 +63,20 @@ dataPath = args.data
 #Uncomment following
 expInfo=readInfo(args.experimentInfo,'\t')
 sampleInfo=readInfo(args.sampleInfo,'\t')
-
+'''
 #Insert into the experiment table:
 if expInfo.shape[0]==1:
 	try:
 		con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 		cur = con.cursor()
-		expINS = "INSERT INTO experiment (title, description, publication) VALUES (%s, %s, %s) " 
-		cur.execute(expINS, (expInfo.iloc[0]['Title'], expInfo.iloc[0]['Description'], expInfo.iloc[0]['Publication']))
+		expINS = "INSERT INTO experiment (title, description, publication) SELECT %s, %s, %s WHERE NOT EXISTS (SELECT id FROM experiment WHERE title = %s AND description = %s AND publication = %s);" 
+		cur.execute(expINS, (expInfo.iloc[0]['Title'], expInfo.iloc[0]['Description'], expInfo.iloc[0]['Publication'], expInfo.iloc[0]['Title'], expInfo.iloc[0]['Description'], expInfo.iloc[0]['Publication']))
 		con.commit()     
-	except psycopg2.DatabaseError:
+	except psycopg2.DatabaseError as e:
 		if con:
 			con.rollback()
-		print('DatabaseError')    
+		print('DatabaseError: Experiment') 
+		print(e)  
 		sys.exit(1)
 	finally:
 		if con:
@@ -84,8 +85,9 @@ if expInfo.shape[0]==1:
 else:
 	print("Experiment Info size:"+str(expInfo.shape[0]))
 	sys.exit(1)
+
 ##Update Experiment and insert accession number, user id.
-#update experiment set accession = concat('EXP',repeat('0',6-length(id::char(9))),id);
+#update experiment set accession = concat('EXP',repeat('0',6-length(id::char(9))),id) where accession is null;
 #Insert into the sample table:
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
@@ -107,7 +109,7 @@ except psycopg2.DatabaseError:
 	if con:
 		con.rollback()
 	
-	print('DatabaseError')    
+	print('DatabaseError: Sample')    
 	sys.exit(1)
 	
 finally:
@@ -117,6 +119,7 @@ finally:
 ## Update sample accession
 #update sample set accession = concat('SAMP',repeat('0',6-length(id::char(10))),id);
 #Load the data into the tge table
+print("tge")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -145,7 +148,7 @@ try:
 except psycopg2.DatabaseError:
 	if con:
 		con.rollback()
-	print('DatabaseError')    
+	print('DatabaseError: TGE')    
 	sys.exit(1)
 	
 finally:
@@ -154,6 +157,7 @@ finally:
 		print("Connection closed")
 
 ## Load the data into the <observation> table
+print("observation")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -201,7 +205,7 @@ finally:
 		print("Connection closed")
 
 ## Load the data into the <transcript> table
-
+print("transcript")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -238,7 +242,7 @@ finally:
 		print("Connection closed")
 
 ## Load the data into the <transcript_observation> table
-
+print("transcript_observation")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -285,6 +289,7 @@ finally:
 		print("Connection closed")
 
 ## update annotation in observation
+print("observation organism")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -300,6 +305,7 @@ try:
 	for i in sampleInfo.index.values:
 		sampleName = sampleInfo.loc[i]['SampleName']
 		##check which file has a file name containing the sample name
+		print(sampleName)
 		##For our pipeline
 		f=sampleName+".summary.tsv"
 		prtF=sampleName+"+fdr+th+grouping+prt_filtered.csv"
@@ -319,6 +325,7 @@ try:
 		summary['RefScore'] = summary['RefScore'].fillna(0)
 		proteins = readInfo(prtPath+prtF,',')
 		proteins['unique peptides'].fillna(0,inplace=True)
+		proteins['description'] = proteins['description'].str.replace("\s+"," ")
 		for j in range(summary.shape[0]): 
 			descr  = summary.iloc[j]['ORF Id']
 			tgeDescr  = descr[0:descr.find(' ')]
@@ -487,7 +494,7 @@ finally:
 		con.close()
 		print("Connection closed")
 ## update observation table with peptide number 
-
+print("update observation")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -500,6 +507,7 @@ try:
 	expID = cur.fetchone()[0]
 	for i in sampleInfo.index.values:
 		sampleName = sampleInfo.loc[i]['SampleName']
+		print(sampleName)
 		##check which file has a file name containing the sample name
 		##For our pipeline
 		prtF=sampleName+"+fdr+th+grouping+prt_filtered.csv"
@@ -532,7 +540,7 @@ finally:
 		print("Connection closed")
 
 ## Insert into peptide 
-
+print("peptide")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -577,7 +585,7 @@ finally:
 		print("Connection closed")
 
 ## Peptides for each TGE
-
+print("tge_peptide")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -630,13 +638,13 @@ finally:
 	if con:
 		con.close()
 	print("Connection closed")
-
+'''
 ## Insert into psm 
-
+print("psm")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
-	insSpec = 'INSERT INTO psm (pep_id, psm_id, spectrum_id, title, location, retention, calc_mz, exp_mz, charge, modifications, raw_score, denovo_score, spec_evalue, evalue, qvalue, pep_qvalue, local_fdr, q_value, fdr_score ) SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE NOT EXISTS (SELECT id FROM psm WHERE spectrum_id = %s AND pep_id = %s AND modifications = %s and psm_id = %s);'
+	
 	prtPath = dataPath + "/PSMs-Peptides-ORFs/"
 	prtFiles = os.listdir(prtPath)
 	for i in sampleInfo.index.values:
@@ -666,8 +674,19 @@ try:
 			query = ("SELECT id FROM peptide WHERE aa_seq = '"+amino+"'") 
 			cur.execute(query)
 			pepID = cur.fetchone()[0]
-			cur.execute(insSpec, (pepID, psms.iloc[j]['PSM_ID'], specID, specTitle, location, psms.iloc[j]['Retention Time (s)'], psms.iloc[j]['Calc m/z'], psms.iloc[j]['Exp m/z'], psms.iloc[j]['Charge'], psms.iloc[j]['Modifications'], psms.iloc[j]['MS-GF:RawScore'], psms.iloc[j]['MS-GF:DeNovoScore'], psms.iloc[j]['MS-GF:SpecEValue'], psms.iloc[j]['MS-GF:EValue'], psms.iloc[j]['MS-GF:QValue'], psms.iloc[j]['MS-GF:PepQValue'], psms.iloc[j]['PSM-level local FDR'], psms.iloc[j]['PSM-level q-value'], psms.iloc[j]['PSM-level FDRScore'], specID, pepID, psms.iloc[j]['Modifications'], psms.iloc[j]['PSM_ID']))
-			con.commit()
+			if 'MS-GF:QValue' in psms.columns.values:
+				if 'MS-GF:PepQValue' in psms.columns.values:
+					insSpec = 'INSERT INTO psm (pep_id, psm_id, spectrum_id, title, location, retention, calc_mz, exp_mz, charge, modifications, raw_score, denovo_score, spec_evalue, evalue, qvalue, pep_qvalue, local_fdr, q_value, fdr_score ) SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE NOT EXISTS (SELECT id FROM psm WHERE spectrum_id = %s AND pep_id = %s AND modifications = %s and psm_id = %s);'
+					cur.execute(insSpec, (pepID, psms.iloc[j]['PSM_ID'], specID, specTitle, location, psms.iloc[j]['Retention Time (s)'], psms.iloc[j]['Calc m/z'], psms.iloc[j]['Exp m/z'], psms.iloc[j]['Charge'], psms.iloc[j]['Modifications'], psms.iloc[j]['MS-GF:RawScore'], psms.iloc[j]['MS-GF:DeNovoScore'], psms.iloc[j]['MS-GF:SpecEValue'], psms.iloc[j]['MS-GF:EValue'], psms.iloc[j]['MS-GF:QValue'], psms.iloc[j]['MS-GF:PepQValue'], psms.iloc[j]['PSM-level local FDR'], psms.iloc[j]['PSM-level q-value'], psms.iloc[j]['PSM-level FDRScore'], specID, pepID, psms.iloc[j]['Modifications'], psms.iloc[j]['PSM_ID']))
+					con.commit()
+				else:
+					insSpec = 'INSERT INTO psm (pep_id, psm_id, spectrum_id, title, location, retention, calc_mz, exp_mz, charge, modifications, raw_score, denovo_score, spec_evalue, evalue, qvalue, local_fdr, q_value, fdr_score ) SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE NOT EXISTS (SELECT id FROM psm WHERE spectrum_id = %s AND pep_id = %s AND modifications = %s and psm_id = %s);'
+					cur.execute(insSpec, (pepID, psms.iloc[j]['PSM_ID'], specID, specTitle, location, psms.iloc[j]['Retention Time (s)'], psms.iloc[j]['Calc m/z'], psms.iloc[j]['Exp m/z'], psms.iloc[j]['Charge'], psms.iloc[j]['Modifications'], psms.iloc[j]['MS-GF:RawScore'], psms.iloc[j]['MS-GF:DeNovoScore'], psms.iloc[j]['MS-GF:SpecEValue'], psms.iloc[j]['MS-GF:EValue'], psms.iloc[j]['MS-GF:QValue'],psms.iloc[j]['PSM-level local FDR'], psms.iloc[j]['PSM-level q-value'], psms.iloc[j]['PSM-level FDRScore'], specID, pepID, psms.iloc[j]['Modifications'], psms.iloc[j]['PSM_ID']))
+				con.commit()
+			else:
+				insSpec = 'INSERT INTO psm (pep_id, psm_id, spectrum_id, title, location, retention, calc_mz, exp_mz, charge, modifications, raw_score, denovo_score, spec_evalue, evalue, local_fdr, q_value, fdr_score ) SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE NOT EXISTS (SELECT id FROM psm WHERE spectrum_id = %s AND pep_id = %s AND modifications = %s and psm_id = %s);'
+				cur.execute(insSpec, (pepID, psms.iloc[j]['PSM_ID'], specID, specTitle, location, psms.iloc[j]['Retention Time (s)'], psms.iloc[j]['Calc m/z'], psms.iloc[j]['Exp m/z'], psms.iloc[j]['Charge'], psms.iloc[j]['Modifications'], psms.iloc[j]['MS-GF:RawScore'], psms.iloc[j]['MS-GF:DeNovoScore'], psms.iloc[j]['MS-GF:SpecEValue'], psms.iloc[j]['MS-GF:EValue'], psms.iloc[j]['PSM-level local FDR'], psms.iloc[j]['PSM-level q-value'], psms.iloc[j]['PSM-level FDRScore'], specID, pepID, psms.iloc[j]['Modifications'], psms.iloc[j]['PSM_ID']))
+				con.commit()
 except psycopg2.DatabaseError as e:
 	if con:
 		con.rollback()
@@ -680,6 +699,7 @@ finally:
 		print("Connection closed")
 
 #Insert into variation
+print("variation")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -714,6 +734,7 @@ finally:
 
 
 #Insert into variation_observation
+print("variation_observation")
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -817,7 +838,7 @@ finally:
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
-	insVar = 'UPDATE tge SET accession = concat(\'TGE\',repeat(\'0\',7-length(id::char(10))),id);'
+	insVar = 'UPDATE tge SET accession = concat(\'TGE\',repeat(\'0\',7-length(id::char(10))),id) where accession is null;'
 	cur.execute(insVar)
 	con.commit()
 except psycopg2.DatabaseError as e:
@@ -833,6 +854,8 @@ finally:
 
 
 #Update TGE tge_class
+##This should not happen in this manner. This will become a burden when the DB grows significantly. tge_class should be updated if a new observation is added and a new class have been seen.
+##Same applies to other TGE table properties that changes based on observations.
 try:
 	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
 	cur = con.cursor()
@@ -904,7 +927,53 @@ except psycopg2.DatabaseError:
 		con.rollback()
 	
 	print('DatabaseError')    
-	sys.exit(1)
+	#sys.exit(1)
+	
+finally:
+	if con:
+		con.close()
+		print("Connection closed")
+
+
+##Insert into table exp_wise_stat
+try:
+	con = psycopg2.connect(database=os.environ['RDS_DB_NAME'], user=os.environ['RDS_USERNAME'], host=os.environ['RDS_HOSTNAME'], password=os.environ['RDS_PASSWORD'])
+	cur = con.cursor()
+	expWiseStatINS = 'INSERT INTO exp_wise_stat (exp_id, sample_num, tge_num, trn_num, pep_num, psms_num, var_num) SELECT %s, %s, %s, %s, %s, %s, %s WHERE NOT EXISTS (SELECT id FROM exp_wise_stat WHERE exp_id = %s);' 
+	cur.execute("SELECT id from experiment;")
+	expIDs = cur.fetchall()
+	for exp in expIDs:
+		print(exp)
+		query = "SELECT count(distinct(id)) FROM sample WHERE exp_id = "+str(exp[0])+";"
+		cur.execute(query)
+		sample_num=int(cur.fetchone()[0])
+		print("sample:"+str(sample_num))
+		query = "SELECT count(distinct(o.tge_id)) from observation as o JOIN sample as s ON o.sample_id=s.id where s.exp_id="+str(exp[0])+";"
+		cur.execute(query)
+		tge_num = int(cur.fetchone()[0])
+		print("tge:"+str(tge_num))
+		query = "SELECT count(distinct(ot.transcript_id)) from transcript_observation as ot JOIN observation as o on ot.obs_id=o.id JOIN sample as s ON o.sample_id=s.id where s.exp_id="+str(exp[0])+";"
+		cur.execute(query)
+		trn_num = int(cur.fetchone()[0])
+		query = "SELECT count(distinct(tp.peptide_id)) from tge_peptide as tp, observation as o, sample as s where tp.obs_id=o.id AND o.sample_id=s.id AND s.exp_id="+str(exp[0])+";"
+		cur.execute(query)
+		pep_num = int(cur.fetchone()[0])
+		query = "SELECT count(distinct(p.psm_id)) from psm as p, tge_peptide as tp, observation as o, sample as s where p.pep_id=tp.peptide_id AND tp.obs_id=o.id AND o.sample_id=s.id AND s.exp_id="+str(exp[0])+";"
+		cur.execute(query)
+		psms_num = int(cur.fetchone()[0])
+		query = "SELECT count(distinct(v.var_id)) from variation_observation as v, observation as o, sample as s where v.obs_id=o.id AND o.sample_id=s.id AND s.exp_id="+str(exp[0])+";"
+		cur.execute(query)
+		var_num = int(cur.fetchone()[0])
+		print(expWiseStatINS % (exp[0], sample_num, tge_num, trn_num, pep_num, psms_num, var_num, exp[0]))
+		cur.execute(expWiseStatINS, (exp[0], sample_num, tge_num, trn_num, pep_num, psms_num, var_num, exp[0]))
+		con.commit()
+except psycopg2.DatabaseError as e:
+	if con:
+		con.rollback()
+	
+	print('DatabaseError')
+	print(e)
+	#sys.exit(1)
 	
 finally:
 	if con:

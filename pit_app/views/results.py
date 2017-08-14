@@ -30,7 +30,7 @@ def tge():
   peps = Peptide.query.with_entities(distinct(Peptide.aa_seq).label('pep')).join(TgeToPeptide).join(Observation).\
                     filter_by(tge_id=tge.id).all()
   #print(peps)
-  query="SELECT p.aa_seq as aa_seq, count(distinct(psm.psm_id)) as psm_count, string_agg(distinct(psm.charge)::char,\',\') as charge, string_agg(distinct(nullif(psm.modifications,''))::char(400),\',\') as modifications, to_char(min(psm.pep_qvalue),'EEEE') AS pep_qvalue, to_char(min(psm.local_fdr),'EEEE') as local_fdr from psm JOIN peptide p ON psm.pep_id=p.id JOIN tge_peptide tp ON p.id=tp.peptide_id JOIN observation o ON tp.obs_id=o.id where o.tge_id="+str(tge.id)+" group by p.aa_seq;"
+  query="SELECT p.aa_seq as aa_seq, count(distinct(psm.psm_id)) as psm_count, string_agg(distinct(psm.charge)::char,\',\') as charge, string_agg(distinct(nullif(psm.modifications,''))::char(400),\',\') as modifications, to_char(min(psm.q_value),'EEEE') AS q_value, to_char(min(psm.local_fdr),'EEEE') as local_fdr from psm JOIN peptide p ON psm.pep_id=p.id JOIN tge_peptide tp ON p.id=tp.peptide_id JOIN observation o ON tp.obs_id=o.id where o.tge_id="+str(tge.id)+" group by p.aa_seq;"
   pepInfo1 = db.engine.execute(query).fetchall()
   pepInfo = [pI for pI in pepInfo1]
   #print(pepInfo)
@@ -72,7 +72,7 @@ def tge():
     
     results.append({'id': obs.id, 'observation': obs.name, 'sampleName': exp.saccession, 'expAccession': exp.accession, 
                     'expID': exp.id, 'tgeClass': obs.tge_class,'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
-                    'uniprotID': obs.uniprot_id, 'peptide_num': obs.peptide_num, 'peptides': peptides, 'star':len(str(obs.star).replace('O','')), 'evidence':str(obs.star_str).upper(),'protein_name':obs.protein_name,'protein_desc': obs.protein_descr })
+                    'uniprotID': obs.uniprot_id, 'peptide_num': len(peptides), 'peptides': peptides, 'star':len(str(obs.star).replace('O','')), 'evidence':str(obs.star_str).upper(),'protein_name':obs.protein_name,'protein_desc': obs.protein_descr })
 
   return render_template('results/tge.html', summary = summary, results=results, pepInfo = pepInfo, variations = variations)
 
@@ -88,9 +88,9 @@ def organism():
 
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
 
-  tges = db.engine.execute("SELECT tge.accession, string_agg(distinct(observation.tge_class), ', ') AS tge_class, string_agg(distinct(observation.uniprot_id), ', ') AS uniprot_id "+ 
+  tges = db.engine.execute("SELECT tge.accession, length(trim(both 'O' from tge.star)) AS star, string_agg(distinct(observation.tge_class), ', ') AS tge_class, string_agg(distinct(observation.uniprot_id), ', ') AS uniprot_id, string_agg(distinct(observation.protein_name), ', ') AS protein_name,"+ " string_agg(distinct(observation.protein_descr), ', ') AS protein_descr" +
                       " FROM tge JOIN observation ON tge.id = observation.tge_id WHERE observation.organism LIKE '%%"+organism+"%%' "+
-                      " GROUP BY tge.accession ORDER BY tge.accession").fetchall(); 
+                      " GROUP BY tge.accession, tge.star ORDER BY tge.accession").fetchall(); 
 
   tgeNum     = separators(obs.distinct(Observation.tge_id).count())
   sampleNum  = separators(obs.join(Sample).distinct(Sample.id).count())
@@ -114,26 +114,19 @@ def organism():
 def experiment():
   experiment  = request.args['experiment']
   exp  = Experiment.query.filter_by(accession=experiment).first_or_404()
-  user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
+  #user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
   print("EXP:"+str(exp.id))
-  print("User:"+str(exp.user_id))
+  #print("User:"+str(exp.user_id))
 
   samples = Sample.query.with_entities(Sample.id, Sample.name).\
               filter_by(exp_id=exp.id).\
               group_by(Sample.id, Sample.name).all()
 
-  tges = TGE.query.join(Observation).join(Sample).filter_by(exp_id=exp.id).all()
+  tges = TGE.query.with_entities(TGE.id, TGE.accession, TGE.tge_class, TGE.uniprot_id, TGE.gene_names, func.length(func.replace(TGE.star,'O','')).label('star'), TGE.organisms, func.string_agg(distinct(Observation.protein_name),',').label('protein_name'), func.string_agg(distinct(Observation.protein_descr),',').label('protein_descr')).join(Observation).join(Sample).filter_by(exp_id=exp.id).group_by(TGE.id, TGE.accession, TGE.tge_class, TGE.uniprot_id, TGE.gene_names, TGE.star, TGE.organisms).all()
   query="SELECT ot.transcript_id as tid, string_agg(distinct(s.exp_id)::char,\',\') as sample_exp, string_agg(distinct(t.accession),\',\') as tge_acc,string_agg(distinct(ot.obs_id)::char,\',\') as obs_id, string_agg(distinct(o.gene_name),\',\') AS genes, string_agg(distinct(s.accession),\',\') as sample_acc from transcript_observation ot JOIN observation o ON ot.obs_id=o.id JOIN tge t ON t.id=o.tge_id JOIN sample s ON o.sample_id=s.id where s.exp_id="+str(exp.id)+" group by ot.transcript_id;"
   #query="SELECT ot.transcript_id, string_agg(distinct(ot.obs_id)::char,\',\') as obs_id, string_agg(distinct(o.gene_name),\',\') AS genes, string_agg(distinct(o.sample_id)::char,\',\') as sample_acc from transcript_observation ot JOIN observation o ON ot.obs_id=o.id JOIN sample s ON o.sample_id=s.id where s.exp_id="+str(exp.id)+" group by ot.transcript_id;"
-  trns = db.engine.execute(query)
-  #TranscriptToObservation.query.join(Observation).join(Sample).filter(Sample.exp_id==exp.id).with_entities(TranscriptToObservation.transcript_id, func.string_agg(TranscriptToObservation.obs_id, ','), Observation.gene_name, Observation.sample_id).group_by(TranscriptToObservation.transcript_id).all()
-  # tgeExp = func.string_agg(Observation.tge_id, aggregate_order_by(literal_column("','")))
-  # genes = func.string_agg(Observation.gene_name, aggregate_order_by(literal_column("','")))
-  # sampleAcc = func.string_agg(Sample.accession, aggregate_order_by(literal_column("','")))
-  # trns = db.session.query(TranscriptToObservation.transcript_id, tgeExp.label('tge_acc'), genes.label('genes'), sampleAcc.label('sample_acc')).filter( TranscriptToObservation.obs_id==Observation.id, Observation.sample_id==Sample.id, Sample.exp_id==exp.id).group_by(TranscriptToObservation.transcript_id, Observation.tge_id).all()
-  print("Total transcript")
-  print(trns)
-  #print()
+  #trns = db.engine.execute(query)
+  
 
   # organisms  = [item for sublist in organisms for item in sublist]
   # sampleNum = Sample.query.filter_by(exp_id=experiment).distinct().count()
@@ -166,8 +159,7 @@ def experiment():
 
   peptUniq = [item for sublist in peptUniq for item in sublist]
 
-  summary = {'accession': experiment,'title': exp.title, 'description': exp.description, 'publication':exp.publication, 'user': user.fullname, 'sampleNum': len(samples), 
-            'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
+  summary = {'accession': experiment,'title': exp.title, 'description': exp.description, 'publication':exp.publication, 'sampleNum': len(samples),'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
             'peptAll' : separators(peptAll), 'peptUniq' : separators(sum(peptUniq)) };
    
   sampleList = []
@@ -179,7 +171,7 @@ def experiment():
 
     sampleList.append({'id':sample.id, 'name': sample.name, 'tgeNum': separators(tgePerSample), 'pepNum': separators(pepPerSample)})
 
-  return render_template('results/experiment.html', summary = summary, sampleList = sampleList, tges = tges, tgeClasses = tgeClasses, trns = trns)
+  return render_template('results/experiment.html', summary = summary, sampleList = sampleList, tges = tges, tgeClasses = tgeClasses) #, trns = trns
 
 
 @results.route('/sample')
@@ -209,14 +201,15 @@ def sample():
       print("Accession"+sampleAccession)
       sample  = Sample.query.filter_by(accession=sampleAccession).first_or_404()
     exp = Experiment.query.filter_by(id=sample.exp_id).first_or_404()
-  user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
+  #user = User.query.with_entities(User.fullname).filter_by(id=exp.user_id).one()
 
-  tges = TGE.query.join(Observation).filter(TGE.id==Observation.tge_id).filter(Observation.sample_id==sample.id).distinct(TGE.id).all()
+  tges = TGE.query.with_entities(TGE.id, TGE.accession, TGE.tge_class, TGE.uniprot_id, TGE.gene_names, func.length(func.replace(TGE.star,'O','')).label('star'), TGE.organisms, func.string_agg(distinct(Observation.protein_name),',').label('protein_name'), func.string_agg(distinct(Observation.protein_descr),',').label('protein_descr')).join(Observation).join(Sample).filter_by(id=sample.id).group_by(TGE.id, TGE.accession, TGE.tge_class, TGE.uniprot_id, TGE.gene_names, TGE.star, TGE.organisms).all()
+
   tgeClasses = Observation.query.with_entities(Observation.tge_class).\
                   filter(Observation.sample_id==sample.id).group_by(Observation.tge_class).all()
   tgeClasses = [item for sublist in tgeClasses for item in sublist]
   
-  transcripts = db.session.query(Transcript.dna_seq, Transcript.id, Observation.tge_id, Observation.name, Observation.id,Observation.organism, Observation.gene_name, TGE.accession).filter(TGE.id==Observation.tge_id).filter(Observation.sample_id==sample.id).filter(TranscriptToObservation.obs_id==Observation.id).filter(Transcript.id==TranscriptToObservation.transcript_id).distinct(Transcript.id) #Transcript.query.join(Observation).filter(Observation.sample_id==sample.id).distinct(Transcript.id)
+  transcripts = db.session.query(Transcript.dna_seq, func.concat('TRN',func.repeat('0',(7-func.length(str(Transcript.id)))),Transcript.id), Observation.tge_id, Observation.name, Observation.id,Observation.organism, Observation.gene_name, TGE.accession).filter(TGE.id==Observation.tge_id).filter(Observation.sample_id==sample.id).filter(TranscriptToObservation.obs_id==Observation.id).filter(Transcript.id==TranscriptToObservation.transcript_id).distinct(Transcript.id) #Transcript.query.join(Observation).filter(Observation.sample_id==sample.id).distinct(Transcript.id)
   results  = []
   #print "OBS Size "+str(tgeObs.count())
   for t in transcripts:
@@ -227,7 +220,7 @@ def sample():
                     'expID': exp.id, 'length': trnLength, 'organism': t[5], 
                     'chr': chrom, 'gene': t[6] })
   #   print "result size "+str(len(results))
-  print "result size "+str(len(results))
+  #print "result size "+str(len(results))
   obsNum = Observation.query.filter_by(sample_id=sample.id).distinct().count()
 
   tgeNum = TGE.query.join(Observation).filter(Observation.sample_id==sample.id).distinct(Observation.tge_id).count()
@@ -244,16 +237,21 @@ def sample():
 
   peptUniq = [item for sublist in peptUniq for item in sublist]
 
-  summary = {'accession': sample.accession,'name': sample.name, 'user': user.fullname, 
+  summary = {'accession': sample.accession,'name': sample.name, 'sid': sample.id,
             'tgeNum' : separators(tgeNum), 'obsNum' : separators(obsNum), 'trnNum' : separators(trnNum), 
             'peptAll' : separators(peptAll), 'peptUniq' : separators(sum(peptUniq)), 'description': sample.description };
   varQuery = "SELECT v.ref_id as ref_id, v.pos as pos, v.ref_aa as ref_aa, v.alt_aa as alt_aa, v.var_type as var_type, count(distinct(vo.obs_id)) as obs_count, string_agg(distinct(vo.qpos)::char(10),\',\') as qpos, max(vo.peptide_num) as pep_evd, string_agg(distinct(vo.unique_peptides),\',\') AS unq_peptides from variation as v JOIN variation_observation vo ON v.id=vo.var_id JOIN observation o ON vo.obs_id=o.id where o.sample_id="+str(sample.id)+" group by v.ref_id, v.pos, v.ref_aa, v.alt_aa, v.var_type;"
   variations = db.engine.execute(varQuery).fetchall()
   if len(variations)==0:
     variations = None
+  else:
+    var_type = Variation.query.with_entities(distinct(Variation.var_type)).all()
+    print(var_type)
+    var_types = [vt[0] for vt in var_type]
+    print(var_types)
   #print(len(tges))
-  print(variations)
-  return render_template('results/sample.html', summary = summary, tges = tges, tgeClasses = tgeClasses, transcripts = results, variations = variations )
+  #print(variations)
+  return render_template('results/sample.html', summary = summary, tges = tges, tgeClasses = tgeClasses, transcripts = results, variations = variations, var_type = var_types )
 
 
 @results.route('/protein')
@@ -289,16 +287,17 @@ def protein():
     
       row   = df[df['attributes'].str.contains(re.escape("ID="+gene+";")+"|"+re.escape(mRNA)+"[;.]")]
       
-      if (len(row['seqid'].iloc[0]) <= 5):
-        chrom = re.search(r'(\d|[X]|[Y])+', row.iloc[0,0]).group()
-        start = row.iloc[0,3]
-        end   = row.iloc[0,4]
-      else:
-        chrom = row.iloc[0,0]
-        start = row.iloc[0,3]
-        end   = row.iloc[0,4]
+      if row.shape[0]>0:
+        if (len(row['seqid'].iloc[0]) <= 5):
+          chrom = re.search(r'(\d|[X]|[Y])+', row.iloc[0,0]).group()
+          start = row.iloc[0,3]
+          end   = row.iloc[0,4]
+        else:
+          chrom = row.iloc[0,0]
+          start = row.iloc[0,3]
+          end   = row.iloc[0,4]
 
-      genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end }
+        genoverse  = { 'uniprot': uniprot, 'chr': chrom, 'start': start, 'end': end }
       break
         
       #chrom = re.search(r'\d+', row.iloc[0,0]).group()

@@ -132,13 +132,17 @@
         <div class="panel-body">
         <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#exptgeModal"><i class="fa fa-download"></i>&nbsp;Download TGEs</button>
             <br/><br/>
+        <div style="overflow-y: auto">
           <table class="table table-striped table-bordered dataTable no-footer" id="exptgeTable" style="display: none;">
           <thead>
             <tr>
               <th>TGE Accession&nbsp;<a class="popoverData" data-content="Unique identifier of a TGE in the PITDB database." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
               <th>TGE Type(s)&nbsp;<a class="popoverData" data-content="One TGE may have multiple types, as it may have a different status in different species. Use the table’s search and sort capabilities to look for specific TGEs or TGE types." rel="popover" data-placement="bottom" data-original-title="TGE Type(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+              <th class="compact">Rating<a class="popoverData" href="#" data-content="<ul><li>The 'Rating' attribute indicates identification rating of the TGE. If the TGE is a known protein, its rating is 5 star. A TGE from other TGE classes gets 5 star if it has unique variation specific peptide evidence, its a complete ORF, and our scoring method predicts it as novel variant.</li><br/> <li>Start ratiis based on Variation specific Unique Peptide (U), Scoring method prediction (S), Completeness of the the ORF (C), Variation specific shared Peptide (V) and Anchor Protein (A) (Only applies to novel TGEs)</li>" rel="popover" data-placement="bottom" data-original-title="Rating&nbsp;&&nbsp;Evidence&nbsp;" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
               <th>Uniprot ID(s)&nbsp;<a class="popoverData" data-content="Accession number of homologous Uniprot protein (if there is one). Click the accession number to see what else the database knows about this protein." rel="popover" data-placement="bottom" data-original-title="Uniprot ID(s)" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
-              <th>Organism(s)&nbsp;<a class="popoverData" data-content="The organism(s) in which the TGE has been observed." rel="popover" data-placement="bottom" data-original-title="Organism(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</th>
+              <th class="compact">Protein&nbsp;<a class="popoverData" href="#" data-content="Protein name of homologous UniProt protein (if there is one). Click the name to see further information about this protein." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+              <th class="compact">Protein<br/>Description<a class="popoverData" href="#" data-content="Protein description of homologous UniProt protein (if there is one)." rel="popover" data-placement="bottom" data-original-title="UniProt" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
+              <th>Organism(s)&nbsp;<a class="popoverData" data-content="The organism(s) in which the TGE has been observed." rel="popover" data-placement="bottom" data-original-title="Organism(s)" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a></th>
             </tr>
           </thead>
           <tbody>
@@ -147,7 +151,21 @@
                 <td>
                 <a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a>
                 </td>
-                <td>{{ tge.tge_class }}</td>
+                <td>
+                {% for tc in tge.tge_class.split(',') %}
+                {{ tc }}{% if not loop.last %},<br>{% endif %}
+                {% endfor %}
+                </td>
+                <td>
+                  <label hidden>{{ tge.star }} &#9733;&#9733;&#9733;</label>
+                    {% if tge.star==5%}<img src="/static/img/5star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==4%}<img src="/static/img/4star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==3%}<img src="/static/img/3star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==2%}<img src="/static/img/2star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==1%}<img src="/static/img/1star.png" style="width:90px;height:20px;">
+                    {%else%}<img src="/static/img/0star.png" style="width:90px;height:20px;">
+                    {%endif%}
+                </td>
                 <td>
                   {% for uniprotID in tge.uniprot_id.split(',') %}
                     {% if uniprotID != '-' %}
@@ -156,6 +174,12 @@
                       <span style="font-size:18px">{{ uniprotID }}</span>
                     {% endif %}{% if not loop.last %},{% endif %}
                   {% endfor %}</br>
+                </td>
+                <td>
+                  {{ tge.protein_name}}
+                </td>
+                <td>
+                  {{ tge.protein_descr}}
                 </td>
                 <td>
                   {% for organism in tge.organisms.split(',') %}
@@ -170,8 +194,10 @@
             {% endfor %}
           </tbody>
         </table>
+        <div style="overflow-y: auto">
       </div>
     </div>
+    <br>
         <div class="panel panel-default" id="transcriptBreakdown">
         <div class="panel-heading">
           <i class="fa fa-table fa-fw"></i> Transcripts
@@ -181,7 +207,7 @@
         <div class="panel-body">
         <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#transModal"><i class="fa fa-download"></i>&nbsp;Download Transcripts</button>
             <br/><br/>
-          <table class="table table-striped table-bordered dataTable no-footer" id="exptrnTable"> <!--style="display: none;-->
+          <!-- <table class="table table-striped table-bordered dataTable no-footer" style="display: none;" id="exptrnTable"> 
           <thead>
             <tr>
               <th>Transcript Accession&nbsp;<a class="popoverData" data-content="Unique identifier of a transcript in the PITDB database." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
@@ -224,7 +250,7 @@
               </tr>
             {% endfor %}
           </tbody>
-        </table>
+        </table> -->
       </div>
     </div>
   </div>

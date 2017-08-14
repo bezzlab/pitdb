@@ -42,6 +42,8 @@
           <ul class="nav navbar-nav navbar-right" style="font-weight: bold; font-size: 15.5px">
             <li><a href="/#about">About</a></li>
             <li><a data-toggle="modal" data-target="#help" style="cursor: pointer;">Help</a></li>
+            <li><a href="browse?accession='all'">Browse</a></li>
+            <li><a data-toggle="modal" data-target="#submission" style="cursor: pointer;">Submission</a></li>
             <li><a data-toggle="modal" data-target="#search" style="cursor: pointer;">Search <i class="fa fa-search fa-fw"></i></a></li>
           </ul>
         </div>
@@ -60,27 +62,35 @@
             <h4 class="modal-title">Help</h4>
           </div>
           <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
-          <h5>What is PITDB?</h5>
-          <p>PITDB is a publicly available database for sharing results from published PIT (proteomics informed by transcriptomics) experiments. The PIT approach [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by sequence-level integration of the acquired data to provide an unprecedented insight into which genomic elements are being transcribed and translated within a given sample. The benefit of this approach is that any expressed polypeptide can be detected, unlike traditional proteomics which is constrained to searching spectra against a list of known protein sequences.</p>
-          <h5>What is a translated genomic element (TGE)?</h5>
-          <p>We define a TGE as an amino acid chain produced from a genomic locus through the processes of transcription and translation. The typical example of a TGE is a protein, encoded by a gene. However, other types of TGE has been reported in the literature, such as short open reading frames (sORF) and products of so-call non coding RNA (ncRNA).</p>
           <h5>How do I browse PITDB?</h5>
           <p>The web interface allows you to browse information in PITDB via four simple searches:</p>
           <ul>
             <li>Search by <strong>TGE</strong> to find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence. Each TGE is supported by one or more TGE observations, comprising a transcript from RNA-seq and peptide evidence of translation of the transcript from mass spectrometry. Each TGE is also assigned a type (e.g. novel isoform) through comparison with reference databases. A single TGE (as defined by its unique sequence) may have been observed across multiple species.</li>
             <li>Search by <strong>experiment</strong> (e.g. PIT000001) to view summary information for a particular experiment that has been submitted to PITDB. An experiment may contain one or more samples. The summary information includes information about the number of TGEs identified, the distribution of these among the samples, and a brief description of the experiment.</li>
-            <li>Search by <strong>protein</strong> to find TGEs corresponding to a specific protein, identified by its Uniprot ID (e.g. P12111). This shows any TGEs corresponding to the protein and is useful in seeking experimental evidence for a theoretical protein, or investigating isoforms of known proteins. For species with a genome assembly, TGEs are shown in their genomic context alongside their corresponding genes.</li>
+            <li>Search by <strong>protein</strong> to find TGEs corresponding to a specific protein, identified by its Uniprot ID (e.g. Q9UNM6). This shows any TGEs corresponding to the protein and is useful in seeking experimental evidence for a theoretical protein, or investigating isoforms of known proteins. For species with a genome assembly, TGEs are shown in their genomic context alongside their corresponding genes.</li>
             <li>Search by <strong>species</strong> to find all TGEs observed for a particular species. For non-model organisms this essentially provides a draft proteome for further analysis. However, it is important to note that the completeness of the proteome will depend on the diversity of sample analysed, e.g. whether they came from multiple tissues.</li>
           </ul>In all the database views, specific TGEs can be located using the search box just above the TGE table.
+          <h5><strong>What is PITDB?</strong></h5>
+          <p>PITDB is a publicly available database for sharing results from published PIT (proteomics informed by transcriptomics) experiments. The PIT approach [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by sequence-level integration of the acquired data to provide an unprecedented insight into which genomic elements are being transcribed and translated within a given sample. The benefit of this approach is that any expressed polypeptide can be detected, unlike traditional proteomics which is constrained to searching spectra against a list of known protein sequences.</p>
+          <h5><strong>What is a translated genomic element (TGE)?</strong></h5>
+          <p>We define a TGE as an amino acid chain produced from a genomic locus through the processes of transcription and translation. The typical example of a TGE is a protein, encoded by a gene. However, other types of TGE have been reported in the literature, such as short open reading frames (sORF) and products of so-call non coding RNA (ncRNA).</p>
+          <h5><strong>How do I browse PITDB?</strong></h5>
+          <p>You can browse the experiments and samples that make up PITDB by clicking Browse in the top right of the PITDB web interface. More usefully, you to access specific information in PITDB via four simple searches:</p>
+          <ul>
+            <li>Search by <strong>TGE</strong> to find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. <a href="https://pitdb.sbcs.qmul.ac.uk/tge?accession=TGE0000273">TGE0000273</a>) or amino acid sequence. Each TGE is supported by one or more TGE observations, comprising a transcript from RNA-seq and peptide evidence of translation of the transcript from mass spectrometry. Each TGE is also assigned a type (e.g. known variant) through comparison with reference databases. A single TGE (as defined by its unique sequence) may have been observed across multiple species.</li>
+            <li>Search by <strong>experiment</strong> or <strong>sample</strong> (e.g. <a href="https://pitdb.sbcs.qmul.ac.uk/experiment?experiment=EXP000001">EXP000001</a> or <a href="https://pitdb.sbcs.qmul.ac.uk/sample?accession=SAMP000001">SAMP000001</a>) to view summary information for a particular experiment that has been submitted to PITDB. An experiment may contain one or more samples. The summary information includes information about the number of TGEs identified, the distribution of these among the samples, and a brief description of the experiment.</li>
+            <li>Search by <strong>protein</strong> or <strong>gene name</strong> to find TGEs corresponding to a specific protein, identified by its Uniprot ID (e.g. <a href="https://pitdb.sbcs.qmul.ac.uk/protein?uniprot=Q52L50">Q52L50</a>). This shows any TGEs corresponding to the protein and is useful in seeking experimental evidence for a theoretical protein, or investigating isoforms of known proteins. For species with a genome assembly, TGEs are shown in their genomic context alongside their corresponding genes.</li>
+            <li>Search by <strong>species</strong> to find all TGEs observed for a particular species. For non-model organisms this essentially provides a draft proteome for further analysis. However, it is important to note that the completeness of the proteome will depend on the diversity of samples analysed, e.g. whether they came from multiple tissues.</li>
+          </ul>In all the database views, specific TGEs can be located using the search box just above the TGE table.
 
-          <h5>Downloading data from PITDB</h5>
-          <p>Detailed information about all the TGEs in a particular database view can be downloaded for further analysis by clicking the “Download TGEs” button and selecting the TGE types and data fields that you want to download.</p>
+          <h5><strong>Downloading data from PITDB</strong></h5>
+          <p>Detailed information from a particular database view can be downloaded for further analysis by clicking the relevant Download button above the table of interest and selecting the items that you want to download, and the format you want to download them in.</p>
 
-          <h5>Submitting data to PITDB</h5>
-          <p>We welcome submission of data of to PITDB, in support of published work. If you are interested in submitting your data, please contact Conrad Bessant (<strong>c.bessant at qmul.ac.uk</strong>) in the first instance. </p>
+          <h5><strong>Submitting data to PITDB</strong></h5>
+          <p>We welcome submission of data to PITDB, in support of published work. To begin a submission, click Submission in the top right of PITDB web interface and follow the instructions.</p>
           <br/>
           <ol style="line-height: 1.7em; padding-left:15px">
-            <li id="ref1">Evans, V.C., et al., De novo derivation of proteomes from transcriptomes for transcript and protein identification. Nature Methods, 2012. 9(12): p. 1207-U111.</li>
+            <li id="ref1">Evans, V.C., <i>et al.</i>, De novo derivation of proteomes from transcriptomes for transcript and protein identification</i>. <a href="http://www.nature.com/nmeth/journal/v9/n12/full/nmeth.2227.html" target=_blank><strong>Nature Methods</strong>, 2012. 9(12): p.1207-1211</a>.</li>
           </ol>
           </div>
           <div class="modal-footer">
@@ -124,6 +134,11 @@
                     <option>Experiment ID</option>
                   </optgroup>
                   <option disabled role="separator" class="divider"></li>
+                  <optgroup label="Sample">
+                    <option>Sample ID</option>
+                    <option>Sample Name</option>
+                  </optgroup>
+                  <option disabled role="separator" class="divider"></li>
                   <optgroup label="Protein">
                     <option>Uniprot ID</option>
                   </optgroup>
@@ -162,6 +177,44 @@
         </div>
       </div>
     </div>
+    <div id="submission" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close btn" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Submit Data to PITDB</h3>
+          </div>
+          <form id="submissionform" class="form-horizontal" role="form" enctype="multipart/form-data" action="/submission" method="POST">
+            <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
+              <div class="form-group">
+                <p>Eight files are needed per sample for PITDB submission (Please check submission guidline from the help page for further information). Each submission also needs a experiment and a sample decsription file. Please zip the files and upload for submission.
+                </p>
+                <p></p>
+                <p>
+                <div id="uploadtextArea">
+                <label>Name</label>
+                <textarea rows="1" cols="5" class="form-control" id="uploaderName" name="uploaderName" placeholder="Enter your name"></textarea>
+                <label>Email</label>
+                <textarea rows="1" cols="5" class="form-control" id="uploaderEmail" name="uploaderEmail" placeholder="Enter your Email address"></textarea>
+                </div>
+                <div>
+                <label>Upload submission zip/tar file</label>
+                  <input type="file" name="submissionFile">
+                </div>
+                </p>
+                <br>
+                
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="submission" type="submit" class="btn btn-primary">Submit <i class="fa fa-search" aria-hidden="true"></i></button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     
     <script src="/static/js/ext/jquery-2.1.4.min.js"></script>
     

@@ -1,0 +1,171 @@
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+G94
+Novel protein was not found in protein DF or multiple foundasmbl_104022|m.1501824 asmbl_104022|g.1501824 ORF asmbl_104022|g.1501824 asmbl_104022|m.1501824 type:5prime_partial len:45 (+) asmbl_104022:1-136(+)
+Novel protein was not found in protein DF or multiple foundasmbl_13901|m.240784 asmbl_13901|g.240784 ORF asmbl_13901|g.240784 asmbl_13901|m.240784 type:3prime_partial len:35 (-) asmbl_13901:1-105(-)
+Novel protein was not found in protein DF or multiple foundasmbl_16935|m.266127 asmbl_16935|g.266127 ORF asmbl_16935|g.266127 asmbl_16935|m.266127 type:3prime_partial len:36 (+) asmbl_16935:369-476(+)
+Novel protein was not found in protein DF or multiple foundasmbl_87503|m.1271648 asmbl_87503|g.1271648 ORF asmbl_87503|g.1271648 asmbl_87503|m.1271648 type:5prime_partial len:130 (+) asmbl_87503:1-391(+)
+G93
+Novel protein was not found in protein DF or multiple foundasmbl_15295|m.268856 asmbl_15295|g.268856 ORF asmbl_15295|g.268856 asmbl_15295|m.268856 type:complete len:52 (-) asmbl_15295:139-294(-)
+G92
+Novel protein was not found in protein DF or multiple foundasmbl_18210|m.249363 asmbl_18210|g.249363 ORF asmbl_18210|g.249363 asmbl_18210|m.249363 type:complete len:98 (-) asmbl_18210:174-467(-)
+G88
+Novel protein was not found in protein DF or multiple foundasmbl_140088|m.2119404 asmbl_140088|g.2119404 ORF asmbl_140088|g.2119404 asmbl_140088|m.2119404 type:5prime_partial len:69 (+) asmbl_140088:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_16428|m.294143 asmbl_16428|g.294143 ORF asmbl_16428|g.294143 asmbl_16428|m.294143 type:5prime_partial len:55 (+) asmbl_16428:1-166(+)
+Novel protein was not found in protein DF or multiple foundasmbl_16428|m.294144 asmbl_16428|g.294144 ORF asmbl_16428|g.294144 asmbl_16428|m.294144 type:5prime_partial len:35 (+) asmbl_16428:1-107(+)
+G85
+Novel protein was not found in protein DF or multiple foundasmbl_20933|m.333675 asmbl_20933|g.333675 ORF asmbl_20933|g.333675 asmbl_20933|m.333675 type:5prime_partial len:70 (+) asmbl_20933:1-210(+)
+Novel protein was not found in protein DF or multiple foundasmbl_43006|m.679290 asmbl_43006|g.679290 ORF asmbl_43006|g.679290 asmbl_43006|m.679290 type:5prime_partial len:51 (+) asmbl_43006:1-154(+)
+Novel protein was not found in protein DF or multiple foundasmbl_47955|m.757408 asmbl_47955|g.757408 ORF asmbl_47955|g.757408 asmbl_47955|m.757408 type:5prime_partial len:57 (+) asmbl_47955:1-172(+)
+Novel protein was not found in protein DF or multiple foundasmbl_84748|m.1296608 asmbl_84748|g.1296608 ORF asmbl_84748|g.1296608 asmbl_84748|m.1296608 type:5prime_partial len:48 (+) asmbl_84748:1-146(+)
+Novel protein was not found in protein DF or multiple foundasmbl_84748|m.1296609 asmbl_84748|g.1296609 ORF asmbl_84748|g.1296609 asmbl_84748|m.1296609 type:5prime_partial len:39 (+) asmbl_84748:1-118(+)
+G82
+Novel protein was not found in protein DF or multiple foundasmbl_17163|m.272970 asmbl_17163|g.272970 ORF asmbl_17163|g.272970 asmbl_17163|m.272970 type:5prime_partial len:34 (-) asmbl_17163:140-243(-)
+Novel protein was not found in protein DF or multiple foundasmbl_17163|m.272968 asmbl_17163|g.272968 ORF asmbl_17163|g.272968 asmbl_17163|m.272968 type:5prime_partial len:55 (-) asmbl_17163:79-243(-)
+Novel protein was not found in protein DF or multiple foundasmbl_32884|m.513741 asmbl_32884|g.513741 ORF asmbl_32884|g.513741 asmbl_32884|m.513741 type:3prime_partial len:59 (+) asmbl_32884:1093-1271(+)
+Novel protein was not found in protein DF or multiple foundasmbl_33428|m.525805 asmbl_33428|g.525805 ORF asmbl_33428|g.525805 asmbl_33428|m.525805 type:5prime_partial len:75 (+) asmbl_33428:1-226(+)
+Novel protein was not found in protein DF or multiple foundasmbl_34357|m.545426 asmbl_34357|g.545426 ORF asmbl_34357|g.545426 asmbl_34357|m.545426 type:3prime_partial len:108 (+) asmbl_34357:139-463(+)
+Novel protein was not found in protein DF or multiple foundasmbl_72905|m.1133138 asmbl_72905|g.1133138 ORF asmbl_72905|g.1133138 asmbl_72905|m.1133138 type:5prime_partial len:71 (+) asmbl_72905:1-214(+)
+Novel protein was not found in protein DF or multiple foundasmbl_8828|m.146380 asmbl_8828|g.146380 ORF asmbl_8828|g.146380 asmbl_8828|m.146380 type:5prime_partial len:67 (+) asmbl_8828:1-202(+)
+G81
+Novel protein was not found in protein DF or multiple foundasmbl_9917|m.89780 asmbl_9917|g.89780 ORF asmbl_9917|g.89780 asmbl_9917|m.89780 type:complete len:147 (-) asmbl_9917:957-1397(-)
+G79
+Novel protein was not found in protein DF or multiple foundasmbl_153895|m.2275349 asmbl_153895|g.2275349 ORF asmbl_153895|g.2275349 asmbl_153895|m.2275349 type:3prime_partial len:41 (-) asmbl_153895:1-124(-)
+Novel protein was not found in protein DF or multiple foundasmbl_158273|m.2328984 asmbl_158273|g.2328984 ORF asmbl_158273|g.2328984 asmbl_158273|m.2328984 type:3prime_partial len:41 (-) asmbl_158273:1-124(-)
+G76
+G75
+Novel protein was not found in protein DF or multiple foundasmbl_131385|m.1803391 asmbl_131385|g.1803391 ORF asmbl_131385|g.1803391 asmbl_131385|m.1803391 type:5prime_partial len:69 (+) asmbl_131385:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_28296|m.359431 asmbl_28296|g.359431 ORF asmbl_28296|g.359431 asmbl_28296|m.359431 type:3prime_partial len:41 (+) asmbl_28296:321-443(+)
+Novel protein was not found in protein DF or multiple foundasmbl_49670|m.699458 asmbl_49670|g.699458 ORF asmbl_49670|g.699458 asmbl_49670|m.699458 type:5prime_partial len:61 (+) asmbl_49670:1-184(+)
+G72
+Novel protein was not found in protein DF or multiple foundasmbl_151416|m.2095910 asmbl_151416|g.2095910 ORF asmbl_151416|g.2095910 asmbl_151416|m.2095910 type:5prime_partial len:44 (-) asmbl_151416:145-277(-)
+Novel protein was not found in protein DF or multiple foundasmbl_157720|m.2151495 asmbl_157720|g.2151495 ORF asmbl_157720|g.2151495 asmbl_157720|m.2151495 type:5prime_partial len:69 (+) asmbl_157720:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_17915|m.258095 asmbl_17915|g.258095 ORF asmbl_17915|g.258095 asmbl_17915|m.258095 type:5prime_partial len:78 (+) asmbl_17915:1-235(+)
+Novel protein was not found in protein DF or multiple foundasmbl_20245|m.306662 asmbl_20245|g.306662 ORF asmbl_20245|g.306662 asmbl_20245|m.306662 type:complete len:98 (-) asmbl_20245:174-467(-)
+Novel protein was not found in protein DF or multiple foundasmbl_25307|m.350614 asmbl_25307|g.350614 ORF asmbl_25307|g.350614 asmbl_25307|m.350614 type:complete len:52 (-) asmbl_25307:134-289(-)
+Novel protein was not found in protein DF or multiple foundasmbl_54118|m.764771 asmbl_54118|g.764771 ORF asmbl_54118|g.764771 asmbl_54118|m.764771 type:5prime_partial len:56 (+) asmbl_54118:1-169(+)
+Novel protein was not found in protein DF or multiple foundasmbl_59629|m.835527 asmbl_59629|g.835527 ORF asmbl_59629|g.835527 asmbl_59629|m.835527 type:5prime_partial len:57 (+) asmbl_59629:1-172(+)
+Novel protein was not found in protein DF or multiple foundasmbl_82688|m.1162164 asmbl_82688|g.1162164 ORF asmbl_82688|g.1162164 asmbl_82688|m.1162164 type:internal len:62 (-) asmbl_82688:1-186(-)
+G69
+Novel protein was not found in protein DF or multiple foundasmbl_12401|m.115163 asmbl_12401|g.115163 ORF asmbl_12401|g.115163 asmbl_12401|m.115163 type:5prime_partial len:164 (+) asmbl_12401:1-492(+)
+Novel protein was not found in protein DF or multiple foundasmbl_12401|m.115164 asmbl_12401|g.115164 ORF asmbl_12401|g.115164 asmbl_12401|m.115164 type:5prime_partial len:75 (+) asmbl_12401:1-227(+)
+Novel protein was not found in protein DF or multiple foundasmbl_12402|m.115185 asmbl_12402|g.115185 ORF asmbl_12402|g.115185 asmbl_12402|m.115185 type:5prime_partial len:70 (+) asmbl_12402:1-212(+)
+G67
+Novel protein was not found in protein DF or multiple foundasmbl_45637|m.648384 asmbl_45637|g.648384 ORF asmbl_45637|g.648384 asmbl_45637|m.648384 type:5prime_partial len:51 (+) asmbl_45637:1-154(+)
+G58
+Novel protein was not found in protein DF or multiple foundasmbl_106721|m.1465366 asmbl_106721|g.1465366 ORF asmbl_106721|g.1465366 asmbl_106721|m.1465366 type:internal len:62 (+) asmbl_106721:1-186(+)
+G57
+Novel protein was not found in protein DF or multiple foundasmbl_172280|m.2294531 asmbl_172280|g.2294531 ORF asmbl_172280|g.2294531 asmbl_172280|m.2294531 type:5prime_partial len:53 (+) asmbl_172280:1-159(+)
+Novel protein was not found in protein DF or multiple foundasmbl_24516|m.356634 asmbl_24516|g.356634 ORF asmbl_24516|g.356634 asmbl_24516|m.356634 type:complete len:52 (-) asmbl_24516:134-289(-)
+Novel protein was not found in protein DF or multiple foundasmbl_24518|m.356673 asmbl_24518|g.356673 ORF asmbl_24518|g.356673 asmbl_24518|m.356673 type:complete len:98 (-) asmbl_24518:174-467(-)
+Novel protein was not found in protein DF or multiple foundasmbl_73286|m.983626 asmbl_73286|g.983626 ORF asmbl_73286|g.983626 asmbl_73286|m.983626 type:5prime_partial len:57 (+) asmbl_73286:1-172(+)
+G54
+Novel protein was not found in protein DF or multiple foundasmbl_13612|m.225885 asmbl_13612|g.225885 ORF asmbl_13612|g.225885 asmbl_13612|m.225885 type:5prime_partial len:75 (+) asmbl_13612:1-226(+)
+G43
+Novel protein was not found in protein DF or multiple foundasmbl_13756|m.226433 asmbl_13756|g.226433 ORF asmbl_13756|g.226433 asmbl_13756|m.226433 type:5prime_partial len:73 (+) asmbl_13756:1-220(+)
+Novel protein was not found in protein DF or multiple foundasmbl_66139|m.1042894 asmbl_66139|g.1042894 ORF asmbl_66139|g.1042894 asmbl_66139|m.1042894 type:5prime_partial len:84 (+) asmbl_66139:1-253(+)
+G42
+G36
+G33a
+Novel protein was not found in protein DF or multiple foundasmbl_135528|m.2023137 asmbl_135528|g.2023137 ORF asmbl_135528|g.2023137 asmbl_135528|m.2023137 type:5prime_partial len:69 (+) asmbl_135528:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_135530|m.2023184 asmbl_135530|g.2023184 ORF asmbl_135530|g.2023184 asmbl_135530|m.2023184 type:5prime_partial len:69 (+) asmbl_135530:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_50706|m.775678 asmbl_50706|g.775678 ORF asmbl_50706|g.775678 asmbl_50706|m.775678 type:5prime_partial len:57 (+) asmbl_50706:1-172(+)
+Novel protein was not found in protein DF or multiple foundasmbl_57502|m.871450 asmbl_57502|g.871450 ORF asmbl_57502|g.871450 asmbl_57502|m.871450 type:5prime_partial len:40 (+) asmbl_57502:1-122(+)
+Novel protein was not found in protein DF or multiple foundasmbl_57502|m.871447 asmbl_57502|g.871447 ORF asmbl_57502|g.871447 asmbl_57502|m.871447 type:internal len:74 (+) asmbl_57502:1-223(+)
+G30
+G29a
+Novel protein was not found in protein DF or multiple foundasmbl_18914|m.301324 asmbl_18914|g.301324 ORF asmbl_18914|g.301324 asmbl_18914|m.301324 type:3prime_partial len:41 (-) asmbl_18914:1-123(-)
+G17
+Novel protein was not found in protein DF or multiple foundasmbl_151339|m.2310555 asmbl_151339|g.2310555 ORF asmbl_151339|g.2310555 asmbl_151339|m.2310555 type:complete len:87 (+) asmbl_151339:851-1111(+)
+Novel protein was not found in protein DF or multiple foundasmbl_156920|m.2385619 asmbl_156920|g.2385619 ORF asmbl_156920|g.2385619 asmbl_156920|m.2385619 type:3prime_partial len:39 (-) asmbl_156920:1-119(-)
+G15
+Novel protein was not found in protein DF or multiple foundasmbl_133785|m.2094547 asmbl_133785|g.2094547 ORF asmbl_133785|g.2094547 asmbl_133785|m.2094547 type:5prime_partial len:69 (+) asmbl_133785:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_133787|m.2094612 asmbl_133787|g.2094612 ORF asmbl_133787|g.2094612 asmbl_133787|m.2094612 type:5prime_partial len:69 (+) asmbl_133787:1-208(+)
+Novel protein was not found in protein DF or multiple foundasmbl_146210|m.2248595 asmbl_146210|g.2248595 ORF asmbl_146210|g.2248595 asmbl_146210|m.2248595 type:3prime_partial len:39 (-) asmbl_146210:1-119(-)
+Novel protein was not found in protein DF or multiple foundasmbl_36586|m.536910 asmbl_36586|g.536910 ORF asmbl_36586|g.536910 asmbl_36586|m.536910 type:complete len:90 (+) asmbl_36586:943-1212(+)
+Novel protein was not found in protein DF or multiple foundasmbl_53984|m.906432 asmbl_53984|g.906432 ORF asmbl_53984|g.906432 asmbl_53984|m.906432 type:5prime_partial len:61 (+) asmbl_53984:1-184(+)
+Novel protein was not found in protein DF or multiple foundasmbl_54982|m.878534 asmbl_54982|g.878534 ORF asmbl_54982|g.878534 asmbl_54982|m.878534 type:5prime_partial len:61 (+) asmbl_54982:1-184(+)
+Novel protein was not found in protein DF or multiple foundasmbl_81011|m.1237082 asmbl_81011|g.1237082 ORF asmbl_81011|g.1237082 asmbl_81011|m.1237082 type:5prime_partial len:75 (+) asmbl_81011:1-225(+)
+G138
+Novel protein was not found in protein DF or multiple foundasmbl_13371|m.181940 asmbl_13371|g.181940 ORF asmbl_13371|g.181940 asmbl_13371|m.181940 type:3prime_partial len:50 (+) asmbl_13371:236-385(+)
+Novel protein was not found in protein DF or multiple foundasmbl_20077|m.262706 asmbl_20077|g.262706 ORF asmbl_20077|g.262706 asmbl_20077|m.262706 type:3prime_partial len:36 (+) asmbl_20077:283-390(+)
+Novel protein was not found in protein DF or multiple foundasmbl_22524|m.300215 asmbl_22524|g.300215 ORF asmbl_22524|g.300215 asmbl_22524|m.300215 type:complete len:90 (+) asmbl_22524:1022-1291(+)
+Novel protein was not found in protein DF or multiple foundasmbl_22525|m.300244 asmbl_22525|g.300244 ORF asmbl_22525|g.300244 asmbl_22525|m.300244 type:complete len:90 (+) asmbl_22525:628-897(+)
+Novel protein was not found in protein DF or multiple foundasmbl_31439|m.417623 asmbl_31439|g.417623 ORF asmbl_31439|g.417623 asmbl_31439|m.417623 type:5prime_partial len:57 (+) asmbl_31439:1-172(+)
+Novel protein was not found in protein DF or multiple foundasmbl_38903|m.507745 asmbl_38903|g.507745 ORF asmbl_38903|g.507745 asmbl_38903|m.507745 type:5prime_partial len:99 (+) asmbl_38903:1-298(+)
+Novel protein was not found in protein DF or multiple foundasmbl_38903|m.507744 asmbl_38903|g.507744 ORF asmbl_38903|g.507744 asmbl_38903|m.507744 type:5prime_partial len:105 (+) asmbl_38903:1-317(+)
+Novel protein was not found in protein DF or multiple foundasmbl_39990|m.526624 asmbl_39990|g.526624 ORF asmbl_39990|g.526624 asmbl_39990|m.526624 type:internal len:77 (+) asmbl_39990:1-231(+)
+Novel protein was not found in protein DF or multiple foundasmbl_95479|m.1243047 asmbl_95479|g.1243047 ORF asmbl_95479|g.1243047 asmbl_95479|m.1243047 type:complete len:106 (+) asmbl_95479:902-1219(+)
+G124
+Novel protein was not found in protein DF or multiple foundasmbl_136778|m.2008824 asmbl_136778|g.2008824 ORF asmbl_136778|g.2008824 asmbl_136778|m.2008824 type:complete len:55 (-) asmbl_136778:3200-3364(-)
+Novel protein was not found in protein DF or multiple foundasmbl_35439|m.501994 asmbl_35439|g.501994 ORF asmbl_35439|g.501994 asmbl_35439|m.501994 type:5prime_partial len:47 (-) asmbl_35439:69-209(-)
+Novel protein was not found in protein DF or multiple foundasmbl_47911|m.724706 asmbl_47911|g.724706 ORF asmbl_47911|g.724706 asmbl_47911|m.724706 type:5prime_partial len:59 (+) asmbl_47911:1-178(+)
+Novel protein was not found in protein DF or multiple foundasmbl_52509|m.790064 asmbl_52509|g.790064 ORF asmbl_52509|g.790064 asmbl_52509|m.790064 type:5prime_partial len:57 (+) asmbl_52509:1-172(+)
+Novel protein was not found in protein DF or multiple foundasmbl_65083|m.949815 asmbl_65083|g.949815 ORF asmbl_65083|g.949815 asmbl_65083|m.949815 type:5prime_partial len:70 (+) asmbl_65083:1-211(+)
+G11
+Novel protein was not found in protein DF or multiple foundasmbl_104355|m.1496848 asmbl_104355|g.1496848 ORF asmbl_104355|g.1496848 asmbl_104355|m.1496848 type:3prime_partial len:54 (+) asmbl_104355:75-237(+)
+Novel protein was not found in protein DF or multiple foundasmbl_158616|m.2281302 asmbl_158616|g.2281302 ORF asmbl_158616|g.2281302 asmbl_158616|m.2281302 type:5prime_partial len:44 (-) asmbl_158616:1368-1500(-)
+Novel protein was not found in protein DF or multiple foundasmbl_164907|m.2332562 asmbl_164907|g.2332562 ORF asmbl_164907|g.2332562 asmbl_164907|m.2332562 type:5prime_partial len:45 (+) asmbl_164907:1-136(+)
+Novel protein was not found in protein DF or multiple foundasmbl_175861|m.2505205 asmbl_175861|g.2505205 ORF asmbl_175861|g.2505205 asmbl_175861|m.2505205 type:3prime_partial len:54 (+) asmbl_175861:396-559(+)
+Novel protein was not found in protein DF or multiple foundasmbl_20997|m.298050 asmbl_20997|g.298050 ORF asmbl_20997|g.298050 asmbl_20997|m.298050 type:complete len:52 (-) asmbl_20997:118-273(-)
+Novel protein was not found in protein DF or multiple foundasmbl_20998|m.298057 asmbl_20998|g.298057 ORF asmbl_20998|g.298057 asmbl_20998|m.298057 type:3prime_partial len:73 (-) asmbl_20998:1-220(-)
+Novel protein was not found in protein DF or multiple foundasmbl_44637|m.628317 asmbl_44637|g.628317 ORF asmbl_44637|g.628317 asmbl_44637|m.628317 type:3prime_partial len:50 (+) asmbl_44637:119-269(+)
+Novel protein was not found in protein DF or multiple foundasmbl_77422|m.1054559 asmbl_77422|g.1054559 ORF asmbl_77422|g.1054559 asmbl_77422|m.1054559 type:internal len:102 (+) asmbl_77422:1-307(+)
+Novel protein was not found in protein DF or multiple foundasmbl_77422|m.1054560 asmbl_77422|g.1054560 ORF asmbl_77422|g.1054560 asmbl_77422|m.1054560 type:internal len:102 (+) asmbl_77422:1-307(+)
+G102
+Novel protein was not found in protein DF or multiple foundasmbl_176059|m.2459132 asmbl_176059|g.2459132 ORF asmbl_176059|g.2459132 asmbl_176059|m.2459132 type:5prime_partial len:44 (-) asmbl_176059:145-277(-)
+Novel protein was not found in protein DF or multiple foundasmbl_23413|m.359831 asmbl_23413|g.359831 ORF asmbl_23413|g.359831 asmbl_23413|m.359831 type:complete len:52 (-) asmbl_23413:139-294(-)
+Novel protein was not found in protein DF or multiple foundasmbl_23415|m.359875 asmbl_23415|g.359875 ORF asmbl_23415|g.359875 asmbl_23415|m.359875 type:3prime_partial len:86 (-) asmbl_23415:1-260(-)
+Novel protein was not found in protein DF or multiple foundasmbl_61585|m.863200 asmbl_61585|g.863200 ORF asmbl_61585|g.863200 asmbl_61585|m.863200 type:3prime_partial len:202 (-) asmbl_61585:1-607(-)
+Novel protein was not found in protein DF or multiple foundasmbl_61586|m.863217 asmbl_61586|g.863217 ORF asmbl_61586|g.863217 asmbl_61586|m.863217 type:complete len:190 (-) asmbl_61586:349-918(-)
+Novel protein was not found in protein DF or multiple foundasmbl_61587|m.863238 asmbl_61587|g.863238 ORF asmbl_61587|g.863238 asmbl_61587|m.863238 type:complete len:190 (-) asmbl_61587:264-833(-)
+Novel protein was not found in protein DF or multiple foundasmbl_61588|m.863259 asmbl_61588|g.863259 ORF asmbl_61588|g.863259 asmbl_61588|m.863259 type:complete len:154 (-) asmbl_61588:209-670(-)
+G10
+Novel protein was not found in protein DF or multiple foundasmbl_111615|m.1808621 asmbl_111615|g.1808621 ORF asmbl_111615|g.1808621 asmbl_111615|m.1808621 type:3prime_partial len:60 (+) asmbl_111615:1994-2175(+)
+Connection closed
+G94
+G93
+G92
+G88
+G85
+G82
+G81
+G79
+G76
+G75
+G72
+G69
+G67
+G58
+G57
+G54
+G43
+G42
+G36
+G33a
+G30
+G29a
+G17
+G15
+G138
+G124
+G11
+G102
+G10
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed
+Connection closed

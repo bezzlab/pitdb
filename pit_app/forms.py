@@ -1,6 +1,13 @@
 from flask import Flask
-from wtforms import Form, TextField, PasswordField, SelectField, TextAreaField, SubmitField # BooleanField
+from wtforms import Form, TextField, PasswordField, SelectField, TextAreaField, SubmitField #, FileField, validators # BooleanField
+#from flask_wtf.file import FileField
+#from flask_wtf.file import FileField, FileRequired
+#from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
+from flask_wtf import Form as FlaskForm
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+
 from wtforms.validators import Required, Email, EqualTo
+
 # from flask_wtf import Form
 # from pit_app.models import User
 
@@ -35,9 +42,15 @@ from wtforms.validators import Required, Email, EqualTo
 #       return False
 #     else:
 #       return True
-
+# class SubmissionForm(Form):
+#   submissionFile = FileField('submissionFile', [validators.regexp(u'.*\.tsv$')])
+#   def validate_file(form, field):
+#         if field.data:
+#             field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
 class SearchForm(Form):
   searchOptions = SelectField('searchOptions', [Required(message='You need to select a search field')])
   searchArea    = TextAreaField('searchArea',  [Required(message='You need to import a search value')])
+
+
 
 
