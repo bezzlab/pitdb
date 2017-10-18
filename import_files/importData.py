@@ -979,12 +979,3 @@ finally:
 	if con:
 		con.close()
 		print("Connection closed")
-
-##Assigning prganism to novel TGEs
-#update observation set organism='Homo sapiens' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=1;
-#update observation set organism='Pteropus alecto' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=3;
-#update observation set organism='Mus musculus' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=4;
-#update observation set organism='Homo sapiens' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=5;
-#update observation set organism='Homo sapiens' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=9;
-#update observation set organism='Aedes aegypti' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=8;
-#update observation set organism='Pteropus alecto' from sample where observation.tge_class='novel' AND observation.sample_id=sample.id AND sample.exp_id=10;
