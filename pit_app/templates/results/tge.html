@@ -129,7 +129,7 @@
                     {%elif res.star==0%}<img src="/static/img/0star.png" style="width:90px;height:20px;">
                     {%endif%}<br>
                     <!-- {% if res.evidence!=''%}({{ res.evidence }}){%else%}(-){%endif%} --></td>
-                    <td class="wordwrap" style="font-size: 12px !important; line-height: 18px;"><strong style="font-size: 14px;">{{ res.peptide_num }}</strong> <br/> <ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul> </td>
+                    <td class="wordwrap" style="font-size: 12px !important; line-height: 18px;"><strong style="font-size: 14px;">{{ res.peptide_num }}</strong> <!-- <br/> <ul style="padding-left: 18px">{% for pep in res.peptides %}<li>{{ pep|wordwrap(15, True) }}</li>{% endfor %}</ul> --> </td>
                     <td class="compact"><a href="protein?uniprot={{ res.uniprotID }}">{{ res.uniprotID }}</a></td> 
                     <td class="compact"><a href="protein?uniprot={{ res.uniprotID }}">{{ res.protein_name }}</a></td> 
                     <td class="compact">{{ res.protein_desc }}</td>                

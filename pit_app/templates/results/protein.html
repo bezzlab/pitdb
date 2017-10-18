@@ -31,7 +31,7 @@
           <div class="panel-body">
             <div class="row" style="margin-left:5px">
               <label>UniProt Reference  
-              <a class="popoverData" href="#" data-content="UniProt accession number – click to see full record for this protein in UniProt." rel="popover" data-placement="bottom" data-original-title="UniProt Reference" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> <a href="http://www.uniprot.org/uniprot/{{ genoverse.uniprot }}" target="_blank">{{ uniprot }}</a></br>
+              <a class="popoverData" href="#" data-content="UniProt accession number – click to see full record for this protein in UniProt." rel="popover" data-placement="bottom" data-original-title="UniProt Reference" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> <a href="http://www.uniprot.org/uniprot/{{ uniprot }}" target="_blank">{{ uniprot }}</a></br>
               <label>Protein Name 
               <a class="popoverData" href="#" data-content="Short protein name associated with this UniProt accession number." rel="popover" data-placement="bottom" data-original-title="Protein Name" data-trigger="hover"><i class="fa fa-info-circle helpTipInner"></i></a>:</label> {{ summary.protein_name }}</br>
               <label>Gene Symbol 
@@ -74,6 +74,7 @@
                 <tr>
                   <th>TGE Accession&nbsp;<a class="popoverData" href="#" data-content="Accession number of each TGE associated with this protein. Click the accession number for more information about the TGE." rel="popover" data-placement="bottom" data-original-title="TGE Accession" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                   <th>TGE Type&nbsp;<a class="popoverData" href="#" data-content="Type of TGE inferred from homology search against known protein isoforms." rel="popover" data-placement="bottom" data-original-title="TGE Type" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
+                  <th class="compact">Rating<a class="popoverData" href="#" data-content="The 'Rating' attribute indicates identification rating of the TGE. If the TGE is a known protein, its rating is 5 star. A TGE from other TGE classes gets 5 star if it has unique variation specific peptide evidence, its a complete ORF, and our scoring method predicts it as novel variant." rel="popover" data-placement="bottom" data-original-title="Rating&nbsp;&&nbsp;Evidence&nbsp;" data-html="true" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                   <th>#Observations&nbsp;<a class="popoverData" href="#" data-content="Number of distinct observations of this sample (i.e. in separate samples)." rel="popover" data-placement="bottom" data-original-title="Number of Observations" data-trigger="hover"><i class="fa fa-info-circle"></i></a></th>
                 </tr>
               </thead>
@@ -82,6 +83,16 @@
                   <tr>
                     <td><a href="tge?accession={{ tge.accession }}">{{ tge.accession }}</a></td>
                     <td>{{ tge.tge_class }}</td>
+                    <td>
+                      <label hidden>{{ tge.star }}</label>
+                    {% if tge.star==5%}<img src="/static/img/5star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==4%}<img src="/static/img/4star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==3%}<img src="/static/img/3star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==2%}<img src="/static/img/2star.png" style="width:90px;height:20px;">
+                    {%elif tge.star==1%}<img src="/static/img/1star.png" style="width:90px;height:20px;">
+                    {%else%}<img src="/static/img/0star.png" style="width:90px;height:20px;">
+                    {%endif%}
+                    </td>
                     <td>{{ tge.obsCount }}</td>
                   </tr>
                 {% endfor %}

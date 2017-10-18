@@ -22,6 +22,18 @@
     <link rel="stylesheet" href="/static/css/ext/sb-admin-2.css">
     
     <link rel="stylesheet" href="/static/css/pitdb.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107488064-1"></script>
+
+    <script>
+
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag(){dataLayer.push(arguments)};
+
+    gtag('js', new Date());
+    gtag('config', 'UA-107488064-1');
+
+    </script>
 </head>
 
   <body>
@@ -62,14 +74,6 @@
             <h4 class="modal-title">Help</h4>
           </div>
           <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
-          <h5>How do I browse PITDB?</h5>
-          <p>The web interface allows you to browse information in PITDB via four simple searches:</p>
-          <ul>
-            <li>Search by <strong>TGE</strong> to find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence. Each TGE is supported by one or more TGE observations, comprising a transcript from RNA-seq and peptide evidence of translation of the transcript from mass spectrometry. Each TGE is also assigned a type (e.g. novel isoform) through comparison with reference databases. A single TGE (as defined by its unique sequence) may have been observed across multiple species.</li>
-            <li>Search by <strong>experiment</strong> (e.g. PIT000001) to view summary information for a particular experiment that has been submitted to PITDB. An experiment may contain one or more samples. The summary information includes information about the number of TGEs identified, the distribution of these among the samples, and a brief description of the experiment.</li>
-            <li>Search by <strong>protein</strong> to find TGEs corresponding to a specific protein, identified by its Uniprot ID (e.g. Q9UNM6). This shows any TGEs corresponding to the protein and is useful in seeking experimental evidence for a theoretical protein, or investigating isoforms of known proteins. For species with a genome assembly, TGEs are shown in their genomic context alongside their corresponding genes.</li>
-            <li>Search by <strong>species</strong> to find all TGEs observed for a particular species. For non-model organisms this essentially provides a draft proteome for further analysis. However, it is important to note that the completeness of the proteome will depend on the diversity of sample analysed, e.g. whether they came from multiple tissues.</li>
-          </ul>In all the database views, specific TGEs can be located using the search box just above the TGE table.
           <h5><strong>What is PITDB?</strong></h5>
           <p>PITDB is a publicly available database for sharing results from published PIT (proteomics informed by transcriptomics) experiments. The PIT approach [<a href="#ref1">1</a>] involves the analysis of a given sample by both RNA-seq and proteomic mass spectrometry followed by sequence-level integration of the acquired data to provide an unprecedented insight into which genomic elements are being transcribed and translated within a given sample. The benefit of this approach is that any expressed polypeptide can be detected, unlike traditional proteomics which is constrained to searching spectra against a list of known protein sequences.</p>
           <h5><strong>What is a translated genomic element (TGE)?</strong></h5>
@@ -110,11 +114,12 @@
           <form id="searchform" class="form-horizontal" role="form" action="/search" method="POST">
             <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
               <div class="form-group">
-                <p>Five main types of search are available:
+                <p>Six main types of search are available:
                 <ul> 
-                  <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number (e.g. TGE001234) or amino acid sequence.</li>
-                  <li><label>Experiment:</label> View summary information for a particular experiment ID, e.g. experiment 4.</li>
-                  <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID, e.g. P12111.</li>
+                  <li><label>TGE:</label> Find PIT evidence for a specific translated genomic element (TGE) by searching for its accession number or amino acid sequence.</li>
+                  <li><label>Experiment:</label> View summary information for a particular experiment ID.</li>
+                  <li><label>Sample:</label> View summary information for a particular sample ID or name.</li>
+                  <li><label>Protein:</label> Find TGEs corresponding to a specific protein, identified by its Uniprot ID.</li>
                   <li><label>Gene:</label> Search by gene symbol to find TGEs that are products of that gene.</li>
                   <li><label>Species:</label> Find all TGEs observed for a particular species, selected from the drop down list.</li>
                 </ul>
@@ -187,7 +192,7 @@
           <form id="submissionform" class="form-horizontal" role="form" enctype="multipart/form-data" action="/submission" method="POST">
             <div class="modal-body" style="font-weight: normal; line-height: 1.6em;">
               <div class="form-group">
-                <p>Eight files are needed per sample for PITDB submission (Please check submission guidline from the help page for further information). Each submission also needs a experiment and a sample decsription file. Please zip the files and upload for submission.
+                <p>Eight files are needed per sample for PITDB submission (Please check <a href="./static/README_DataSubmission.pdf">submission guidline</a> from the help page for further information). Each submission also needs a experiment and a sample decsription file. Please zip the files and upload for submission.
                 </p>
                 <p></p>
                 <p>

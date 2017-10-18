@@ -72,7 +72,7 @@ def tge():
     
     results.append({'id': obs.id, 'observation': obs.name, 'sampleName': exp.saccession, 'expAccession': exp.accession, 
                     'expID': exp.id, 'tgeClass': obs.tge_class,'type': tgeType, 'length': tgeLength, 'strand':tgeStrand, 'organism': obs.organism, 
-                    'uniprotID': obs.uniprot_id, 'peptide_num': len(peptides), 'peptides': peptides, 'star':len(str(obs.star).replace('O','')), 'evidence':str(obs.star_str).upper(),'protein_name':obs.protein_name,'protein_desc': obs.protein_descr })
+                    'uniprotID': obs.uniprot_id, 'peptide_num': obs.peptide_num, 'peptides': peptides, 'star':len(str(obs.star).replace('O','')), 'evidence':str(obs.star_str).upper(),'protein_name':obs.protein_name,'protein_desc': obs.protein_descr })
 
   return render_template('results/tge.html', summary = summary, results=results, pepInfo = pepInfo, variations = variations)
 
@@ -265,9 +265,9 @@ def protein():
 
   summary = {'protein_name': protein.protein_name, 'gene_name': protein.gene_name, 'protein_descr': protein.protein_descr, 'organism': protein.organism }
 
-  tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.count(Observation.id).label('obsCount')).\
+  tges = TGE.query.with_entities(TGE.accession, TGE.tge_class, func.length(func.replace(TGE.star,'O','')).label('star'), func.count(Observation.id).label('obsCount')).\
               join(Observation).filter_by(uniprot_id=uniprot).\
-              group_by(TGE.accession, TGE.tge_class).all()
+              group_by(TGE.accession, TGE.tge_class, TGE.star).all()
 
   obj  = Experiment.query.with_entities(Experiment.title, Experiment.accession, Sample.name, Sample.id).\
               join(Sample).join(Observation).filter_by(uniprot_id=uniprot).\
